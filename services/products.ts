@@ -3,16 +3,18 @@ import { NUM_DAYS_PRODUCT_NEW } from '@/lib/constants';
 import { db } from '@/lib/db';
 import { ExpectedError } from '@/lib/errors';
 import FilterApi from '@/lib/filter';
-import { getDateInPast, nameToSlug } from '@/lib/helpers';
+import { generateOrQueryForSearch, getDateInPast, nameToSlug } from '@/lib/helpers';
 import { deleteFromS3, uploadToS3 } from '@/lib/upload';
 import { ProdFormSchemaType, ProdVariantSchemaType } from '@/schemas/products';
 import { ProductWithCateAndImg, ProductWithCateAndPrImg } from '@/types/products';
 import { Prisma } from '@prisma/client';
+import { randomUUID } from 'crypto';
 
-export const getAllProducts = async (searchParams: { [key: string]: string }) => {
-  let { minPrice, maxPrice, category } = searchParams;
+export const getAllFilteredProducts = async (searchParams: { [key: string]: string }) => {
+  let { minPrice, maxPrice, category, query } = searchParams;
 
   const where: Prisma.ProductWhereInput = {
+    OR: generateOrQueryForSearch(query, 'name'),
     category: category
       ? {
           OR: [
@@ -87,7 +89,7 @@ export const getProductBySlug = async (slug: string) => {
 export const getBestSellingProductImages = async () => {
   const product = await db.product.findUnique({
     where: {
-      slug: 'nike-air-force-1',
+      slug: 'Converse-Chuck-70-Low',
     },
     include: {
       productImages: true,
@@ -157,23 +159,50 @@ export const getProductByName = async (name: string) => {
   return product;
 };
 
-export const getAllUserProducts = async (searchParams: { [key: string]: string }) => {
+export const getSimilarProducts = async (categoryId?: string, productId?: string) => {
+  const products = await db.product.findMany({
+    where: {
+      OR: [
+        {
+          categoryId,
+        },
+        {
+          category: {
+            parentId: categoryId,
+          },
+        },
+      ],
+      id: {
+        not: productId,
+      },
+    },
+    include: {
+      productImages: {
+        where: {
+          isPrimary: true,
+        },
+      },
+      category: true,
+    },
+  });
+
+  return products;
+};
+
+export const getAllUserFilteredProducts = async (searchParams: { [key: string]: string }) => {
   const user = await getUserSession();
   const userId = user?.id;
   if (!userId) throw new ExpectedError('Unauthenticated!');
 
   const { search, from, to, item } = searchParams;
   const where: Prisma.ProductWhereInput = {
-    name: {
-      contains: search,
-      mode: 'insensitive',
-    },
+    OR: search ? generateOrQueryForSearch(search, 'name') : undefined,
     createdAt: {
       gte: from ? new Date(from) : undefined,
       lte: to ? new Date(to) : undefined,
     },
     category: {
-      name: item ? item : undefined,
+      OR: item ? [{ name: item }, { parentId: item }] : undefined,
     },
     userId,
   };
@@ -211,7 +240,7 @@ export const createProduct = async (data: ProdFormSchemaType) => {
   if (Object.keys(Object.groupBy(variants, (variant) => variant.parentVariantId)).length > 1)
     throw new ExpectedError('You can only create product with one variant type!');
 
-  let prodVariants: (Omit<ProdVariantSchemaType, 'variantName' | 'parentVariantId'> & { altText: string })[] = [];
+  let prodVariants: Omit<ProdVariantSchemaType, 'variantName' | 'parentVariantId' | 'imageFile'>[] = [];
 
   const existingProd = await getProductByName(name);
   if (existingProd) throw new ExpectedError('Product with this name already exists, please choose another name!');
@@ -240,7 +269,7 @@ export const createProduct = async (data: ProdFormSchemaType) => {
         price: variant.price || regularPrice,
         stock: variant.stock,
         imageUrl: variantImageUrl,
-        altText: `Product variant image ${name} ${idx + 1}`,
+        altText: variantImageUrl && `Product variant image ${name} ${idx + 1}`,
       };
     })
   );
@@ -271,167 +300,170 @@ export const createProduct = async (data: ProdFormSchemaType) => {
 };
 
 export const updateProduct = async (data: ProdFormSchemaType) => {
-  const user = await getUserSession();
-  const userId = user?.id;
-  if (!userId) throw new ExpectedError('Unauthenticated!');
+  if (data.mode === 'edit') {
+    const user = await getUserSession();
+    const userId = user?.id;
+    if (!userId) throw new ExpectedError('Unauthenticated!');
 
-  if (!data.id) throw new ExpectedError('Product ID is required!');
+    const { id, name, categoryId, regularPrice, description, summary, images, variants } = data;
 
-  const { id, name, categoryId, regularPrice, description, summary, images, variants } = data;
+    if (!id) throw new ExpectedError('Product ID is required!');
 
-  if (variants.length === 0) throw new ExpectedError('Your product has to have at least one variant!');
+    if (variants.length === 0) throw new ExpectedError('Your product has to have at least one variant!');
 
-  if (Object.keys(Object.groupBy(variants, (variant) => variant.parentVariantId)).length > 1)
-    throw new ExpectedError('You can only update product with one variant type!');
+    if (Object.keys(Object.groupBy(variants, (variant) => variant.parentVariantId)).length > 1)
+      throw new ExpectedError('You can only update product with one variant type!');
 
-  let existProdVariants: Omit<ProdVariantSchemaType, 'variantName' | 'parentVariantId'>[] = [];
-  let newProdVariants: (Omit<ProdVariantSchemaType, 'variantName' | 'parentVariantId'> & { altText: string })[] = [];
-  let deletingProdVariants: string[] = [];
+    let existProdVariants: Omit<ProdVariantSchemaType, 'variantName' | 'parentVariantId'>[] = [];
+    let newProdVariants: Omit<ProdVariantSchemaType, 'variantName' | 'parentVariantId'>[] = [];
+    let deletingProdVariants: string[] = [];
 
-  const existingUserProd = await getUserProductById(id, userId);
-  if (!existingUserProd) throw new ExpectedError('Unauthorized!');
+    const existingUserProd = await getUserProductById(id, userId);
+    if (!existingUserProd) throw new ExpectedError('Unauthorized!');
 
-  const existingProd = await getProductByName(name);
-  if (existingProd && existingProd.id !== id)
-    throw new ExpectedError('Product with this name already exists, please choose another name!');
+    const existingProd = await getProductByName(name);
+    if (existingProd && existingProd.id !== id)
+      throw new ExpectedError('Product with this name already exists, please choose another name!');
 
-  const existingProdImages = images.filter((img) => img.imgId);
-  const deletingProdImages = await Promise.all(
-    (
-      await getManyProductImages(
-        id,
-        existingProdImages.map((img) => img.imgId!)
-      )
-    ).map(async (img) => {
-      await deleteFromS3(img.imageUrl);
-      return img.id;
-    })
-  );
-
-  const newProdImages = await Promise.all(
-    images
-      .filter((img) => !img.imgId)
-      .map(async (img, idx) => {
-        const imageUrl = await uploadToS3(img.imageFile, 'products');
-
-        return {
-          imageUrl,
-          isPrimary: img.isPrimary,
-          altText: `Product image ${name} ${idx + 1}`,
-        };
+    const existingProdImages = images.filter((img) => img.imgId);
+    const deletingProdImages = await Promise.all(
+      (
+        await getManyProductImages(
+          id,
+          existingProdImages.map((img) => img.imgId!)
+        )
+      ).map(async (img) => {
+        await deleteFromS3(img.imageUrl);
+        return img.id;
       })
-  );
+    );
 
-  existProdVariants = variants.filter((variant) => variant.variantId);
-  deletingProdVariants = await Promise.all(
-    (
-      await getManyProductVariants(
-        id,
-        existProdVariants.map((variant) => variant.variantId!)
-      )
-    ).map(async (variant) => {
-      if (variant.imageUrl) await deleteFromS3(variant.imageUrl);
-      return variant.id;
-    })
-  );
-  existProdVariants = await Promise.all(
-    existProdVariants.map(async (variant) => {
-      let variantImageUrl: string | undefined;
-      if (variant.imageFile) {
-        variantImageUrl = await uploadToS3(variant.imageFile, 'products');
-        const oldVariant = await db.productVariant.findUnique({
-          where: {
-            id: variant.variantId,
-          },
-        });
-        if (oldVariant && oldVariant.imageUrl) await deleteFromS3(oldVariant.imageUrl);
-      } else variantImageUrl = variant.imageUrl;
+    const newProdImages = await Promise.all(
+      images
+        .filter((img) => !img.imgId)
+        .map(async (img, idx) => {
+          const imageUrl = await uploadToS3(img.imageFile, 'products');
 
-      return {
-        variantId: variant.variantId,
-        firstAttrId: variant.firstAttrId,
-        secondAttrId: variant.secondAttrId,
-        price: variant.price,
-        stock: variant.stock,
-        imageUrl: variantImageUrl,
-      };
-    })
-  );
+          return {
+            imageUrl,
+            isPrimary: img.isPrimary,
+            altText: `Product image ${name} ${idx + 1}`,
+          };
+        })
+    );
 
-  newProdVariants = await Promise.all(
-    variants
-      .filter((variant) => !variant.variantId)
-      .map(async (variant, idx) => {
+    existProdVariants = variants.filter((variant) => variant.variantId);
+    deletingProdVariants = await Promise.all(
+      (
+        await getManyProductVariants(
+          id,
+          existProdVariants.map((variant) => variant.variantId!)
+        )
+      ).map(async (variant) => {
+        if (variant.imageUrl) await deleteFromS3(variant.imageUrl);
+        return variant.id;
+      })
+    );
+    existProdVariants = await Promise.all(
+      existProdVariants.map(async (variant) => {
         let variantImageUrl: string | undefined;
-        if (variant.imageFile) variantImageUrl = await uploadToS3(variant.imageFile, 'products');
-        else variantImageUrl = undefined;
+        if (variant.imageFile) {
+          variantImageUrl = await uploadToS3(variant.imageFile, 'products');
+          const oldVariant = await db.productVariant.findUnique({
+            where: {
+              id: variant.variantId,
+            },
+          });
+          if (oldVariant && oldVariant.imageUrl) await deleteFromS3(oldVariant.imageUrl);
+        } else variantImageUrl = variant.imageUrl;
 
         return {
+          variantId: variant.variantId,
           firstAttrId: variant.firstAttrId,
           secondAttrId: variant.secondAttrId,
-          price: variant.price || regularPrice,
+          price: variant.price,
           stock: variant.stock,
           imageUrl: variantImageUrl,
-          altText: `Product variant image ${name} ${idx + 1}`,
+          altText: variantImageUrl && `Product variant image ${name} ${randomUUID()}`,
         };
       })
-  );
+    );
 
-  const slug = nameToSlug(name);
+    newProdVariants = await Promise.all(
+      variants
+        .filter((variant) => !variant.variantId)
+        .map(async (variant) => {
+          let variantImageUrl: string | undefined;
+          if (variant.imageFile) variantImageUrl = await uploadToS3(variant.imageFile, 'products');
+          else variantImageUrl = undefined;
 
-  await db.product.update({
-    where: {
-      id,
-    },
-    data: {
-      name,
-      categoryId,
-      description,
-      regularPrice,
-      summary,
-      slug,
-      productImages: {
-        deleteMany: {
-          id: {
-            in: deletingProdImages,
-          },
-        },
-        updateMany: existingProdImages.map((img) => ({
-          where: {
-            id: img.imgId!,
-          },
-          data: {
-            isPrimary: img.isPrimary,
-          },
-        })),
-        createMany: {
-          data: newProdImages,
-        },
-      },
-      productVariants: {
-        deleteMany: {
-          id: {
-            in: deletingProdVariants,
-          },
-        },
-        updateMany: existProdVariants.map((variant) => ({
-          where: {
-            id: variant.variantId!,
-          },
-          data: {
+          return {
             firstAttrId: variant.firstAttrId,
             secondAttrId: variant.secondAttrId,
-            price: variant.price,
+            price: variant.price || regularPrice,
             stock: variant.stock,
-            imageUrl: variant.imageUrl,
+            imageUrl: variantImageUrl,
+            altText: variantImageUrl && `Product variant image ${name} ${randomUUID()}`,
+          };
+        })
+    );
+
+    const slug = nameToSlug(name);
+
+    await db.product.update({
+      where: {
+        id,
+      },
+      data: {
+        name,
+        categoryId,
+        description,
+        regularPrice,
+        summary,
+        slug,
+        productImages: {
+          deleteMany: {
+            id: {
+              in: deletingProdImages,
+            },
           },
-        })),
-        createMany: {
-          data: newProdVariants,
+          updateMany: existingProdImages.map((img) => ({
+            where: {
+              id: img.imgId!,
+            },
+            data: {
+              isPrimary: img.isPrimary,
+            },
+          })),
+          createMany: {
+            data: newProdImages,
+          },
+        },
+        productVariants: {
+          deleteMany: {
+            id: {
+              in: deletingProdVariants,
+            },
+          },
+          updateMany: existProdVariants.map((variant) => ({
+            where: {
+              id: variant.variantId!,
+            },
+            data: {
+              firstAttrId: variant.firstAttrId,
+              secondAttrId: variant.secondAttrId,
+              price: variant.price,
+              stock: variant.stock,
+              imageUrl: variant.imageUrl,
+            },
+          })),
+          createMany: {
+            data: newProdVariants,
+          },
         },
       },
-    },
-  });
+    });
+  }
 };
 
 export const getManyProductImages = async (productId: string, ids?: string[]) => {
@@ -447,7 +479,7 @@ export const getManyProductImages = async (productId: string, ids?: string[]) =>
   return images;
 };
 
-export const getManyProductVariants = async (productId: string, ids?: string[]) => {
+export const getManyProductVariants = async (productId: string, ids: string[]) => {
   const variants = await db.productVariant.findMany({
     where: {
       id: {
@@ -505,43 +537,7 @@ export const deleteManyProducts = async (ids: string[]) => {
   const userId = user?.id;
   if (!userId) throw new ExpectedError('Unauthorized!');
 
-  const products = await db.product.findMany({
-    where: {
-      id: {
-        in: ids,
-      },
-    },
-    include: {
-      productImages: true,
-      productVariants: {
-        include: {
-          firstAttr: true,
-          secondAttr: true,
-        },
-      },
-    },
-  });
-
-  if (!products.length) throw new ExpectedError('Products not found!');
-
-  if (products.every((prod) => prod.userId !== userId)) throw new ExpectedError('Unauthorized!');
-
-  products.forEach(async (prod) => {
-    prod.productImages.forEach(async (image) => {
-      await deleteFromS3(image.imageUrl);
-    });
-    prod.productVariants.forEach(async (variant) => {
-      if (variant.imageUrl) await deleteFromS3(variant.imageUrl);
-    });
-  });
-
-  await db.product.deleteMany({
-    where: {
-      id: {
-        in: ids,
-      },
-    },
-  });
+  await Promise.all(ids.map(deleteProduct));
 };
 
 export const getUserProductById = async (id: string, userId: string) => {

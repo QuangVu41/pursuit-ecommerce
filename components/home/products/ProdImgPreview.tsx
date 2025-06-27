@@ -20,8 +20,9 @@ const ProdImgPreview = ({ prodImgs }: ProdImgPreviewProps) => {
         <Image
           src={variantImg.imgUrl || mainImg.imgUrl}
           alt={variantImg.altText || mainImg.altText}
-          fill
-          className='object-cover'
+          width={450}
+          height={450}
+          className='object-cover absolute inset-0 w-full h-full'
         />
       </figure>
       <Carousel>

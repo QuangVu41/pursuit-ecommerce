@@ -43,6 +43,7 @@ const usePersistedVariant = (
   };
 
   const handleSelectAttr = (value: string[]) => {
+    console.log(value);
     if (value.length > 2) {
       value.shift();
     }
@@ -89,6 +90,7 @@ const usePersistedVariant = (
 
   const handleAppendVariant = () => {
     const attrValArr = determineAttrValArr(currentVariants);
+    console.log(attrValArr);
     if (attrValArr.length === 2) {
       const firstArr = attrValArr[0];
       const secondArr = attrValArr[1];

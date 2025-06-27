@@ -1,5 +1,15 @@
-import { MAX_IMAGE_SIZE, MAX_PRODUCT_PRICE, MAX_PRODUCT_STOCK } from '@/lib/constants';
+import { MAX_IMAGE_SIZE, MAX_PROD_IMAGE_UPLOAD, MAX_PRODUCT_PRICE, MAX_PRODUCT_STOCK } from '@/lib/constants';
 import { z } from 'zod';
+
+const IsEditableSchema = z.discriminatedUnion('mode', [
+  z.object({
+    mode: z.literal('edit'),
+    id: z.string().nonempty(),
+  }),
+  z.object({
+    mode: z.literal('create'),
+  }),
+]);
 
 export const ProdVariantSchema = z.object({
   variantId: z.string().optional(),
@@ -25,7 +35,7 @@ export const ProdVariantSchema = z.object({
     .max(MAX_PRODUCT_STOCK, { message: `Stock cannot exceed ${MAX_PRODUCT_STOCK}!` }),
 });
 
-export const ProdImagesSchema = z
+export const ProdImageSchema = z
   .object({
     imgId: z.string().optional(),
     imageUrl: z.string(),
@@ -34,28 +44,42 @@ export const ProdImagesSchema = z
     altText: z.string().optional(),
   })
   .array()
-  .max(10)
+  .max(MAX_PROD_IMAGE_UPLOAD)
   .refine((vals) => vals.every((val) => (val.imageFile ? val.imageFile.size <= MAX_IMAGE_SIZE : true)), {
     message: `Image size cannot exceed ${MAX_IMAGE_SIZE / 1024 / 1024}MB!`,
+  })
+  .refine((vals) => vals.length > 0, {
+    message: 'Please choose at least 1 image!',
+  })
+  .refine((vals) => vals.some((obj) => obj.isPrimary), {
+    message: 'Please select one image as primary.',
   });
 
-export const ProdFormSchema = z.object({
-  id: z.string().optional(),
+export const ProdSchema = z.object({
   name: z.string().nonempty({ message: 'Name is required!' }).trim(),
   description: z.string().min(100, { message: 'Description has to be at least 100 characters!' }),
   summary: z
     .string()
     .nonempty({ message: 'Summary is required!' })
-    .max(250, { message: 'Summary is max 250 characters!' }),
+    .max(250, { message: 'Summary is max 250 characters!' })
+    .trim(),
   categoryId: z.string().nonempty({ message: 'Category is required!' }),
-  images: ProdImagesSchema,
+  images: ProdImageSchema,
   regularPrice: z.coerce
     .number({ message: 'Price must be a number!' })
     .max(MAX_PRODUCT_PRICE, { message: `Price cannot exceed ${MAX_PRODUCT_PRICE}!` })
     .int(),
-  variants: ProdVariantSchema.array(),
+  variants: ProdVariantSchema.array()
+    .refine((vals) => vals.length > 0, {
+      message: 'Please add at least one product variant!',
+    })
+    .refine((vals) => vals.length === new Set(vals.map((v) => v.variantName)).size, {
+      message: 'Variant cannot have duplicate!',
+    }),
 });
+
+export const ProdFormSchema = z.intersection(ProdSchema, IsEditableSchema);
 
 export type ProdFormSchemaType = z.infer<typeof ProdFormSchema>;
 export type ProdVariantSchemaType = z.infer<typeof ProdVariantSchema>;
-export type ProdImagesSchemaType = z.infer<typeof ProdImagesSchema>;
+export type ProdImageSchemaType = z.infer<typeof ProdImageSchema>;

@@ -20,7 +20,7 @@ const AttrForm = () => {
           render={({ field }) => (
             <FormItem className='hidden'>
               <FormControl>
-                <Input className='md:text-xl' {...field} type='text' hidden />
+                <Input {...field} type='text' hidden />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -34,7 +34,7 @@ const AttrForm = () => {
           <FormItem>
             <FormLabel>Name*</FormLabel>
             <FormControl>
-              <Input className='md:text-xl' {...field} placeholder='Size' type='text' disabled={isPending} />
+              <Input {...field} placeholder='Size' type='text' disabled={isPending} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -51,7 +51,6 @@ const AttrForm = () => {
               <div className='flex items-center gap-x-2'>
                 <FormControl>
                   <Input
-                    className='md:text-xl'
                     {...field}
                     placeholder={`M-55kg (Maximum ${MAX_ALLOWED_ATTR_VALUE} values)`}
                     type='text'

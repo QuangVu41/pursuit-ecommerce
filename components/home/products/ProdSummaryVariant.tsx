@@ -16,6 +16,9 @@ const ProdSummaryVariant = ({ productVariants }: ProdSummaryVariantProps) => {
   const setSecondAttrId = useProdAddToCartStore((state) => state.setSecondAttrId);
   const firstAttrId = useProdAddToCartStore((state) => state.firstAttrId);
   const secondAttrId = useProdAddToCartStore((state) => state.secondAttrId);
+  const setVariantPrice = useProdAddToCartStore((state) => state.setVariantPrice);
+  const setHasError = useProdAddToCartStore((state) => state.setHasError);
+  const hasTwoAttrs = useProdAddToCartStore((state) => state.hasTwoAttrs);
   const setVariantImg = useProdImgPreviewStore((state) => state.setVariantImg);
   const firstVariant = Object.entries(Object.groupBy(productVariants, (variant) => variant.firstAttr.attribute.name));
   const secondVariant = productVariants.every((variant) => variant.secondAttr)
@@ -32,7 +35,9 @@ const ProdSummaryVariant = ({ productVariants }: ProdSummaryVariantProps) => {
           <div className='flex flex-wrap items-center gap-2'>
             {variants
               ?.reduce((res, variant) => {
+                const hasImg = variants.some((v) => v.firstAttr.name === variant.firstAttr.name && v.imageUrl);
                 if (res.some((v) => v.firstAttr.name === variant.firstAttr.name)) return res;
+                if (hasImg && !variant.imageUrl) return res;
                 return [...res, variant];
               }, [] as ProductVariantWithPayLoad[])
               .map((variant) => (
@@ -42,9 +47,34 @@ const ProdSummaryVariant = ({ productVariants }: ProdSummaryVariantProps) => {
                   className={`capitalize rounded-none items-center h-auto !px-4 relative ${
                     firstAttrId === variant.firstAttrId ? 'border-home-primary text-home-primary' : ''
                   }`}
-                  onMouseOver={() => variant.imageUrl && setVariantImg(variant.imageUrl)}
-                  onMouseOut={() => setVariantImg('')}
-                  onClick={() => setFirstAttrId(variant.firstAttr.id)}
+                  onMouseOver={() =>
+                    variant.imageUrl && setVariantImg({ imgUrl: variant.imageUrl, altText: variant.altText })
+                  }
+                  onMouseOut={() => setVariantImg({ imgUrl: '', altText: '' })}
+                  onClick={() => {
+                    setFirstAttrId(variant.firstAttr.id);
+                    if (hasTwoAttrs && secondAttrId) setHasError(false);
+                    if (!hasTwoAttrs) setHasError(false);
+                    if (hasTwoAttrs && firstAttrId === variant.firstAttrId) {
+                      setFirstAttrId('');
+                      setVariantPrice(0);
+                      return;
+                    }
+                    if (!hasTwoAttrs && firstAttrId === variant.firstAttrId) {
+                      setFirstAttrId('');
+                      setVariantPrice(0);
+                      return;
+                    }
+                    if (hasTwoAttrs && secondAttrId) {
+                      const v = variants.find(
+                        (v) => v.firstAttrId === variant.firstAttrId && v.secondAttrId === secondAttrId && v.stock !== 0
+                      );
+                      if (v) {
+                        return setVariantPrice(v.price);
+                      }
+                    }
+                    if (!hasTwoAttrs) setVariantPrice(variant.price);
+                  }}
                   disabled={
                     secondAttrId
                       ? !variants.find(
@@ -94,7 +124,24 @@ const ProdSummaryVariant = ({ productVariants }: ProdSummaryVariantProps) => {
                     className={`capitalize rounded-none items-center h-auto relative !px-4 ${
                       secondAttrId === variant.secondAttrId ? 'border-home-primary text-home-primary' : ''
                     }`}
-                    onClick={() => setSecondAttrId(variant.secondAttr?.id)}
+                    onClick={() => {
+                      setSecondAttrId(variant.secondAttr?.id);
+                      if (hasTwoAttrs && firstAttrId) setHasError(false);
+                      if (hasTwoAttrs && secondAttrId === variant.secondAttrId) {
+                        setSecondAttrId('');
+                        setVariantPrice(0);
+                        return;
+                      }
+                      if (hasTwoAttrs && firstAttrId) {
+                        const v = variants.find(
+                          (v) =>
+                            v.firstAttrId === firstAttrId && v.secondAttrId === variant.secondAttrId && v.stock !== 0
+                        );
+                        if (v) {
+                          return setVariantPrice(v.price);
+                        }
+                      }
+                    }}
                     disabled={
                       firstAttrId
                         ? !variants.find(

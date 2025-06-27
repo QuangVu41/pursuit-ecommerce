@@ -19,14 +19,14 @@ const BtnCombobox = ({ items, inputText }: BtnComboboxProps) => {
   const [value, setValue] = useState('');
   const { router, pathname, searchParams } = useUrl();
 
-  const handleValueChange = (currentValue: string) => {
+  const handleValueChange = (currentValue: string, id: string) => {
     const params = new URLSearchParams(searchParams.toString());
     const newValue = currentValue === value ? '' : currentValue;
     setValue(newValue);
     setOpen(false);
 
     if (newValue) {
-      params.set('item', newValue);
+      params.set('item', id);
     } else {
       params.delete('item');
     }
@@ -59,7 +59,7 @@ const BtnCombobox = ({ items, inputText }: BtnComboboxProps) => {
                   key={item.id}
                   value={item.name}
                   onSelect={(currentValue) => {
-                    handleValueChange(currentValue);
+                    handleValueChange(currentValue, item.id);
                   }}
                   className='capitalize'
                 >

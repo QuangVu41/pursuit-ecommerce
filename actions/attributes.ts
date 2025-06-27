@@ -1,12 +1,12 @@
 'use server';
 
-import { CreateAttrSchema, CreateAttrSchemaType, UpdateAttrSchema, UpdateAttrSchemaType } from '@/schemas/attributes';
+import { AttrFormSchema, AttrFormSchemaType } from '@/schemas/attributes';
 import { createAttribute, deleteAttribute, deleteManyAttributes, updateAttribute } from '@/services/attributes';
 import { revalidatePath } from 'next/cache';
 import { catchAsync } from '@/lib/catchAsync';
 
-export const createAttrWithValues = catchAsync(async (data: CreateAttrSchemaType) => {
-  const validatedFields = CreateAttrSchema.safeParse(data);
+export const createAttrWithValues = catchAsync(async (data: AttrFormSchemaType) => {
+  const validatedFields = AttrFormSchema.safeParse(data);
 
   if (!validatedFields.success)
     return { error: `Invalid Fields! ${validatedFields.error.errors.map((err) => err.message).join(', ')}` };
@@ -17,8 +17,8 @@ export const createAttrWithValues = catchAsync(async (data: CreateAttrSchemaType
   return { success: 'Attribute created successfully!' };
 });
 
-export const updateAttWithValues = catchAsync(async (data: UpdateAttrSchemaType) => {
-  const validatedFields = UpdateAttrSchema.safeParse(data);
+export const updateAttWithValues = catchAsync(async (data: AttrFormSchemaType) => {
+  const validatedFields = AttrFormSchema.safeParse(data);
 
   if (!validatedFields.success)
     return { error: `Invalid Fields! ${validatedFields.error.errors.map((err) => err.message).join(', ')}` };

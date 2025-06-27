@@ -1,48 +1,51 @@
 'use client';
 
 import { createCate, updateCate } from '@/actions/categories';
-import { CreateCateSchema, CreateCateSchemaType, UpdateCateSchema, UpdateCateSchemaType } from '@/schemas/categories';
+import { CateFormSchema, CateFormSchemaType } from '@/schemas/categories';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Category } from '@prisma/client';
 import { createContext, useContext, useTransition } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { toast } from 'sonner';
 
 interface InitialState {
-  handleSubmit: (data: CreateCateSchemaType | UpdateCateSchemaType, btnCloseRef?: HTMLButtonElement | null) => void;
-  form: UseFormReturn<CreateCateSchemaType | UpdateCateSchemaType>;
+  handleSubmit: (data: CateFormSchemaType, btnCloseRef?: HTMLButtonElement | null) => void;
+  form: UseFormReturn<CateFormSchemaType>;
   isPending: boolean;
   mode?: 'edit' | 'create';
   cateSelectItems: React.ReactNode;
 }
 
-interface CateFormProviderProps {
+type CateFormProviderProps = {
   children: React.ReactNode;
-  mode?: 'edit' | 'create';
-  category?: UpdateCateSchemaType;
   cateSelectItems: React.ReactNode;
-}
+} & ({ mode: 'create'; category?: never } | { mode: 'edit'; category: Category });
 
 const CateFormContext = createContext<InitialState | undefined>(undefined);
 
-const CateFormProvider = ({ children, mode = 'create', category, cateSelectItems }: CateFormProviderProps) => {
-  const defaultValues: CreateCateSchemaType | UpdateCateSchemaType =
+const CateFormProvider = ({ children, mode, category, cateSelectItems }: CateFormProviderProps) => {
+  const defaultValues: CateFormSchemaType =
     mode === 'create'
-      ? { name: '', description: '', parentId: '' }
+      ? { name: '', description: '', parentId: '', imageUrl: '', mode }
       : {
-          id: category?.id,
-          name: category?.name || '',
-          description: category?.description || '',
-          parentId: category?.parentId || '',
+          id: category.id,
+          name: category.name,
+          description: category.description ?? undefined,
+          parentId: category.parentId ?? undefined,
+          imageUrl: category.imageUrl,
+          altText: category.altText,
+          imageFile: undefined,
+          mode,
         };
   const [isPending, startTransition] = useTransition();
-  const form = useForm<CreateCateSchemaType | UpdateCateSchemaType>({
-    resolver: zodResolver(mode === 'create' ? CreateCateSchema : UpdateCateSchema),
+  const form = useForm<CateFormSchemaType>({
+    resolver: zodResolver(CateFormSchema),
     defaultValues,
   });
 
-  const handleSubmit = (data: CreateCateSchemaType | UpdateCateSchemaType, btnCloseRef?: HTMLButtonElement | null) => {
+  const handleSubmit = (data: CateFormSchemaType, btnCloseRef?: HTMLButtonElement | null) => {
     startTransition(() => {
-      if (mode === 'create')
+      if (data.mode === 'create')
         createCate(data).then((res) => {
           if (res?.error) {
             toast.error(res?.error);
@@ -54,7 +57,7 @@ const CateFormProvider = ({ children, mode = 'create', category, cateSelectItems
           }
         });
       else {
-        updateCate(data as UpdateCateSchemaType).then((res) => {
+        updateCate(data).then((res) => {
           if (res?.error) {
             toast.error(res?.error);
           }

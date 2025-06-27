@@ -7,6 +7,7 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 
@@ -29,6 +30,7 @@ interface DataTableProps<TData extends { id: string }, TValue> {
   handleDeleteSelectedRowsServer?: (
     originalSelectedRows: string[]
   ) => Promise<{ success?: string; error?: string } | void>;
+  showPagination?: boolean;
 }
 
 const DataTable = <TData extends { id: string }, TValue>({
@@ -39,6 +41,7 @@ const DataTable = <TData extends { id: string }, TValue>({
   showFilter = true,
   count,
   handleDeleteSelectedRowsServer,
+  showPagination = false,
 }: DataTableProps<TData, TValue>) => {
   const [isPending, startTransition] = useTransition();
   const [rowSelection, setRowSelection] = useState({});
@@ -56,6 +59,7 @@ const DataTable = <TData extends { id: string }, TValue>({
     onRowSelectionChange: setRowSelection,
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: showPagination ? getPaginationRowModel() : undefined,
   });
 
   return (
@@ -109,7 +113,7 @@ const DataTable = <TData extends { id: string }, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className='text-lg font-semibold'>
+                    <TableHead key={header.id} className='text-base font-semibold'>
                       {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   );
@@ -138,6 +142,28 @@ const DataTable = <TData extends { id: string }, TValue>({
           </TableBody>
         </Table>
       </div>
+      {showPagination && (
+        <div className='flex items-center justify-end space-x-2 py-4'>
+          <Button
+            type='button'
+            variant='outline'
+            size='sm'
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            type='button'
+            variant='outline'
+            size='sm'
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

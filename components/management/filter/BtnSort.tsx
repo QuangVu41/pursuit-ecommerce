@@ -25,7 +25,7 @@ const BtnSort = ({ header, sortBy }: BtnSortProps) => {
   };
 
   return (
-    <Button variant='lighterGhost' size='sm' className='text-lg font-semibold' onClick={handleClick}>
+    <Button variant='lighterGhost' size='sm' className='text-base font-semibold' onClick={handleClick}>
       {header}
       <ArrowUpDown className='size-5 stroke-foreground' />
     </Button>

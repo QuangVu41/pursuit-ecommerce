@@ -20,7 +20,7 @@ const ModalPopup = ({ children, title, content, isOpen, setIsOpen, className, de
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent className={className}>
         <DialogHeader>
-          <DialogTitle className='text-xl capitalize'>{title}</DialogTitle>
+          <DialogTitle className='text-lg font-bold'>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         {content}

@@ -15,8 +15,9 @@ const FilterSearch = () => {
 
   const handleChange = useDebouncedCallback((value: string) => {
     const newSearchParams = new URLSearchParams(searchParams.toString());
-    if (value) {
-      newSearchParams.set('search', value);
+    const search = value.trim();
+    if (search) {
+      newSearchParams.set('search', search);
       newSearchParams.set('page', '1');
     } else newSearchParams.delete('search');
     router.replace(`${pathname}?${newSearchParams.toString()}`);

@@ -1,5 +1,6 @@
 import Hero from '@/components/home/hero/Hero';
-import Newsletter from '@/components/home/other/Newsletter';
+import CategorySection from '@/components/home/others/CategorySection';
+import Newsletter from '@/components/home/others/Newsletter';
 import ProdPreviewSection from '@/components/home/products/ProdPreviewSection';
 import ProdSaleSection from '@/components/home/products/ProdSaleSection';
 import { getNewProducts, getRatedProducts } from '@/services/products';
@@ -11,6 +12,7 @@ const Home = async () => {
   return (
     <>
       <Hero />
+      <CategorySection />
       <ProdSaleSection products={ratedProduct} />
       <ProdPreviewSection
         title='Our popular products'

@@ -33,7 +33,7 @@ const AvatarDropdown = async () => {
       <DropdownMenuContent
         align='end'
         sideOffset={10}
-        className='rounded-none bg-home-primary-hover border-0 p-0 w-[170px]'
+        className='rounded-none bg-home-primary-hover border-0 p-0 w-[180px]'
       >
         {user ? (
           <>

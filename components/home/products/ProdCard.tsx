@@ -3,13 +3,13 @@ import { Heart } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import starSvg from '@/public/star.svg';
-import { ProductWithCateAndImg } from '@/types/products';
+import { ProductWithCateAndPrimaryImg } from '@/types/products';
 import { formatCurrency, getDateInPast } from '@/lib/helpers';
 import { NUM_DAYS_PRODUCT_NEW } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
 interface ProdCardProps {
-  prod: ProductWithCateAndImg;
+  prod: ProductWithCateAndPrimaryImg;
   className?: string;
 }
 
@@ -18,12 +18,13 @@ const ProdCard = ({ prod, className }: ProdCardProps) => {
     <Link href={`/products/${prod.slug}`}>
       <Card className={cn('border-0 rounded-none p-2 gap-y-2 shadow-md hover:shadow-lg transition-shadow', className)}>
         <CardHeader className='p-0 gap-0'>
-          <figure className='group/prod-img relative w-full h-[150px] md:h-[200px]'>
+          <figure className='relative h-[150px] md:h-[200px]'>
             <Image
               src={prod.productImages[0].imageUrl}
               alt={prod.productImages[0].altText}
-              fill
-              className='object-cover'
+              width={200}
+              height={200}
+              className='object-cover absolute inset-0 w-full h-full'
             />
             {prod.createdAt >= getDateInPast(NUM_DAYS_PRODUCT_NEW) && (
               <div className='flex py-1 px-2 items-center justify-center bg-home-popup absolute text-xs italic font-medium top-0 left-0'>

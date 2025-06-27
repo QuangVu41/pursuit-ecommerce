@@ -18,17 +18,10 @@ import { useTransition } from 'react';
 import { ProductWithPayLoad } from '@/types/products';
 import { create } from 'zustand';
 
-interface ProdFormProps {
+type ProdFormProps = {
   cateSelectItems: React.ReactNode;
   attributes: ProductAttributeWithValues[];
-  product?: ProductWithPayLoad;
-  mode?: 'create' | 'edit';
-}
-
-interface HasNoImageState {
-  hasNoImage: boolean;
-  setHasNoImage: (value: boolean) => void;
-}
+} & ({ mode: 'create'; product?: never } | { mode: 'edit'; product: ProductWithPayLoad });
 
 interface HasNoVariantsState {
   hasNoVariants: boolean;
@@ -40,14 +33,7 @@ export const useHasNoVariants = create<HasNoVariantsState>((set) => ({
   setHasNoVariants: (value: boolean) => set({ hasNoVariants: value }),
 }));
 
-export const useHasNoImage = create<HasNoImageState>((set) => ({
-  hasNoImage: false,
-  setHasNoImage: (value: boolean) => set({ hasNoImage: value }),
-}));
-
-const ProdForm = ({ cateSelectItems, attributes, mode = 'create', product }: ProdFormProps) => {
-  const setHasNoVariants = useHasNoVariants((state) => state.setHasNoVariants);
-  const setHasNoImage = useHasNoImage((state) => state.setHasNoImage);
+const ProdForm = ({ cateSelectItems, attributes, mode, product }: ProdFormProps) => {
   const defaultValues: ProdFormSchemaType =
     mode === 'create'
       ? {
@@ -58,38 +44,37 @@ const ProdForm = ({ cateSelectItems, attributes, mode = 'create', product }: Pro
           regularPrice: 0,
           variants: [],
           images: [],
+          mode,
         }
       : {
-          id: product?.id || '',
-          name: product?.name || '',
-          description: product?.description || '',
-          summary: product?.summary || '',
-          categoryId: product?.categoryId || '',
-          regularPrice: product?.regularPrice || 0,
-          variants:
-            product?.productVariants?.map((variant) => ({
-              variantId: variant.id,
-              firstAttrId: variant.firstAttrId,
-              secondAttrId: variant.secondAttrId || undefined,
-              altText: variant.altText || '',
-              variantName: `${variant.firstAttr.name}${
-                variant.secondAttr?.name ? ` - ${variant.secondAttr.name}` : ''
-              }`,
-              parentVariantId: `${variant.firstAttr.attributeId}${
-                variant.secondAttr?.attributeId ? `,${variant.secondAttr.attributeId}` : ''
-              }`,
-              imageUrl: variant.imageUrl || '',
-              price: variant.price,
-              stock: variant.stock,
-            })) || [],
-          images:
-            product?.productImages.map((img) => ({
-              imgId: img.id,
-              imageUrl: img.imageUrl,
-              isPrimary: img.isPrimary,
-              imageFile: new File([], img.imageUrl),
-              altText: img.altText || '',
-            })) || [],
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          summary: product.summary,
+          categoryId: product.categoryId,
+          regularPrice: product.regularPrice,
+          variants: product.productVariants.map((variant) => ({
+            variantId: variant.id,
+            firstAttrId: variant.firstAttrId,
+            secondAttrId: variant.secondAttrId ?? undefined,
+            altText: variant.altText ?? undefined,
+            variantName: `${variant.firstAttr.name}${variant.secondAttr?.name ? ` - ${variant.secondAttr.name}` : ''}`,
+            parentVariantId: `${variant.firstAttr.attributeId}${
+              variant.secondAttr?.attributeId ? `,${variant.secondAttr.attributeId}` : ''
+            }`,
+            imageFile: undefined,
+            imageUrl: variant.imageUrl ?? undefined,
+            price: variant.price,
+            stock: variant.stock,
+          })),
+          images: product!.productImages.map((img) => ({
+            imgId: img.id,
+            imageUrl: img.imageUrl,
+            isPrimary: img.isPrimary,
+            imageFile: new File([], img.imageUrl),
+            altText: img.altText,
+          })),
+          mode,
         };
   const [isPending, startTransition] = useTransition();
   const form = useForm<ProdFormSchemaType>({
@@ -107,20 +92,6 @@ const ProdForm = ({ cateSelectItems, attributes, mode = 'create', product }: Pro
   const { handleFileChange, handleRemoveImage, handleCheckboxChange } = usePreviewImage(fieldImagesArrUtils);
 
   const handleSubmit = (data: ProdFormSchemaType) => {
-    if (fieldImagesArrUtils.fields.length === 0) {
-      toast.error('Please choose at least one image.');
-      setHasNoImage(true);
-      return;
-    }
-    if (!fieldImagesArrUtils.fields.some((obj) => obj.isPrimary)) {
-      toast.error('Please select one image as primary.');
-      return;
-    }
-    if (fieldVariantArrUtils.fields.length === 0) {
-      toast.error('Please add at least one product variant.');
-      setHasNoVariants(true);
-      return;
-    }
     startTransition(async () => {
       if (mode === 'create')
         try {
@@ -143,6 +114,7 @@ const ProdForm = ({ cateSelectItems, attributes, mode = 'create', product }: Pro
   return (
     <FormWrapper className='p-0' form={form} isModal={false} handleSubmit={handleSubmit}>
       <ProdImageSection
+        form={form}
         fields={fieldImagesArrUtils.fields}
         handleCheckboxChange={handleCheckboxChange}
         handleFileChange={handleFileChange}
@@ -151,7 +123,7 @@ const ProdForm = ({ cateSelectItems, attributes, mode = 'create', product }: Pro
       />
       <ProdDetailSection form={form} cateSelectItems={cateSelectItems} isPending={isPending} />
       <ProdVariantProvider fieldVariantArrUtils={fieldVariantArrUtils} attributes={attributes} isPending={isPending}>
-        <ProdVariantSection prodVariantForm={<ProdVariantForm />} />
+        <ProdVariantSection prodVariantForm={<ProdVariantForm />} form={form} />
       </ProdVariantProvider>
       <Button className='flex shadow-md ml-auto text-base items-center' type='submit' disabled={isPending}>
         {mode === 'create' ? 'Create Product' : 'Save Changes'}

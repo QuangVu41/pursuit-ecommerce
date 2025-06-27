@@ -1,6 +1,6 @@
 import HomeSectionContainer from '@/components/common/HomeSectionContainer';
 import SectionContent from '@/components/common/SectionContent';
-import { ProductWithCateAndImg } from '@/types/products';
+import { ProductWithCateAndPrimaryImg } from '@/types/products';
 import HomeSectionHeader from '@/components/common/HomeSectionHeader';
 import ProdCarouselPreview from './ProdCarouselPreview';
 
@@ -8,7 +8,7 @@ interface ProdPreviewSectionProps {
   title: string;
   description?: string;
   buttonLink: string;
-  products: ProductWithCateAndImg[];
+  products: ProductWithCateAndPrimaryImg[];
 }
 
 const ProdPreviewSection = ({ title, description, buttonLink, products }: ProdPreviewSectionProps) => {

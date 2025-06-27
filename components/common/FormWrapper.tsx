@@ -2,9 +2,9 @@
 
 import { Form } from '@/components/ui/form';
 import { UseFormReturn } from 'react-hook-form';
-import { DialogClose } from '@/components/ui/dialog';
 import { useRef } from 'react';
 import { cn } from '@/lib/utils';
+import { SheetClose } from '@/components/ui/sheet';
 
 interface FormWrapperProps<T extends Record<string, any>> {
   form: UseFormReturn<T>;
@@ -32,9 +32,9 @@ const FormWrapper = <T extends Record<string, any>>({
       <form className={cn('space-y-3 px-4', className)} onSubmit={form.handleSubmit(handleFormSubmit)}>
         {children}
         {isModal && (
-          <DialogClose asChild>
+          <SheetClose asChild>
             <button type='button' ref={ref} hidden></button>
-          </DialogClose>
+          </SheetClose>
         )}
       </form>
     </Form>

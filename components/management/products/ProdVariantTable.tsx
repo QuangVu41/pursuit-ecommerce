@@ -93,6 +93,7 @@ const ProdVariantTable = () => {
       data={fields}
       handleDeleteSelectedRows={handleDeleteSelectedRows}
       name='variantName'
+      showPagination
     />
   );
 };

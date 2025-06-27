@@ -1,22 +1,20 @@
 'use client';
 
 import { createAttrWithValues, updateAttWithValues } from '@/actions/attributes';
-import { CreateAttrSchema, CreateAttrSchemaType, UpdateAttrSchema, UpdateAttrSchemaType } from '@/schemas/attributes';
+import { AttrFormSchema, AttrFormSchemaType } from '@/schemas/attributes';
 import { ProductAttributeWithValues } from '@/types/attributes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createContext, useContext, useTransition } from 'react';
 import { useFieldArray, useForm, UseFormReturn } from 'react-hook-form';
 import { toast } from 'sonner';
 
-interface AttrFormProviderProps {
+type AttrFormProviderProps = {
   children: React.ReactNode;
-  mode?: 'edit' | 'create';
-  attribute?: ProductAttributeWithValues;
-}
+} & ({ mode: 'create'; attribute?: never } | { mode: 'edit'; attribute: ProductAttributeWithValues });
 
 interface InitialState {
-  form: UseFormReturn<CreateAttrSchemaType | UpdateAttrSchemaType>;
-  handleSubmit: (data: CreateAttrSchemaType | UpdateAttrSchemaType, btnCloseRef?: HTMLButtonElement | null) => void;
+  form: UseFormReturn<AttrFormSchemaType>;
+  handleSubmit: (data: AttrFormSchemaType, btnCloseRef?: HTMLButtonElement | null) => void;
   isPending: boolean;
   fields: any[];
   append: (value: any) => void;
@@ -26,31 +24,30 @@ interface InitialState {
 
 const AttrFormContext = createContext<InitialState | undefined>(undefined);
 
-const AttrFormProvider = ({ children, mode = 'create', attribute }: AttrFormProviderProps) => {
+const AttrFormProvider = ({ children, mode, attribute }: AttrFormProviderProps) => {
   const defaultValues =
     mode === 'create'
-      ? { name: '', values: [{ value: '' }] }
+      ? { name: '', values: [{ value: '' }], mode }
       : {
-          id: attribute?.id,
-          name: attribute?.name,
-          values: attribute?.productAttributeValues.map((val) => ({ value: val.name, fieldId: val.id })),
+          id: attribute.id,
+          name: attribute.name,
+          values: attribute.productAttributeValues.map((val) => ({ value: val.name, fieldId: val.id })),
+          mode,
         };
   const [isPending, startTransition] = useTransition();
-  const form = useForm<CreateAttrSchemaType | UpdateAttrSchemaType>({
-    resolver: zodResolver(mode === 'create' ? CreateAttrSchema : UpdateAttrSchema),
+  const form = useForm<AttrFormSchemaType>({
+    resolver: zodResolver(AttrFormSchema),
     defaultValues: defaultValues,
   });
 
-  const { fields, append, remove, replace } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     name: 'values',
     control: form.control,
   });
 
-  const handleSubmit = (data: CreateAttrSchemaType, btnCloseRef?: HTMLButtonElement | null) => {
-    const values = data.values.map((val) => ({ value: val.value }));
+  const handleSubmit = (data: AttrFormSchemaType, btnCloseRef?: HTMLButtonElement | null) => {
     startTransition(() => {
-      replace(values);
-      if (mode === 'create')
+      if (data.mode === 'create')
         createAttrWithValues(data).then((res) => {
           if (res?.error) toast.error(res.error);
           if (res?.success) {

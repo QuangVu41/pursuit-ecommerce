@@ -4,7 +4,6 @@ import { formatDistanceFromNow } from '@/lib/helpers';
 import ActionBtns from '@/components/common/ActionBtns';
 import { deleteCate, deleteManyCates } from '@/actions/categories';
 import CateForm from './CateForm';
-import { UpdateCateSchemaType } from '@/schemas/categories';
 import CateFormProvider from './CateFormProvider';
 import CateSelectItemsClient from './CateSelectItemsClient';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -14,6 +13,7 @@ import BtnSort from '../filter/BtnSort';
 import { Badge } from '@/components/ui/badge';
 import { CateWithParentCate } from '@/types/categories';
 import { Minus } from 'lucide-react';
+import Image from 'next/image';
 
 interface CateTableProps {
   categories: CateWithParentCate[];
@@ -44,6 +44,20 @@ const CateTable = ({ categories, count }: CateTableProps) => {
       header: () => <BtnSort header='Name' sortBy='name' />,
       cell: (info) => <Badge className='text-base bg-amber-500 dark:bg-amber-700'>{info.getValue()}</Badge>,
     }),
+    columnHelper.accessor('imageUrl', {
+      header: () => 'Image',
+      cell: (info) => (
+        <figure className='relative size-14'>
+          <Image
+            src={info.getValue()}
+            alt={info.row.original.altText}
+            width={56}
+            height={56}
+            className='object-cover absolute inset-0 w-full h-full rounded-md'
+          />
+        </figure>
+      ),
+    }),
     columnHelper.accessor('parent', {
       header: () => 'Parent Category',
       cell: (info) => <Badge className='text-base bg-home-primary'>{info.getValue()?.name || <Minus />}</Badge>,
@@ -58,7 +72,7 @@ const CateTable = ({ categories, count }: CateTableProps) => {
       cell: ({ row }) => (
         <CateFormProvider
           mode='edit'
-          category={row.original as UpdateCateSchemaType}
+          category={row.original}
           cateSelectItems={<CateSelectItemsClient id={row.original.id} />}
         >
           <ActionBtns

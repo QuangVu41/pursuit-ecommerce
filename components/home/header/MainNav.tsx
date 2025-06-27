@@ -6,7 +6,7 @@ import {
   MenubarSeparator,
   MenubarTrigger,
 } from '@/components/ui/menubar';
-import { getAllCategoriesWithNoParent } from '@/services/categories';
+import { getAllCatesWithNoParentCates } from '@/services/categories';
 import { CateWithSubCates } from '@/types/categories';
 import { ChevronDown, Minus, OctagonAlert, ScrollText } from 'lucide-react';
 import Link from 'next/link';
@@ -29,7 +29,7 @@ type NavLinkItem = {
 export type MainNavItems<T = unknown> = (NavDropdownItem<T> | NavLinkItem)[];
 
 export const getMainNavItems = async (): Promise<MainNavItems<CateWithSubCates>> => {
-  const categories = await getAllCategoriesWithNoParent();
+  const categories = await getAllCatesWithNoParentCates();
 
   return [
     {

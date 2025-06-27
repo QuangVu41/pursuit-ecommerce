@@ -17,6 +17,7 @@ const ProdInputQty = ({ prod }: ProdInputQtyProps) => {
   const firstAttrId = useProdAddToCartStore((state) => state.firstAttrId);
   const secondAttrId = useProdAddToCartStore((state) => state.secondAttrId);
   const hasTwoAttrs = useProdAddToCartStore((state) => state.hasTwoAttrs);
+  const setQty = useProdAddToCartStore((state) => state.setQty);
   const totalQty = prod.productVariants
     .filter((v) => {
       if (firstAttrId && secondAttrId) {
@@ -34,7 +35,7 @@ const ProdInputQty = ({ prod }: ProdInputQtyProps) => {
   const isDisabled = hasTwoAttrs ? !firstAttrId || !secondAttrId : !firstAttrId;
 
   return (
-    <div className='flex items-start mt-2'>
+    <div className='flex items-start'>
       <h2 className='text-base text-muted-foreground w-[100px] shrink-0'>Quantity</h2>
       <div className='flex items-center'>
         <Button size='icon' className='rounded-none' variant='outline' onClick={decreaseQty} disabled={isDisabled}>
@@ -42,9 +43,12 @@ const ProdInputQty = ({ prod }: ProdInputQtyProps) => {
         </Button>
         <InputHome
           type='number'
-          className='w-12 text-home-primary relative z-10 text-center'
+          className='w-16 text-home-primary relative z-10 text-center bg-background'
           value={Math.min(quantity, totalQty)}
           disabled={isDisabled}
+          onChange={(e) => {
+            setQty(+e.target.value);
+          }}
         />
         <Button
           size='icon'

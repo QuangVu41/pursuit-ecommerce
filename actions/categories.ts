@@ -1,12 +1,12 @@
 'use server';
 
-import { CreateCateSchema, CreateCateSchemaType, UpdateCateSchema, UpdateCateSchemaType } from '@/schemas/categories';
+import { CateFormSchema, CateFormSchemaType } from '@/schemas/categories';
 import { createCategory, deleteCategory, deleteManyCategories, updateCategory } from '@/services/categories';
 import { revalidatePath } from 'next/cache';
 import { catchAsync } from '../lib/catchAsync';
 
-export const createCate = catchAsync(async (data: CreateCateSchemaType) => {
-  const validatedFields = CreateCateSchema.safeParse(data);
+export const createCate = catchAsync(async (data: CateFormSchemaType) => {
+  const validatedFields = CateFormSchema.safeParse(data);
 
   if (!validatedFields.success)
     return { error: `Invalid Fields! ${validatedFields.error.errors.map((err) => err.message).join(', ')}` };
@@ -17,8 +17,8 @@ export const createCate = catchAsync(async (data: CreateCateSchemaType) => {
   return { success: 'Category created successfully!' };
 });
 
-export const updateCate = catchAsync(async (data: UpdateCateSchemaType) => {
-  const validatedFields = UpdateCateSchema.safeParse(data);
+export const updateCate = catchAsync(async (data: CateFormSchemaType) => {
+  const validatedFields = CateFormSchema.safeParse(data);
 
   if (!validatedFields.success)
     return { error: `Invalid Fields! ${validatedFields.error.errors.map((err) => err.message).join(', ')}` };

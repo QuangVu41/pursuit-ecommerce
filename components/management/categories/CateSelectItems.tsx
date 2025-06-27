@@ -1,4 +1,4 @@
-import { getAllCategoriesWithNoParent } from '@/services/categories';
+import { getAllCatesWithNoParentCates } from '@/services/categories';
 import { SelectGroup, SelectItem, SelectLabel } from '@/components/ui/select';
 import { Minus } from 'lucide-react';
 
@@ -8,7 +8,7 @@ interface CateSelectItemsProps {
 }
 
 const CateSelectItems = async ({ id, showSubCates = false }: CateSelectItemsProps) => {
-  const categories = await getAllCategoriesWithNoParent(id);
+  const categories = await getAllCatesWithNoParentCates(id);
 
   return (
     <>

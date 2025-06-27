@@ -9,7 +9,7 @@ const CreateProductPage = async () => {
   return (
     <>
       <Heading title='Create Product' />
-      <ProdForm cateSelectItems={<CateSelectItems showSubCates />} attributes={attributes} />
+      <ProdForm mode='create' cateSelectItems={<CateSelectItems showSubCates />} attributes={attributes} />
     </>
   );
 };

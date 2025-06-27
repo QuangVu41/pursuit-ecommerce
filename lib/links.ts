@@ -1,4 +1,4 @@
-import { BadgeCheck, LayoutDashboard, Settings, ShoppingBag, Truck } from 'lucide-react';
+import { BadgeCheck, LayoutDashboard, Megaphone, Settings, ShoppingBag, Truck } from 'lucide-react';
 
 export const sidebarMenu = [
   {
@@ -24,6 +24,11 @@ export const sidebarMenu = [
         href: '/mng/products/attributes',
       },
     ],
+  },
+  {
+    label: 'Banners',
+    href: '/mng/banners',
+    icon: Megaphone,
   },
   {
     label: 'Orders',

@@ -182,7 +182,7 @@
 }
 
 .quill {
-  @apply focus-within:border-ring focus-within:ring-ring/50 focus-within:*:!border-primary focus-within:ring-[3px];
+  @apply border focus-within:border-ring focus-within:ring-ring/50 focus-within:*:!border-primary focus-within:ring-[3px];
 }
 
 .ql-toolbar {
@@ -190,7 +190,7 @@
 }
 
 .ql-container {
-  @apply rounded-b-md !border-input !text-base md:!text-lg;
+  @apply rounded-b-md !border-input !text-base;
 }
 
 .ql-editor.ql-blank::before {
@@ -199,4 +199,8 @@
 
 .ql-editor {
   @apply font-manrope;
+}
+
+[data-slot='form-item']:has(> p) > .quill {
+  @apply !ring-destructive/20 dark:!ring-destructive/40 !border-destructive;
 }

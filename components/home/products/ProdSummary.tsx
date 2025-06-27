@@ -1,10 +1,10 @@
-import { formatCurrency } from '@/lib/helpers';
 import { ProductWithPayLoad } from '@/types/products';
 import starSvg from '@/public/star.svg';
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
 import ProdSummaryVariant from '@/components/home/products/ProdSummaryVariant';
 import ProdInputQty from '@/components/home/products/ProdInputQty';
+import ProdPrice from '@/components/home/products/ProdPrice';
+import ProdVariantWrapper from '@/components/home/products/ProdVariantWrapper';
 
 interface ProdSummaryProps {
   prod: ProductWithPayLoad;
@@ -20,18 +20,12 @@ const ProdSummary = ({ prod }: ProdSummaryProps) => {
         </span>
         |<span>Sold 0</span>|<span>Review 0</span>
       </div>
-      <span className='text-3xl text-primary font-medium'>{formatCurrency('VND', prod.regularPrice)}</span>
-      {prod.productVariants.length > 0 && <ProdSummaryVariant productVariants={prod.productVariants} />}
-      <ProdInputQty prod={prod} />
+      <ProdPrice />
       <p className='text-base mt-2'>{prod.summary}</p>
-      <div className='flex items-center gap-x-4 mt-3'>
-        <Button variant='outlinePrimary' size='homeDefault' className='rounded-none text-lg'>
-          Add to Cart
-        </Button>
-        <Button size='homeDefault' className='rounded-none text-lg'>
-          Purchase now
-        </Button>
-      </div>
+      <ProdVariantWrapper>
+        {prod.productVariants.length > 0 && <ProdSummaryVariant productVariants={prod.productVariants} />}
+        <ProdInputQty prod={prod} />
+      </ProdVariantWrapper>
     </div>
   );
 };

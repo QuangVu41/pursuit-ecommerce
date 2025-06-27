@@ -74,3 +74,14 @@ export function getDateInPast(days: number) {
 export const formatCurrency = (code: string, number: number) => {
   return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: code }).format(number);
 };
+
+export const generateOrQueryForSearch = <T>(searchTerms: string, field: keyof T) => {
+  if (!searchTerms) return;
+
+  return searchTerms.split(' ').map((q) => ({
+    [field]: {
+      contains: q,
+      mode: 'insensitive',
+    },
+  }));
+};

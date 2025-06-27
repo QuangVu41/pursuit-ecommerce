@@ -1,11 +1,9 @@
-import { useHasNoImage } from '@/components/management/products/ProdForm';
-import { MAX_IMAGE_SIZE, MAX_IMAGE_UPLOAD } from '@/lib/constants';
+import { MAX_IMAGE_SIZE, MAX_PROD_IMAGE_UPLOAD } from '@/lib/constants';
 import { ProdFormSchemaType } from '@/schemas/products';
 import { UseFieldArrayReturn } from 'react-hook-form';
 import { toast } from 'sonner';
 
 const usePreviewImage = (fieldImagesArrUtils: UseFieldArrayReturn<ProdFormSchemaType, 'images', 'id'>) => {
-  const setHasNoImage = useHasNoImage((state) => state.setHasNoImage);
   const { fields, update, append, remove } = fieldImagesArrUtils;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -13,8 +11,8 @@ const usePreviewImage = (fieldImagesArrUtils: UseFieldArrayReturn<ProdFormSchema
     let isValidFile = true;
     let isValidSize = true;
     if (files) {
-      if (files.length > MAX_IMAGE_UPLOAD || fields.length + files.length > MAX_IMAGE_UPLOAD)
-        return toast.error(`You can only upload a maximum of ${MAX_IMAGE_UPLOAD} images`);
+      if (files.length > MAX_PROD_IMAGE_UPLOAD || fields.length + files.length > MAX_PROD_IMAGE_UPLOAD)
+        return toast.error(`You can only upload a maximum of ${MAX_PROD_IMAGE_UPLOAD} images`);
 
       const newImageFiles = Array.from(files).map((file) => {
         const imageUrl = URL.createObjectURL(file);
@@ -26,7 +24,6 @@ const usePreviewImage = (fieldImagesArrUtils: UseFieldArrayReturn<ProdFormSchema
       if (!isValidSize) return toast.error(`File size should be less than ${MAX_IMAGE_SIZE / 1024 / 1024}MB`);
       if (!fields.some((obj) => obj.isPrimary)) newImageFiles[0].isPrimary = true;
 
-      setHasNoImage(false);
       append(newImageFiles);
     }
   };

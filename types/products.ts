@@ -43,6 +43,16 @@ export type ProductWithPayLoad = Prisma.ProductGetPayload<{
   };
 }>;
 export type ProductWithCateAndImg = Omit<ProductWithPayLoad, 'productVariants'>;
+export type ProductWithCateAndPrimaryImg = Prisma.ProductGetPayload<{
+  include: {
+    category: true;
+    productImages: {
+      where: {
+        isPrimary: true;
+      };
+    };
+  };
+}>;
 export type ProductVariantWithPayLoad = Prisma.ProductVariantGetPayload<{
   include: {
     firstAttr: {

@@ -6,7 +6,7 @@ import SectionContent from '@/components/common/SectionContent';
 import FilterBtnGroup from '@/components/home/filter/FilterBtnGroup';
 import ProdFilter from '@/components/home/products/ProdFilter';
 import ProdList from '@/components/home/products/ProdList';
-import { getAllProducts } from '@/services/products';
+import { getAllFilteredProducts } from '@/services/products';
 
 interface ProductsPageProps {
   searchParams: Promise<{
@@ -16,7 +16,7 @@ interface ProductsPageProps {
 
 const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
   const queryParams = await searchParams;
-  const { products, count } = await getAllProducts(queryParams);
+  const { products, count } = await getAllFilteredProducts(queryParams);
 
   return (
     <HomeSectionContainer className='mb-[50px] md:mb-[100px]'>

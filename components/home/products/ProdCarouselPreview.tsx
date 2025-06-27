@@ -1,15 +1,29 @@
-import { Carousel, CarouselContent, CarouselItem, CustomDotButton } from '@/components/ui/carousel';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  CustomDotButton,
+} from '@/components/ui/carousel';
 import { Button } from '@/components/ui/button';
-import { ProductWithCateAndImg } from '@/types/products';
+import { ProductWithCateAndPrimaryImg } from '@/types/products';
 import ProdCard from '@/components/home/products/ProdCard';
 import Link from 'next/link';
 
 interface ProdCarouselPreviewProps {
-  products: ProductWithCateAndImg[];
+  products: ProductWithCateAndPrimaryImg[];
   buttonLink?: string;
+  showNavbarBtn?: boolean;
+  showNavBtn?: boolean;
 }
 
-const ProdCarouselPreview = ({ products, buttonLink }: ProdCarouselPreviewProps) => {
+const ProdCarouselPreview = ({
+  products,
+  buttonLink,
+  showNavbarBtn = true,
+  showNavBtn = true,
+}: ProdCarouselPreviewProps) => {
   return (
     <Carousel>
       <CarouselContent className='-ml-2 md:-ml-4 pb-5 px-2 md:px-4'>
@@ -19,11 +33,17 @@ const ProdCarouselPreview = ({ products, buttonLink }: ProdCarouselPreviewProps)
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CustomDotButton className='mt-5 md:mt-[35px]' ctnClassName='' />
+      {showNavbarBtn && <CustomDotButton className='mt-5 md:mt-[35px]' />}
       {buttonLink && (
         <Button variant='homeOutline' size='homeDefault' asChild className='flex md:hidden w-full mt-10 text-base py-3'>
           <Link href={buttonLink}>Browse All</Link>
         </Button>
+      )}
+      {showNavBtn && (
+        <>
+          <CarouselNext />
+          <CarouselPrevious />
+        </>
       )}
     </Carousel>
   );

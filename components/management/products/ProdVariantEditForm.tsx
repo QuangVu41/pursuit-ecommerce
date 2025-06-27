@@ -150,9 +150,10 @@ const ProdVariantEditForm = ({ variant }: ProdVariantEditFormProps) => {
             <>
               <Image
                 src={imgPreUrl || variant.imageUrl!}
-                alt={`${variant.variantName} preview`}
-                fill
-                className='object-cover'
+                alt={`${variant.altText || `Product variant image ${variant.id}`}`}
+                height={208}
+                width={208}
+                className='object-cover absolute inset-0 w-full h-full'
               />
               <FilePenLine className='w-5 h-5 text-foreground/70 group-hover:text-foreground top-2 right-2 absolute' />
             </>
@@ -160,7 +161,7 @@ const ProdVariantEditForm = ({ variant }: ProdVariantEditFormProps) => {
           {!imgPreUrl && !variant.imageUrl && (
             <>
               <FilePlus2 className='w-5 h-5 text-primary/70 group-hover:text-primary top-2 right-2 absolute' />
-              <p className='font-manrope text-xl font-bold text-foreground/70 group-hover:text-foreground'>570 X 570</p>
+              <p className='font-manrope text-xl font-bold text-foreground/70 group-hover:text-foreground'>870 X 870</p>
               <p className='text-foreground/70 group-hover:text-foreground text-center text-sm w-9/10'>
                 Upload an image according to the expected ratio
               </p>

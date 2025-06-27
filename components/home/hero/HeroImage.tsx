@@ -1,17 +1,19 @@
 import { CarouselContent, CarouselItem, CustomDotButton } from '@/components/ui/carousel';
-import { getBestSellingProductImages } from '@/services/products';
+import { BannerImage } from '@prisma/client';
 import Image from 'next/image';
 
-const HeroImage = async () => {
-  const prodImages = await getBestSellingProductImages();
+interface HeroImageProps {
+  bannerImages: BannerImage[];
+}
 
+const HeroImage = ({ bannerImages }: HeroImageProps) => {
   return (
     <div className='flex-1 relative'>
       <CarouselContent className='relative z-10'>
-        {prodImages.map(
+        {bannerImages.map(
           (img) =>
             img.imageUrl && (
-              <CarouselItem key={img.altText}>
+              <CarouselItem key={img.imageUrl}>
                 <div className='relative w-full xs:w-3/5 mx-auto md:w-full h-[400px] md:h-[450px] lg:h-[500px] xl:h-[550px] z-10'>
                   <figure className='absolute inset-5 md:inset-7 z-10'>
                     <Image

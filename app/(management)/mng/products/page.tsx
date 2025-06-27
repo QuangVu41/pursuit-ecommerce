@@ -7,8 +7,8 @@ import FilterHeader from '@/components/management/filter/FilterHeader';
 import ProdTable from '@/components/management/products/ProdTable';
 import { Button } from '@/components/ui/button';
 import { flattenNestedArray } from '@/lib/helpers';
-import { getAllCategoriesWithNoParent } from '@/services/categories';
-import { getAllUserProducts } from '@/services/products';
+import { getAllCatesWithNoParentCates } from '@/services/categories';
+import { getAllUserFilteredProducts } from '@/services/products';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 
@@ -20,8 +20,8 @@ interface ProductsPageProps {
 
 const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
   const queryParams = await searchParams;
-  const { products, count } = await getAllUserProducts(queryParams);
-  const categories = flattenNestedArray(await getAllCategoriesWithNoParent(), 'subcategories');
+  const { products, count } = await getAllUserFilteredProducts(queryParams);
+  const categories = flattenNestedArray(await getAllCatesWithNoParentCates(), 'subcategories');
 
   return (
     <>

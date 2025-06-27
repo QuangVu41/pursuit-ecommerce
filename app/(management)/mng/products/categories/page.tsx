@@ -9,7 +9,7 @@ import CateSelectItems from '@/components/management/categories/CateSelectItems'
 import CateTable from '@/components/management/categories/CateTable';
 import FilterHeader from '@/components/management/filter/FilterHeader';
 import { Button } from '@/components/ui/button';
-import { filterAndCountCategories } from '@/services/categories';
+import { getFilteredCategories } from '@/services/categories';
 import { Plus } from 'lucide-react';
 
 interface CategoriesPageProps {
@@ -20,12 +20,12 @@ interface CategoriesPageProps {
 
 const CategoriesPage = async ({ searchParams }: CategoriesPageProps) => {
   const queryParams = await searchParams;
-  const { categories, count } = await filterAndCountCategories(queryParams);
+  const { categories, count } = await getFilteredCategories(queryParams);
 
   return (
     <>
       <Heading title='Category List' />
-      <CateFormProvider cateSelectItems={<CateSelectItems />}>
+      <CateFormProvider mode='create' cateSelectItems={<CateSelectItems />}>
         <FilterHeader>
           <DateRangePicker />
           <SheetSlideOver title='Create Category' content={<CateForm />}>

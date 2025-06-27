@@ -32,7 +32,7 @@ const LayoutTemplate = async ({
         <SessionProvider session={session}>
           <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
             {children}
-            <Toaster richColors position='top-center' />
+            <Toaster richColors position='top-center' closeButton />
           </ThemeProvider>
         </SessionProvider>
       </body>

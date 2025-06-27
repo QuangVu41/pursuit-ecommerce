@@ -8,7 +8,7 @@ import AttrFormProvider from '@/components/management/attributes/AttrFormProvide
 import AttrTable from '@/components/management/attributes/AttrTable';
 import FilterHeader from '@/components/management/filter/FilterHeader';
 import { Button } from '@/components/ui/button';
-import { getAllUserAttributes } from '@/services/attributes';
+import { getAllUserFilteredAttributes } from '@/services/attributes';
 import { Plus } from 'lucide-react';
 
 interface AttributesPageProps {
@@ -19,12 +19,12 @@ interface AttributesPageProps {
 
 const AttributesPage = async ({ searchParams }: AttributesPageProps) => {
   const queryParams = await searchParams;
-  const { attributes, count } = await getAllUserAttributes(queryParams);
+  const { attributes, count } = await getAllUserFilteredAttributes(queryParams);
 
   return (
     <>
       <Heading title='Attribute List' />
-      <AttrFormProvider>
+      <AttrFormProvider mode='create'>
         <FilterHeader>
           <DateRangePicker />
           <SheetSlideOver title='Create Attribute' content={<AttrForm />}>
