@@ -13,10 +13,10 @@ const UserCart = async () => {
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <Link href='/cart'>
+        <Link href='/cart' className='block'>
           <span className='relative'>
             {numItemsInCart !== 0 && (
-              <Badge className='absolute -top-2 -right-4 border-2 border-home-primary'>{numItemsInCart}</Badge>
+              <Badge className='absolute -top-3 left-2 border-2 border-home-primary z-5'>{numItemsInCart}</Badge>
             )}
             <ShoppingCart />
           </span>

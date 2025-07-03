@@ -20,6 +20,7 @@ import {
 import { Email } from '@/lib/email';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { catchAsync } from '../lib/catchAsync';
+import { SignInOptions } from 'next-auth/react';
 
 export const sendEmailVerification = catchAsync(async (email: string) => {
   const verificationToken = await generateEmailVerificationToken(email);
@@ -71,6 +72,10 @@ export const signin = catchAsync(async (data: SigninSchemaType, callbackUrl?: st
 
 export const logout = catchAsync(async () => {
   await signOut({ redirectTo: '/' });
+});
+
+export const signInWithSocial = catchAsync(async (provider: 'google' | 'github', options: SignInOptions) => {
+  await signIn(provider, options);
 });
 
 export const verifyEmailVerificationToken = catchAsync(
