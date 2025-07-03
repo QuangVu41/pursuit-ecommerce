@@ -14,12 +14,14 @@ const CategorySection = async () => {
   }, []);
 
   return (
-    <HomeSectionContainer>
-      <HomeSectionHeader title='Explore, find exactly what you need' />
-      <SectionContent className='mt-10'>
-        <CategoryCarousel categories={categories} />
-      </SectionContent>
-    </HomeSectionContainer>
+    categories.length > 0 && (
+      <HomeSectionContainer>
+        <HomeSectionHeader title='Explore, find exactly what you need' />
+        <SectionContent>
+          <CategoryCarousel categories={categories} />
+        </SectionContent>
+      </HomeSectionContainer>
+    )
   );
 };
 

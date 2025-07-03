@@ -5,9 +5,9 @@ import { ExpectedError } from '@/lib/errors';
 import FilterApi from '@/lib/filter';
 import { generateOrQueryForSearch, getDateInPast, nameToSlug } from '@/lib/helpers';
 import { deleteFromS3, uploadToS3 } from '@/lib/upload';
-import { ProdFormSchemaType, ProdVariantSchemaType } from '@/schemas/products';
+import { AddToCartSchemaType, ProdFormSchemaType, ProdVariantSchemaType } from '@/schemas/products';
 import { ProductWithCateAndImg, ProductWithCateAndPrImg } from '@/types/products';
-import { Prisma } from '@prisma/client';
+import { Prisma, ProductVariant } from '@prisma/client';
 import { randomUUID } from 'crypto';
 
 export const getAllFilteredProducts = async (searchParams: { [key: string]: string }) => {
@@ -549,4 +549,155 @@ export const getUserProductById = async (id: string, userId: string) => {
   });
 
   return product;
+};
+
+export const addToCart = async (data: AddToCartSchemaType) => {
+  const user = await getUserSession();
+  const userId = user?.id;
+  if (!userId) throw new ExpectedError('Unauthenticated!');
+
+  const { firstAttrId, secondAttrId, quantity, productId } = data;
+
+  if (!firstAttrId) throw new ExpectedError('Please choose product variant!');
+
+  const variant = await getProdVariantByAttrIds(productId, firstAttrId, secondAttrId);
+
+  const userCart = await getUserCartByUserId(userId);
+  const existingCartItem = userCart?.cartItems.find(
+    (item) => item.productVariantId === variant.id && item.cartId === userCart.id
+  );
+
+  await db.cart.upsert({
+    where: {
+      userId,
+    },
+    update: {
+      total: userCart ? userCart.total + variant.price * quantity : variant.price * quantity,
+      cartItems: {
+        update: existingCartItem
+          ? {
+              where: {
+                id: existingCartItem.id,
+              },
+              data: {
+                quantity: existingCartItem.quantity + quantity,
+              },
+            }
+          : undefined,
+        create: existingCartItem
+          ? undefined
+          : {
+              productVariantId: variant.id,
+              quantity,
+            },
+      },
+    },
+    create: {
+      userId,
+      total: variant.price * quantity,
+      cartItems: {
+        create: {
+          productVariantId: variant.id,
+          quantity,
+        },
+      },
+    },
+  });
+};
+
+export const numItemsInUserCart = async () => {
+  const user = await getUserSession();
+  const userId = user?.id;
+  if (!userId) return 0;
+
+  const numItems = await db.cartItem.count({
+    where: {
+      cart: {
+        userId,
+      },
+    },
+  });
+
+  return numItems;
+};
+
+export const getUserCartItems = async () => {
+  const user = await getUserSession();
+  const userId = user?.id;
+  if (!userId) return [];
+
+  const cartItems = await db.cartItem.findMany({
+    where: {
+      cart: {
+        userId,
+      },
+    },
+    include: {
+      productVariant: {
+        include: {
+          product: {
+            include: {
+              productImages: {
+                where: {
+                  isPrimary: true,
+                },
+              },
+            },
+          },
+          firstAttr: {
+            select: {
+              name: true,
+            },
+          },
+          secondAttr: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return cartItems;
+};
+
+export const getProdVariantByAttrIds = async (productId: string, firstAttrId: string, secondAttrId?: string) => {
+  let variant: ProductVariant | null;
+  if (secondAttrId)
+    variant = await db.productVariant.findUnique({
+      where: {
+        productId_firstAttrId_secondAttrId: {
+          productId,
+          firstAttrId,
+          secondAttrId,
+        },
+      },
+    });
+  else {
+    variant = await db.productVariant.findFirst({
+      where: {
+        firstAttrId,
+        secondAttrId: null,
+        productId,
+      },
+    });
+  }
+
+  if (!variant) throw new ExpectedError('Product variant not found!');
+
+  return variant;
+};
+
+export const getUserCartByUserId = async (userId: string) => {
+  const cart = await db.cart.findUnique({
+    where: {
+      userId,
+    },
+    include: {
+      cartItems: true,
+    },
+  });
+
+  return cart;
 };

@@ -80,6 +80,17 @@ export const ProdSchema = z.object({
 
 export const ProdFormSchema = z.intersection(ProdSchema, IsEditableSchema);
 
+export const AddToCartSchema = z.object({
+  productId: z.string().nonempty({ message: 'Product ID is required!' }),
+  firstAttrId: z.string(),
+  secondAttrId: z.string().optional(),
+  quantity: z.coerce
+    .number({ message: 'Quantity must be a number!' })
+    .int()
+    .min(1, { message: 'Quantity must be at least 1!' }),
+});
+
 export type ProdFormSchemaType = z.infer<typeof ProdFormSchema>;
 export type ProdVariantSchemaType = z.infer<typeof ProdVariantSchema>;
 export type ProdImageSchemaType = z.infer<typeof ProdImageSchema>;
+export type AddToCartSchemaType = z.infer<typeof AddToCartSchema>;

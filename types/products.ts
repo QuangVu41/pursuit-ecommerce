@@ -67,3 +67,30 @@ export type ProductVariantWithPayLoad = Prisma.ProductVariantGetPayload<{
     };
   };
 }>;
+export type CartItemWithPayload = Prisma.CartItemGetPayload<{
+  include: {
+    productVariant: {
+      include: {
+        product: {
+          include: {
+            productImages: {
+              where: {
+                isPrimary: true;
+              };
+            };
+          };
+        };
+        firstAttr: {
+          select: {
+            name: true;
+          };
+        };
+        secondAttr: {
+          select: {
+            name: true;
+          };
+        };
+      };
+    };
+  };
+}>;

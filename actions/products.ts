@@ -1,8 +1,8 @@
 'use server';
 
 import { catchAsync } from '@/lib/catchAsync';
-import { ProdFormSchema, ProdFormSchemaType } from '@/schemas/products';
-import { createProduct, deleteManyProducts, deleteProduct, updateProduct } from '@/services/products';
+import { AddToCartSchema, AddToCartSchemaType, ProdFormSchema, ProdFormSchemaType } from '@/schemas/products';
+import { addToCart, createProduct, deleteManyProducts, deleteProduct, updateProduct } from '@/services/products';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -40,4 +40,16 @@ export const deleteManyProds = catchAsync(async (ids: string[]) => {
 
   revalidatePath('/mng/products');
   return { success: 'Products deleted successfully!' };
+});
+
+export const addToCartAction = catchAsync(async (data: AddToCartSchemaType) => {
+  const validatedFields = AddToCartSchema.safeParse(data);
+
+  if (!validatedFields.success)
+    return { error: `Invalid Fields! ${validatedFields.error.errors.map((err) => err.message).join(', ')}` };
+
+  await addToCart(validatedFields.data);
+
+  revalidatePath('/');
+  return { success: 'Item added to cart successfully!' };
 });

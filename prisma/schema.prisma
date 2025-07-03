@@ -46,6 +46,7 @@ model User {
   isTwoFactorEnabled Boolean            @default(false)
   products           Product[]
   productAttributes  ProductAttribute[]
+  cart               Cart?
 
   @@map("users")
 }
@@ -115,6 +116,7 @@ model ProductVariant {
   secondAttr   ProductAttributeValue? @relation("SecondAttr", fields: [secondAttrId], references: [id], onDelete: Cascade)
   createdAt    DateTime               @default(now())
   updatedAt    DateTime               @updatedAt
+  cartItems    CartItem[]
 
   @@unique([productId, firstAttrId, secondAttrId])
   @@map("product_variants")
@@ -131,6 +133,32 @@ model ProductImage {
   updatedAt DateTime @updatedAt
 
   @@map("product_images")
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  total     Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  cartItems CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id               String         @id @default(cuid())
+  cartId           String
+  cart             Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productVariantId String
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  quantity         Int
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@unique([cartId, productVariantId])
+  @@map("cart_items")
 }
 
 model Category {

@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import BannerImagePreview from './BannerImagePreview';
 import { useBannerPreviewImage } from '@/hooks/use-banner-preview-image';
-import { createBannerAct, updateBannerAct } from '@/actions/banners';
+import { createBannerAction, updateBannerAction } from '@/actions/banners';
 import { toast } from 'sonner';
 import { useTransition } from 'react';
 import { BannerWithImagesType } from '@/types/banners';
@@ -56,7 +56,7 @@ const BannerForm = ({ mode, banner }: BannerFormProps) => {
   const handleSubmit = (data: BannerFormSchemaType, btnCloseRef?: HTMLButtonElement | null) => {
     startTransition(() => {
       if (mode === 'create')
-        createBannerAct(data).then((res) => {
+        createBannerAction(data).then((res) => {
           if (res?.error) {
             toast.error(res?.error);
           }
@@ -67,7 +67,7 @@ const BannerForm = ({ mode, banner }: BannerFormProps) => {
           }
         });
       else if (mode === 'edit') {
-        updateBannerAct(data).then((res) => {
+        updateBannerAction(data).then((res) => {
           if (res?.error) {
             toast.error(res?.error);
           }

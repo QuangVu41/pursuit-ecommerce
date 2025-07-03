@@ -6,6 +6,7 @@ import HomeSidebar from '@/components/home/header/HomeSidebar';
 import Header from '@/components/home/header/Header';
 import Footer from '@/components/home/footer/Footer';
 import FooterCopyright from '@/components/home/footer/FooterCopyright';
+import { Toaster } from '@/components/ui/sonner';
 
 export const metadata: Metadata = {
   title: {
@@ -31,6 +32,7 @@ export default function ApplicationLayout({
           <FooterCopyright />
         </SidebarInset>
       </SidebarProvider>
+      <Toaster richColors position='top-center' theme='light' closeButton />
     </LayoutTemplate>
   );
 }

@@ -9,7 +9,7 @@ interface HeroImageProps {
 const HeroImage = ({ bannerImages }: HeroImageProps) => {
   return (
     <div className='flex-1 relative'>
-      <CarouselContent className='relative z-10'>
+      <CarouselContent>
         {bannerImages.map(
           (img) =>
             img.imageUrl && (

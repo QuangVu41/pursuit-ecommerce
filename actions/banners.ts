@@ -5,7 +5,7 @@ import { BannerFormSchemaType, BannerFormsSchema } from '@/schemas/banners';
 import { createBanner, deleteBanner, deleteManyBanners, updateBanner } from '@/services/banners';
 import { revalidatePath } from 'next/cache';
 
-export const createBannerAct = catchAsync(async (data: BannerFormSchemaType) => {
+export const createBannerAction = catchAsync(async (data: BannerFormSchemaType) => {
   const validatedFields = BannerFormsSchema.safeParse(data);
 
   if (!validatedFields.success)
@@ -17,7 +17,7 @@ export const createBannerAct = catchAsync(async (data: BannerFormSchemaType) => 
   return { success: 'Banner created successfully!' };
 });
 
-export const updateBannerAct = catchAsync(async (data: BannerFormSchemaType) => {
+export const updateBannerAction = catchAsync(async (data: BannerFormSchemaType) => {
   const validatedFields = BannerFormsSchema.safeParse(data);
 
   if (!validatedFields.success)
@@ -29,14 +29,14 @@ export const updateBannerAct = catchAsync(async (data: BannerFormSchemaType) => 
   return { success: 'Banner updated successfully!' };
 });
 
-export const deleteBannerAct = catchAsync(async (id: string) => {
+export const deleteBannerAction = catchAsync(async (id: string) => {
   await deleteBanner(id);
 
   revalidatePath('/mng/banners');
   return { success: 'Category deleted successfully!' };
 });
 
-export const deleteManyBannersAct = catchAsync(async (ids: string[]) => {
+export const deleteManyBannersAction = catchAsync(async (ids: string[]) => {
   await deleteManyBanners(ids);
 
   revalidatePath('/mng/banners');

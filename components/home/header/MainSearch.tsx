@@ -70,6 +70,15 @@ const MainSearch = () => {
     inputRef.current?.focus();
   };
 
+  const handleSuggestionClick = (suggestion: string) => {
+    setOriginalQuery(suggestion);
+    setQuery(suggestion);
+    setIsDropdownOpen(false);
+    setSelectedIndex(-1);
+    inputRef.current?.blur();
+    router.push(`/products?query=${encodeURIComponent(suggestion)}`);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isDropdownOpen || suggestions.length === 0) return;
 
@@ -136,7 +145,7 @@ const MainSearch = () => {
           <Button
             variant='ghost'
             size='icon'
-            onClick={handleClearInput}
+            onMouseDown={handleClearInput}
             className='size-auto justify-center items-center hover:bg-transparent'
           >
             <X className='h-5 w-5 text-home-popup' />
@@ -155,12 +164,13 @@ const MainSearch = () => {
           {suggestions.length > 0 && (
             <ul ref={listRef} className='max-h-80 overflow-y-auto'>
               {suggestions.map((suggestion, index) => (
-                <li key={index}>
+                <li key={suggestion}>
                   <button
                     className={cn(
-                      'w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-3',
+                      'w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-3 cursor-pointer',
                       `${selectedIndex === index && 'bg-muted'}`
                     )}
+                    onMouseDown={() => handleSuggestionClick(suggestion.toLocaleLowerCase())}
                   >
                     <TrendingUp className='size-4 text-home-popup flex-shrink-0' />
                     <span

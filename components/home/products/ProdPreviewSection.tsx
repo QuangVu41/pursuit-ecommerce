@@ -16,7 +16,7 @@ const ProdPreviewSection = ({ title, description, buttonLink, products }: ProdPr
     !!products.length && (
       <HomeSectionContainer>
         <HomeSectionHeader title={title} description={description} buttonLink={buttonLink} />
-        <SectionContent className='mt-10'>
+        <SectionContent>
           <ProdCarouselPreview products={products} buttonLink={buttonLink} />
         </SectionContent>
       </HomeSectionContainer>

@@ -1,7 +1,5 @@
 import { Syne } from 'next/font/google';
 import { Manrope } from 'next/font/google';
-import ThemeProvider from './ThemeProvider';
-import { Toaster } from '@/components/ui/sonner';
 import { SessionProvider } from 'next-auth/react';
 import { auth } from '@/auth';
 
@@ -29,12 +27,7 @@ const LayoutTemplate = async ({
   return (
     <html lang='en' className={`${syne.variable} ${manrope.variable}`} suppressHydrationWarning>
       <body className={bodyClassName}>
-        <SessionProvider session={session}>
-          <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
-            {children}
-            <Toaster richColors position='top-center' closeButton />
-          </ThemeProvider>
-        </SessionProvider>
+        <SessionProvider session={session}>{children}</SessionProvider>
       </body>
     </html>
   );

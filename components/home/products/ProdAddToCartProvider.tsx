@@ -4,6 +4,7 @@ import { createContext, useContext, useState } from 'react';
 import { createStore, StoreApi, useStore } from 'zustand';
 
 interface ProdAddToCartStore {
+  productId: string;
   regularPrice: number;
   variantPrice?: number;
   hasTwoAttrs: boolean;
@@ -24,13 +25,15 @@ interface ProdAddToCartProviderProps {
   children: React.ReactNode;
   hasTwoAttrs: boolean;
   regularPrice: number;
+  productId: string;
 }
 
 const ProdAddToCartContext = createContext<StoreApi<ProdAddToCartStore> | undefined>(undefined);
 
-const ProdAddToCartProvider = ({ children, hasTwoAttrs, regularPrice }: ProdAddToCartProviderProps) => {
+const ProdAddToCartProvider = ({ children, hasTwoAttrs, regularPrice, productId }: ProdAddToCartProviderProps) => {
   const [store] = useState(() =>
     createStore<ProdAddToCartStore>((set) => ({
+      productId,
       regularPrice,
       hasTwoAttrs,
       quantity: 1,

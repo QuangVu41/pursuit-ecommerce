@@ -10,6 +10,7 @@ import ProdSimilarProducts from '@/components/home/products/ProdSimilarProducts'
 import ProdSummary from '@/components/home/products/ProdSummary';
 import { getProductBySlug, getSimilarProducts } from '@/services/products';
 import { ProductWithPayLoad } from '@/types/products';
+import { notFound } from 'next/navigation';
 import 'react-quill-new/dist/quill.snow.css';
 
 interface ProductPageProps {
@@ -25,12 +26,15 @@ const ProductPage = async ({ params }: ProductPageProps) => {
   const mainImg = product?.productImages.find((img) => img.isPrimary);
   const similarProducts = await getSimilarProducts(product?.categoryId, product?.id);
 
+  if (!product) return notFound();
+
   return (
     <HomeSectionContainer>
       <ProdBreadcrumbNav prod={product as ProductWithPayLoad} />
       <ProdAddToCartProvider
-        hasTwoAttrs={!!product?.productVariants.find((v) => v.firstAttrId && v.secondAttrId)}
+        hasTwoAttrs={!!product.productVariants.find((v) => v.firstAttrId && v.secondAttrId)}
         regularPrice={product?.regularPrice || 0}
+        productId={product.id}
       >
         <ProdImgPreviewProvider mainImg={{ imgUrl: mainImg!.imageUrl, altText: mainImg!.altText }}>
           <SectionContent className='!mt-5'>
@@ -38,7 +42,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
               <ProdImgPreview prodImgs={product!.productImages} />
               <ProdSummary prod={product as ProductWithPayLoad} />
             </div>
-            <ProdDescription desc={product?.description} />
+            <ProdDescription desc={product.description} />
             <ProdReviewSection />
             <ProdSimilarProducts prods={similarProducts} />
           </SectionContent>

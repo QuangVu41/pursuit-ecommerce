@@ -10,7 +10,7 @@ import DataTable from '@/components/common/DataTable';
 import { BannerWithImagesType } from '@/types/banners';
 import { Badge } from '@/components/ui/badge';
 import { BannerType } from '@prisma/client';
-import { deleteBannerAct, deleteManyBannersAct } from '@/actions/banners';
+import { deleteBannerAction, deleteManyBannersAction } from '@/actions/banners';
 
 interface BannerTableProps {
   banners: BannerWithImagesType[];
@@ -60,7 +60,7 @@ const BannerTable = ({ banners, count }: BannerTableProps) => {
         <ActionBtns
           model={row.original}
           confirmText='Are you sure you want to delete this banner?'
-          deletionAction={deleteBannerAct}
+          deletionAction={deleteBannerAction}
           deletionTitle={`Delete ${row.original.title} banner`}
           editionTitle='Edit Banner'
           editionContent={<BannerForm mode='edit' banner={row.original} />}
@@ -76,7 +76,7 @@ const BannerTable = ({ banners, count }: BannerTableProps) => {
       columns={bannerColumns}
       data={banners}
       showFilter={false}
-      handleDeleteSelectedRowsServer={deleteManyBannersAct}
+      handleDeleteSelectedRowsServer={deleteManyBannersAction}
     />
   );
 };
