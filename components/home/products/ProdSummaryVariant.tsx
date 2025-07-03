@@ -48,7 +48,9 @@ const ProdSummaryVariant = ({ productVariants }: ProdSummaryVariantProps) => {
                     firstAttrId === variant.firstAttrId ? 'border-home-primary text-home-primary' : ''
                   }`}
                   onMouseOver={() =>
-                    variant.imageUrl && setVariantImg({ imgUrl: variant.imageUrl, altText: variant.altText })
+                    variant.imageUrl &&
+                    variant.altText &&
+                    setVariantImg({ imgUrl: variant.imageUrl, altText: variant.altText })
                   }
                   onMouseOut={() => setVariantImg({ imgUrl: '', altText: '' })}
                   onClick={() => {
