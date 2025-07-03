@@ -29,7 +29,7 @@ const FormWrapper = <T extends Record<string, any>>({
 
   return (
     <Form {...form}>
-      <form className={cn('space-y-3 px-4', className)} onSubmit={form.handleSubmit(handleFormSubmit)}>
+      <form className={cn('space-y-3 !px-4', className)} onSubmit={form.handleSubmit(handleFormSubmit)}>
         {children}
         {isModal && (
           <SheetClose asChild>
