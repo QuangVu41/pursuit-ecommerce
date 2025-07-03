@@ -28,10 +28,10 @@ const ProdVariantSection = ({ prodVariantForm, form }: ProdVariantSectionProps) 
         control={form.control}
         name='variants'
         render={() => (
-          <FormItem>
+          <FormItem className='block'>
             <FormControl>
               <SectionContent className='!mt-0'>
-                <SectionHeader>
+                <SectionHeader className='mb-2'>
                   <FormLabel className='font-medium text-base'>Product Variants*</FormLabel>
                   <ModalPopup
                     content={prodVariantForm}

@@ -24,14 +24,14 @@ const BreadcrumbNav = () => {
 
   return (
     <Breadcrumb className='flex items-center gap-x-1'>
-      <BreadcrumbList>
+      <BreadcrumbList className='flex-nowrap'>
         {breadcrumbLinks.map((link) => {
           if (link.href === pathname)
             return (
               <Fragment key={link.label}>
                 {breadcrumbLinks.length > 1 && <BreadcrumbSeparator />}
                 <BreadcrumbItem>
-                  <BreadcrumbPage>{link.label}</BreadcrumbPage>
+                  <BreadcrumbPage className='truncate w-[100px] sm:w-auto'>{link.label}</BreadcrumbPage>
                 </BreadcrumbItem>
               </Fragment>
             );
@@ -46,7 +46,9 @@ const BreadcrumbNav = () => {
                 <>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbPage className='capitalize'>{(slug as string).replaceAll('-', ' ')}</BreadcrumbPage>
+                    <BreadcrumbPage className='capitalize truncate w-[100px] sm:w-auto'>
+                      {(slug as string).replaceAll('-', ' ')}
+                    </BreadcrumbPage>
                   </BreadcrumbItem>
                 </>
               )}

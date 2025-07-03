@@ -112,7 +112,7 @@ const ProdForm = ({ cateSelectItems, attributes, mode, product }: ProdFormProps)
   };
 
   return (
-    <FormWrapper className='p-0' form={form} isModal={false} handleSubmit={handleSubmit}>
+    <FormWrapper className='!p-0' form={form} isModal={false} handleSubmit={handleSubmit}>
       <ProdImageSection
         form={form}
         fields={fieldImagesArrUtils.fields}

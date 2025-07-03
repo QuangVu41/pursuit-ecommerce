@@ -41,8 +41,8 @@ const ProdCarouselPreview = ({
       )}
       {showNavBtn && (
         <>
-          <CarouselNext />
-          <CarouselPrevious />
+          <CarouselNext className='hidden md:inline-flex' />
+          <CarouselPrevious className='hidden md:inline-flex' />
         </>
       )}
     </Carousel>

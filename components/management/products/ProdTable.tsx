@@ -38,7 +38,7 @@ const ProdTable = ({ products, count }: ProdTableProps) => {
     }),
     columnHelper.accessor('name', {
       header: () => <BtnSort header='Name' sortBy='name' />,
-      cell: (info) => info.getValue(),
+      cell: (info) => <span className='w-72 truncate block'>{info.getValue()}</span>,
     }),
     columnHelper.accessor('productImages', {
       header: () => 'Image',

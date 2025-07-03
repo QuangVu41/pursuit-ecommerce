@@ -8,6 +8,15 @@
   --breakpoint-xs: 35rem;
   --breakpoint-2md: 54rem;
   --animate-loop-scroll: loop-scroll 5s linear infinite;
+
+  @keyframes loop-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
 }
 
 @theme inline {
