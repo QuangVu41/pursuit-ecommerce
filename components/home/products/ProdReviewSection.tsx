@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 const ProdReviewSection = () => {
   return (
-    <section className='grid grid-cols-2 mt-10'>
+    <section className='grid sm:grid-cols-2 mt-10'>
       <div className='grid gap-y-3'>
         <h3 className='text-lg font-bold uppercase'>Customer reviews</h3>
         <span>0 reviews</span>

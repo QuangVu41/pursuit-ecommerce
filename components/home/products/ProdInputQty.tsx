@@ -59,7 +59,7 @@ const ProdInputQty = ({ prod }: ProdInputQtyProps) => {
         >
           <Plus />
         </Button>
-        <span className='text-muted-foreground text-sm ml-2'>{totalQty} products available</span>
+        <span className='text-muted-foreground text-sm ml-2 whitespace-nowrap'>{totalQty} products available</span>
       </div>
     </div>
   );

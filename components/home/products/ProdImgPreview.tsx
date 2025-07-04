@@ -15,8 +15,8 @@ const ProdImgPreview = ({ prodImgs }: ProdImgPreviewProps) => {
   const setMainImg = useProdImgPreviewStore((state) => state.setMainImg);
 
   return (
-    <div className='flex flex-col gap-5'>
-      <figure className='size-[450] relative'>
+    <div className='flex flex-col gap-5 w-full 2md:w-auto'>
+      <figure className='aspect-square 2md:aspect-auto w-full 2md:size-[370px] lg:size-[450] relative'>
         <Image
           src={variantImg.imgUrl || mainImg.imgUrl}
           alt={variantImg.altText || mainImg.altText}
@@ -30,10 +30,11 @@ const ProdImgPreview = ({ prodImgs }: ProdImgPreviewProps) => {
           {prodImgs.map((img) => (
             <CarouselItem key={img.id} className='basis-1/4'>
               <figure
-                className={`h-[100px] relative border-2 ${
+                className={`aspect-square 2md:aspect-auto 2md:h-[100px] relative border-2 ${
                   img.imageUrl === mainImg.imgUrl ? 'border-home-primary' : 'border-transparent'
                 }`}
                 onMouseOver={() => setMainImg({ imgUrl: img.imageUrl, altText: img.altText })}
+                onTouchStart={() => setMainImg({ imgUrl: img.imageUrl, altText: img.altText })}
               >
                 <Image
                   src={img.imageUrl}
@@ -46,8 +47,8 @@ const ProdImgPreview = ({ prodImgs }: ProdImgPreviewProps) => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselNext />
-        <CarouselPrevious />
+        <CarouselNext className='hidden lg:inline-flex' />
+        <CarouselPrevious className='hidden lg:inline-flex' />
       </Carousel>
     </div>
   );

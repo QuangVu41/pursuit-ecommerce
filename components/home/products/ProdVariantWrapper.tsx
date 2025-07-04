@@ -48,11 +48,11 @@ const ProdVariantWrapper = ({ children }: ProdVariantWrapperProps) => {
         {children}
         {hasError && <p className='text-sm text-destructive'>Please, chose product variant!</p>}
       </div>
-      <div className='flex items-center gap-x-4 mt-3'>
+      <div className='flex items-center gap-x-2 2md:gap-x-4 mt-3'>
         <Button
           variant='outlinePrimary'
           size='homeDefault'
-          className='rounded-none text-lg cursor-pointer'
+          className='rounded-none px-7 py-3 text-base flex-1 2md:flex-none lg:text-lg cursor-pointer'
           onClick={handleAddToCart}
           disabled={isPending}
         >
@@ -60,7 +60,7 @@ const ProdVariantWrapper = ({ children }: ProdVariantWrapperProps) => {
         </Button>
         <Button
           size='homeDefault'
-          className='rounded-none text-lg cursor-pointer'
+          className='rounded-none px-7 py-3 text-base flex-1 2md:flex-none lg:text-lg cursor-pointer'
           onClick={handlePurchaseNow}
           disabled={isPending}
         >

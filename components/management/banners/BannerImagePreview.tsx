@@ -49,7 +49,7 @@ const BannerImagePreview = ({
                         fill
                         className='object-cover'
                       />
-                      <div className='absolute flex gap-x-2 right-2 top-2 invisible group-hover:visible transition-all'>
+                      <div className='absolute flex gap-x-2 right-2 top-2 md:invisible md:group-hover:visible transition-all'>
                         <Button
                           type='button'
                           variant='destructive'

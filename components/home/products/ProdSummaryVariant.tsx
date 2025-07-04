@@ -52,7 +52,13 @@ const ProdSummaryVariant = ({ productVariants }: ProdSummaryVariantProps) => {
                     variant.altText &&
                     setVariantImg({ imgUrl: variant.imageUrl, altText: variant.altText })
                   }
+                  onTouchStart={() =>
+                    variant.imageUrl &&
+                    variant.altText &&
+                    setVariantImg({ imgUrl: variant.imageUrl, altText: variant.altText })
+                  }
                   onMouseOut={() => setVariantImg({ imgUrl: '', altText: '' })}
+                  onTouchEnd={() => setVariantImg({ imgUrl: '', altText: '' })}
                   onClick={() => {
                     setFirstAttrId(variant.firstAttr.id);
                     if (hasTwoAttrs && secondAttrId) setHasError(false);

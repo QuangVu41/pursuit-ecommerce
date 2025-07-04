@@ -51,33 +51,6 @@ const ProdImageSection = ({
                 className='w-full group/prod-img'
               >
                 <CarouselContent>
-                  {fields.length < MAX_PROD_IMAGE_UPLOAD && (
-                    <CarouselItem className='basis-full xs:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5'>
-                      <div
-                        className={`relative group aspect-square rounded-lg overflow-hidden flex flex-col items-center justify-center bg-background/70 cursor-pointer p-2  group-aria-invalid/prod-img:border-destructive group-aria-invalid/prod-img:border ${
-                          isPending ? 'opacity-50' : ''
-                        }`}
-                        onClick={() => inputFileRef.current?.click()}
-                      >
-                        <input
-                          ref={inputFileRef}
-                          type='file'
-                          id='prod-img'
-                          hidden
-                          onChange={handleFileChange}
-                          multiple
-                          disabled={isPending}
-                        />
-                        <FilePlus2 className='w-5 h-5 text-primary/70 group-hover:text-primary top-2 right-2 absolute' />
-                        <p className='font-manrope text-lg font-bold text-foreground/70 group-hover:text-foreground'>
-                          870 X 870
-                        </p>
-                        <p className='text-foreground/70 group-hover:text-foreground text-center text-sm'>
-                          Expected ratio (max 10 images)
-                        </p>
-                      </div>
-                    </CarouselItem>
-                  )}
                   {fields.map((field, idx) => (
                     <CarouselItem
                       key={`${field.id}-${Math.random()}`}
@@ -90,7 +63,7 @@ const ProdImageSection = ({
                           fill
                           className='object-cover'
                         />
-                        <div className='absolute flex gap-x-2 right-2 top-2 invisible group-hover:visible transition-all'>
+                        <div className='absolute flex gap-x-2 right-2 top-2 md:invisible md:group-hover:visible transition-all'>
                           <TooltipWrapper
                             content={field.isPrimary ? undefined : 'Mark as primary image, only 1 image can be primary'}
                           >
@@ -118,6 +91,33 @@ const ProdImageSection = ({
                       </figure>
                     </CarouselItem>
                   ))}
+                  {fields.length < MAX_PROD_IMAGE_UPLOAD && (
+                    <CarouselItem className='basis-full xs:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5'>
+                      <div
+                        className={`relative group aspect-square rounded-lg overflow-hidden flex flex-col items-center justify-center bg-background/70 cursor-pointer p-2  group-aria-invalid/prod-img:border-destructive group-aria-invalid/prod-img:border ${
+                          isPending ? 'opacity-50' : ''
+                        }`}
+                        onClick={() => inputFileRef.current?.click()}
+                      >
+                        <input
+                          ref={inputFileRef}
+                          type='file'
+                          id='prod-img'
+                          hidden
+                          onChange={handleFileChange}
+                          multiple
+                          disabled={isPending}
+                        />
+                        <FilePlus2 className='w-5 h-5 text-primary/70 group-hover:text-primary top-2 right-2 absolute' />
+                        <p className='font-manrope text-lg font-bold text-foreground/70 group-hover:text-foreground'>
+                          870 X 870
+                        </p>
+                        <p className='text-foreground/70 group-hover:text-foreground text-center text-sm'>
+                          Expected ratio (max 10 images)
+                        </p>
+                      </div>
+                    </CarouselItem>
+                  )}
                 </CarouselContent>
               </Carousel>
             </FormControl>

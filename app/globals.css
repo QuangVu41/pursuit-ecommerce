@@ -7,6 +7,7 @@
   --breakpoint-xxs: 27.188rem;
   --breakpoint-xs: 35rem;
   --breakpoint-2md: 54rem;
+
   --animate-loop-scroll: loop-scroll 5s linear infinite;
 
   @keyframes loop-scroll {

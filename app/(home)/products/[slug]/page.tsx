@@ -38,7 +38,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
       >
         <ProdImgPreviewProvider mainImg={{ imgUrl: mainImg!.imageUrl, altText: mainImg!.altText }}>
           <SectionContent className='!mt-5'>
-            <div className='flex items-start justify-between gap-20'>
+            <div className='flex flex-col 2md:flex-row items-start justify-between gap-8 2md:gap-12 xl:gap-20'>
               <ProdImgPreview prodImgs={product!.productImages} />
               <ProdSummary prod={product as ProductWithPayLoad} />
             </div>

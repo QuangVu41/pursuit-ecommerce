@@ -12,13 +12,13 @@ interface ProdSummaryProps {
 
 const ProdSummary = ({ prod }: ProdSummaryProps) => {
   return (
-    <div className='flex flex-col flex-1 gap-y-3'>
+    <div className='flex flex-col flex-1 gap-y-3 w-full'>
       <h1 className='text-2xl font-medium capitalize'>{prod.name}</h1>
       <div className='flex items-center gap-x-3 font-medium'>
         <span className='flex items-center gap-x-0.5'>
           <Image src={starSvg} alt='star' className='size-4' />0
         </span>
-        |<span>Sold 0</span>|<span>Review 0</span>
+        |<span>0 Sold</span>|<span>0 Review</span>
       </div>
       <ProdPrice />
       <p className='text-base mt-2'>{prod.summary}</p>
