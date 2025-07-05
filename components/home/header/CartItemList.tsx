@@ -14,7 +14,7 @@ const CartItemList = ({ items }: CartItemListProps) => {
       <h2 className='text-muted-foreground font-medium p-2 pb-1'>New Added Items</h2>
       <ul className='h-96 overflow-y-auto'>
         {items.map((item) => (
-          <li key={item.id}>
+          <li key={item.id} className='border-b'>
             <Link
               href={`/products/${item.productVariant.product.slug}`}
               className='p-2 flex justify-between hover:bg-muted gap-x-2'
@@ -32,7 +32,7 @@ const CartItemList = ({ items }: CartItemListProps) => {
                 <div className='flex flex-col gap-y-2 w-48'>
                   <h2 className='text-sm truncate'>{item.productVariant.product.name}</h2>
                   <div className='flex item-center gap-x-1 text-sm text-muted-foreground'>
-                    <span className='truncate'>Quantity: {item.quantity}</span>|
+                    <span className='truncate'>Quantity: {item.quantity}</span>-
                     <span className='capitalize truncate'>
                       Variant: {item.productVariant.firstAttr.name}
                       {item.productVariant.secondAttr ? `-${item.productVariant.secondAttr.name}` : ''}

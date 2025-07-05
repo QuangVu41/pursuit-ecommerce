@@ -94,3 +94,47 @@ export type CartItemWithPayload = Prisma.CartItemGetPayload<{
     };
   };
 }>;
+
+export type UserCartWithPayload = Prisma.CartGetPayload<{
+  include: {
+    cartItems: {
+      include: {
+        productVariant: {
+          include: {
+            product: {
+              include: {
+                productImages: {
+                  where: {
+                    isPrimary: true;
+                  };
+                };
+              };
+            };
+            firstAttr: {
+              select: {
+                name: true;
+                attribute: {
+                  select: {
+                    name: true;
+                  };
+                };
+              };
+            };
+            secondAttr: {
+              select: {
+                name: true;
+                attribute: {
+                  select: {
+                    name: true;
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+}>;
+
+export type UserCartItemsWithPayload = UserCartWithPayload['cartItems'][0];

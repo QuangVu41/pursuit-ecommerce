@@ -1,12 +1,15 @@
+import { auth } from '@/auth';
 import { ExpectedError } from '@/lib/errors';
 import { AuthError } from 'next-auth';
 
 export const catchAsync =
-  (fn: (...parameters: any[]) => Promise<{ success?: string; error?: string } | void>) =>
+  (fn: (...parameters: any[]) => Promise<{ success?: string; error?: string } | void>, bypass: boolean = false) =>
   async (...parameters: any[]) => {
     try {
-      // const session = await auth();
-      // if (!session) throw new ExpectedError('Unauthenticated! Please log in.');
+      if (!bypass) {
+        const session = await auth();
+        if (!session) throw new ExpectedError('Unauthenticated! Please log in.');
+      }
 
       return await fn(...parameters);
     } catch (error) {

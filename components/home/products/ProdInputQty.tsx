@@ -42,12 +42,14 @@ const ProdInputQty = ({ prod }: ProdInputQtyProps) => {
           <Minus />
         </Button>
         <InputHome
-          type='number'
+          type='text'
+          inputMode='numeric'
+          pattern='[0-9]*'
           className='w-16 text-home-primary relative z-10 text-center bg-background'
-          value={Math.min(quantity, totalQty)}
+          value={+quantity > totalQty ? totalQty : quantity}
           disabled={isDisabled}
           onChange={(e) => {
-            setQty(+e.target.value);
+            setQty(e.target.value);
           }}
         />
         <Button

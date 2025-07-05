@@ -21,7 +21,7 @@ const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
   return (
     <HomeSectionContainer className='mb-[50px] md:mb-[100px]'>
       <HomeSectionHeader title='Find something you love' />
-      <SectionContent className='lg:mt-10 grid grid-cols-12 gap-x-4'>
+      <SectionContent className='grid grid-cols-12 gap-x-4'>
         <div className='hidden 2md:block col-span-3 xl:col-span-2'>
           <ProdFilter />
         </div>

@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Heart } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import starSvg from '@/public/star.svg';
@@ -36,7 +35,6 @@ const ProdCard = ({ prod, className }: ProdCardProps) => {
         <CardContent className='p-0 flex flex-col gap-y-2 capitalize'>
           <span className='flex items-end justify-between w-full text-xs text-home-foreground gap-x-2'>
             <span className='truncate'>{prod.category.name}</span>
-            <Heart className='size-5 stroke-foreground hover:fill-destructive hover:stroke-destructive transition-colors cursor-pointer' />
           </span>
           <h2 className='text-base font-medium truncate leading-none'>{prod.name}</h2>
           <div className='flex flex-col gap-y-2 items-start text-xs leading-none'>

@@ -2,7 +2,16 @@
 
 import { catchAsync } from '@/lib/catchAsync';
 import { AddToCartSchema, AddToCartSchemaType, ProdFormSchema, ProdFormSchemaType } from '@/schemas/products';
-import { addToCart, createProduct, deleteManyProducts, deleteProduct, updateProduct } from '@/services/products';
+import {
+  addToCart,
+  createProduct,
+  deleteCartItem,
+  deleteManyProducts,
+  deleteProduct,
+  setCartItemQty,
+  updateCartItemQty,
+  updateProduct,
+} from '@/services/products';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -52,4 +61,34 @@ export const addToCartAction = catchAsync(async (data: AddToCartSchemaType) => {
 
   revalidatePath('/');
   return { success: 'Item added to cart successfully!' };
+});
+
+export const increaseCartItemQty = catchAsync(async (id: string) => {
+  await updateCartItemQty(id, 1);
+
+  revalidatePath('/cart');
+});
+
+export const decreaseCartItemQty = catchAsync(async (id: string) => {
+  await updateCartItemQty(id, -1);
+
+  revalidatePath('/cart');
+});
+
+export const setCartItemQtyAct = catchAsync(async (id: string, quantity: number) => {
+  await setCartItemQty(id, quantity);
+
+  revalidatePath('/cart');
+});
+
+export const deleteCartItemAct = catchAsync(async (id: string) => {
+  await deleteCartItem(id);
+
+  revalidatePath('/cart');
+});
+
+export const deleteManyCartItemsAct = catchAsync(async (ids: string[]) => {
+  await Promise.all(ids.map((id) => deleteCartItem(id)));
+
+  revalidatePath('/cart');
 });

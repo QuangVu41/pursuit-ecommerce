@@ -572,7 +572,6 @@ export const addToCart = async (data: AddToCartSchemaType) => {
       userId,
     },
     update: {
-      total: userCart ? userCart.total + variant.price * quantity : variant.price * quantity,
       cartItems: {
         update: existingCartItem
           ? {
@@ -594,7 +593,6 @@ export const addToCart = async (data: AddToCartSchemaType) => {
     },
     create: {
       userId,
-      total: variant.price * quantity,
       cartItems: {
         create: {
           productVariantId: variant.id,
@@ -700,4 +698,134 @@ export const getUserCartByUserId = async (userId: string) => {
   });
 
   return cart;
+};
+
+export const getUserCartWithPayloadByUserId = async () => {
+  const user = await getUserSession();
+  const userId = user?.id;
+  if (!userId) return;
+
+  const cart = await db.cart.findUnique({
+    where: {
+      userId,
+    },
+    include: {
+      cartItems: {
+        include: {
+          productVariant: {
+            include: {
+              product: {
+                include: {
+                  productImages: {
+                    where: {
+                      isPrimary: true,
+                    },
+                  },
+                },
+              },
+              firstAttr: {
+                select: {
+                  name: true,
+                  attribute: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
+              secondAttr: {
+                select: {
+                  name: true,
+                  attribute: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return cart;
+};
+
+export const deleteCartItem = async (id: string) => {
+  const cartItem = await db.cartItem.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!cartItem) throw new ExpectedError('Cart item not found!');
+
+  await db.cartItem.delete({
+    where: {
+      id,
+    },
+  });
+};
+
+export const updateCartItemQty = async (id: string, quantity: number) => {
+  const cartItem = await db.cartItem.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      productVariant: true,
+    },
+  });
+
+  if (!cartItem) throw new ExpectedError('Cart item not found!');
+
+  const newQty =
+    quantity > 0
+      ? Math.min(cartItem.quantity + quantity, cartItem.productVariant.stock)
+      : Math.max(cartItem.quantity + quantity, 0);
+
+  if (newQty === 0) {
+    await deleteCartItem(id);
+    return;
+  }
+
+  await db.cartItem.update({
+    where: {
+      id,
+    },
+    data: {
+      quantity: newQty,
+    },
+  });
+};
+
+export const setCartItemQty = async (id: string, quantity: number) => {
+  const cartItem = await db.cartItem.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      productVariant: true,
+    },
+  });
+
+  if (!cartItem) throw new ExpectedError('Cart item not found!');
+
+  const newQty = Math.min(quantity, cartItem.productVariant.stock);
+
+  if (newQty === 0) {
+    await deleteCartItem(id);
+    return;
+  }
+
+  await db.cartItem.update({
+    where: {
+      id,
+    },
+    data: {
+      quantity: newQty,
+    },
+  });
 };

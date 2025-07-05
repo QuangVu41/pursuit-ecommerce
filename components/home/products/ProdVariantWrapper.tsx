@@ -30,7 +30,6 @@ const ProdVariantWrapper = ({ children }: ProdVariantWrapperProps) => {
         secondAttrId,
         quantity,
       }).then((res) => {
-        console.log(res);
         if (res?.success) toast.success(res.success);
         else if (res?.error) toast.error(res.error);
       });

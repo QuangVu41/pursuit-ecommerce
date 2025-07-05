@@ -76,7 +76,7 @@ export const logout = catchAsync(async () => {
 
 export const signInWithSocial = catchAsync(async (provider: 'google' | 'github', options: SignInOptions) => {
   await signIn(provider, options);
-});
+}, true);
 
 export const verifyEmailVerificationToken = catchAsync(
   async (data: VerificationCodeWithEmailSchemaType | SigninSchemaType, type: 'signin' | 'signup') => {

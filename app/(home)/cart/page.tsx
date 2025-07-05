@@ -1,5 +1,25 @@
-const CartPage = () => {
-  return <div>CartPage</div>;
+import HomeSectionContainer from '@/components/common/HomeSectionContainer';
+import HomeSectionHeader from '@/components/common/HomeSectionHeader';
+import SectionContent from '@/components/common/SectionContent';
+import CartItemsProvider from '@/components/home/cart/CartItemsProvider';
+import CartTable from '@/components/home/cart/CartTable';
+import { getUserCartWithPayloadByUserId } from '@/services/products';
+
+const CartPage = async () => {
+  const userCart = await getUserCartWithPayloadByUserId();
+
+  return (
+    userCart && (
+      <HomeSectionContainer className='mb-10 md:mb-[60px]'>
+        <HomeSectionHeader title='Your Cart' />
+        <CartItemsProvider cartItems={userCart.cartItems}>
+          <SectionContent className='flex flex-col gay-y-4'>
+            <CartTable />
+          </SectionContent>
+        </CartItemsProvider>
+      </HomeSectionContainer>
+    )
+  );
 };
 
 export default CartPage;

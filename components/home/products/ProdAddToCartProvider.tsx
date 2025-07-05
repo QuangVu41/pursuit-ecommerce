@@ -8,7 +8,7 @@ interface ProdAddToCartStore {
   regularPrice: number;
   variantPrice?: number;
   hasTwoAttrs: boolean;
-  quantity: number;
+  quantity: number | string;
   firstAttrId: string;
   secondAttrId?: string;
   hasError: boolean;
@@ -18,7 +18,7 @@ interface ProdAddToCartStore {
   setFirstAttrId: (id: string) => void;
   setSecondAttrId: (id?: string) => void;
   setVariantPrice: (newPrice: number) => void;
-  setQty: (newQty: number) => void;
+  setQty: (newQty: string) => void;
 }
 
 interface ProdAddToCartProviderProps {
@@ -42,9 +42,13 @@ const ProdAddToCartProvider = ({ children, hasTwoAttrs, regularPrice, productId 
       hasError: false,
       setHasError: (hasError: boolean) => set(() => ({ hasError })),
       setVariantPrice: (newPrice: number) => set({ variantPrice: newPrice }),
-      setQty: (newQty: number) => set({ quantity: Math.max(1, newQty) }),
-      increaseQty: (totalQty: number) => set((state) => ({ quantity: Math.min(state.quantity + 1, totalQty) })),
-      decreaseQty: () => set((state) => ({ quantity: Math.max(1, state.quantity - 1) })),
+      setQty: (newQty: string) => {
+        if (isNaN(Number(newQty))) return set({ quantity: 1 });
+        if (newQty === '0') return;
+        set({ quantity: newQty });
+      },
+      increaseQty: (totalQty: number) => set((state) => ({ quantity: Math.min(+state.quantity + 1, totalQty) })),
+      decreaseQty: () => set((state) => ({ quantity: Math.max(1, +state.quantity - 1) })),
       setFirstAttrId: (id: string) => set((state) => ({ firstAttrId: id !== state.firstAttrId ? id : '' })),
       setSecondAttrId: (id?: string) => set((state) => ({ secondAttrId: id !== state.secondAttrId ? id : '' })),
     }))
