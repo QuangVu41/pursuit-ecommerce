@@ -42,7 +42,7 @@ const CartDataTable = ({ columns, data }: CartDataTableProps) => {
     } else {
       setCartTotal([]);
     }
-  }, [rowSelection, setCartTotal, table]);
+  }, [rowSelection, setCartTotal, table, data]);
 
   return (
     <div className='w-full'>
