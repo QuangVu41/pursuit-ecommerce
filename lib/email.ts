@@ -3,9 +3,9 @@ import nodemailer from 'nodemailer';
 export class Email {
   to: string;
   from: string;
-  token: string;
+  token?: string;
 
-  constructor(email: string, token: string) {
+  constructor(email: string, token?: string) {
     this.from = `Pursuit Verification <${process.env.SENDGRID_EMAIL_FROM}>`;
     this.to = email;
     this.token = token;
@@ -33,5 +33,9 @@ export class Email {
 
   async sendEmailVerification() {
     await this.send(`<p>Your email verification code: ${this.token}</p>`, 'Email Verification');
+  }
+
+  async sendEmailProductPurchase(html: string) {
+    await this.send(html, 'Product Purchase Successful');
   }
 }
