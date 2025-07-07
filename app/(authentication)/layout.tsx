@@ -3,6 +3,7 @@ import '../globals.css';
 import AuthHero from '@/components/auth/AuthHero';
 import LayoutTemplate from '@/components/common/LayoutTemplate';
 import LogoText from '@/components/common/LogoText';
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
   title: {
@@ -30,6 +31,7 @@ export default function AuthenticationLayout({
         </div>
         <AuthHero />
       </div>
+      <Toaster richColors position='top-center' theme='light' closeButton />
     </LayoutTemplate>
   );
 }

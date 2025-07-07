@@ -18,7 +18,7 @@ const ReturnPage = () => {
               Congrats on linking your account to Pursuit. You can now start selling your products.
             </p>
             <Button variant='homeDefault' className='mt-5 sm:mt-6 w-full rounded-none' asChild>
-              <Link href='/'>Back to HomeReturnPage</Link>
+              <Link href='/'>Back to Homepage</Link>
             </Button>
           </div>
         </div>

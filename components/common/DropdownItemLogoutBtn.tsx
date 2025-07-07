@@ -15,9 +15,16 @@ const DropdownItemLogoutBtn = ({ className }: DropdownItemLogoutBtnProps) => {
   const [isPending, startTransition] = useTransition();
 
   const handleLogout = () => {
+    const toastId = toast(
+      <div className='items-center gap-1 flex'>
+        <Loader2 className='animate-spin' />
+        Logging out...
+      </div>
+    );
     startTransition(() =>
       logout().then((res) => {
         if (res?.error) toast.error(res.error);
+        toast.dismiss(toastId);
       })
     );
   };
@@ -26,7 +33,6 @@ const DropdownItemLogoutBtn = ({ className }: DropdownItemLogoutBtnProps) => {
     <DropdownMenuItem onClick={handleLogout} className={cn('text-foreground', className)} disabled={isPending}>
       <LogOut className='text-inherit' />
       Log out
-      {isPending && <Loader2 className='animate-spin text-muted' />}
     </DropdownMenuItem>
   );
 };

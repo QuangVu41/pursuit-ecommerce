@@ -109,7 +109,9 @@ export const purchaseProduct = catchAsync(async (data: AddToCartSchemaType) => {
       },
     ],
     metadata: {
-      prodImage: prodVariant?.imageUrl || (prodVariant?.product.productImages[0].imageUrl as string),
+      prodImage: prodVariant?.imageUrl
+        ? prodVariant?.imageUrl
+        : (prodVariant?.product.productImages[0].imageUrl as string),
     },
     payment_intent_data: {
       application_fee_amount: prodVariant!.price * quantity * APP_FEE_AMOUNT,

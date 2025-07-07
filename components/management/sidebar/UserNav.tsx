@@ -23,7 +23,7 @@ const UserNav = () => {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu>
+        <DropdownMenu modal>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size='lg'
@@ -35,7 +35,7 @@ const UserNav = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className='w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg'
-            side={isMobile ? 'bottom' : 'right'}
+            side={isMobile ? 'top' : 'right'}
             align='end'
             sideOffset={4}
           >

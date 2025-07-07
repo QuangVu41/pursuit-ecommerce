@@ -19,6 +19,7 @@ export async function POST(req: Request) {
     case 'checkout.session.completed': {
       const session = event.data.object;
       const prodImage = session.metadata?.prodImage;
+      console.log(prodImage);
       if (session.customer_details?.email)
         await new Email(session.customer_details?.email).sendEmailProductPurchase(`
         <p>Thank you for your purchase!</p>
