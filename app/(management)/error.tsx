@@ -1,12 +1,9 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import Error from '@/components/common/Error';
 
-export default function Error({ reset, error }: { error: Error & { digest?: string }; reset: () => void }) {
-  return (
-    <div className='flex flex-col items-center justify-center gap-y-2'>
-      <h2 className='text-2xl text-destructive'>Something went wrong!</h2>
-      <Button onClick={() => reset()}>Try again</Button>
-    </div>
-  );
-}
+const ErrorPage = ({ reset, error }: { error: Error & { digest?: string }; reset: () => void }) => {
+  return <Error reset={reset} error={error} />;
+};
+
+export default ErrorPage;

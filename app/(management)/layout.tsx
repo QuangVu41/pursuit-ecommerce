@@ -7,6 +7,7 @@ import DashboardHeader from '@/components/management/sidebar/DashboardHeader';
 import MainContent from '@/components/common/MainContent';
 import ThemeProvider from '@/components/common/ThemeProvider';
 import { Toaster } from '@/components/ui/sonner';
+import { checkStripeAccountLinked } from './mng/dashboard/page';
 
 export const metadata: Metadata = {
   title: {
@@ -16,11 +17,13 @@ export const metadata: Metadata = {
   description: 'Find the best styles of modern shoes',
 };
 
-export default function ApplicationLayout({
+export default async function ApplicationLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  await checkStripeAccountLinked();
+
   return (
     <LayoutTemplate bodyClassName='bg-muted'>
       <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>

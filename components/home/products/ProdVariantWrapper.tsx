@@ -5,6 +5,7 @@ import { useProdAddToCartStore } from '@/components/home/products/ProdAddToCartP
 import { useTransition } from 'react';
 import { addToCartAction } from '@/actions/products';
 import { toast } from 'sonner';
+import { purchaseProduct } from '@/actions/payment';
 
 interface ProdVariantWrapperProps {
   children: React.ReactNode;
@@ -39,6 +40,14 @@ const ProdVariantWrapper = ({ children }: ProdVariantWrapperProps) => {
   const handlePurchaseNow = () => {
     if (hasTwoAttrs && (!firstAttrId || !secondAttrId)) return setHasError(true);
     if (!hasTwoAttrs && !firstAttrId) return setHasError(true);
+    startTransition(() => {
+      purchaseProduct({
+        productId,
+        firstAttrId,
+        secondAttrId,
+        quantity,
+      });
+    });
   };
 
   return (

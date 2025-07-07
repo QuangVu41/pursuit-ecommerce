@@ -21,6 +21,7 @@ import { Email } from '@/lib/email';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { catchAsync } from '../lib/catchAsync';
 import { SignInOptions } from 'next-auth/react';
+import { stripe } from '@/lib/stripe';
 
 export const sendEmailVerification = catchAsync(async (email: string) => {
   const verificationToken = await generateEmailVerificationToken(email);

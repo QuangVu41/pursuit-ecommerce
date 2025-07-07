@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getUsernameFallback } from '@/lib/helpers';
-import { CircleUserRound, HandCoins, LayoutDashboard, LogIn, User } from 'lucide-react';
+import { CircleUserRound, HandCoins, LayoutDashboard, LogIn, Receipt, User } from 'lucide-react';
 import Link from 'next/link';
 import DropdownItemLogoutBtn from '../../common/DropdownItemLogoutBtn';
 
@@ -48,14 +48,23 @@ const AvatarDropdown = async () => {
             >
               <Link href='/mng/dashboard'>
                 <LayoutDashboard className='text-inherit' />
-                Dashboard
+                Sell your Products
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
               asChild
               className='text-muted focus:text-muted focus:bg-home-primary-foreground rounded-none'
             >
-              <Link href='/mng/profile'>
+              <Link href='/billing'>
+                <Receipt className='text-inherit' />
+                Billing
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              asChild
+              className='text-muted focus:text-muted focus:bg-home-primary-foreground rounded-none'
+            >
+              <Link href='/profile'>
                 <User className='text-inherit' />
                 Profile
               </Link>

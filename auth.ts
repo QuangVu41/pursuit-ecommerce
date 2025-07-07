@@ -3,6 +3,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { db } from './lib/db';
 import authConfig from '@/auth.config';
 import { getUserById, updateUserById } from './services/users';
+import { stripe } from './lib/stripe';
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   pages: {
@@ -10,7 +11,21 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   },
   events: {
     async linkAccount({ user }) {
-      await updateUserById(user.id!, { emailVerified: new Date() });
+      const account = await stripe.accounts.create({
+        email: user.email || undefined,
+        controller: {
+          losses: {
+            payments: 'application',
+          },
+          fees: {
+            payer: 'application',
+          },
+          stripe_dashboard: {
+            type: 'express',
+          },
+        },
+      });
+      await updateUserById(user.id!, { emailVerified: new Date(), connectedAccountId: account.id });
     },
   },
   callbacks: {
