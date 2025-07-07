@@ -114,8 +114,8 @@ export const purchaseProduct = catchAsync(async (data: AddToCartSchemaType) => {
         destination: prodVariant?.product.user.connectedAccountId as string,
       },
     },
-    success_url: 'http://localhost:3000/payment/success',
-    cancel_url: 'http://localhost:3000/payment/cancel',
+    success_url: `${process.env.APP_URL}/payment/success`,
+    cancel_url: `${process.env.APP_URL}/payment/cancel`,
   });
 
   return redirect(session.url as string);
@@ -130,8 +130,8 @@ export const createStripeAccountLink = catchAsync(async () => {
 
   const accountLInk = await stripe.accountLinks.create({
     account: userPayload!.connectedAccountId as string,
-    refresh_url: 'http://localhost:3000/billing',
-    return_url: `http://localhost:3000/return/${userPayload?.connectedAccountId}`,
+    refresh_url: `${process.env.APP_URL}/billing`,
+    return_url: `${process.env.APP_URL}/return/${userPayload?.connectedAccountId}`,
     type: 'account_onboarding',
   });
 
