@@ -15,11 +15,16 @@ const SuccessPage = () => {
           <div className='mt-3 text-center sm:mt-5 w-full'>
             <h3 className='text-lg leading-6 font-medium'>Payment Successful</h3>
             <p className='mt-2 text-sm text-muted-foreground'>
-              Congrats to your purchase! Please check your email for further instructions.
+              Congrats to your purchase! Please check your email and your orders for further instructions.
             </p>
-            <Button variant='homeDefault' className='mt-5 sm:mt-6 w-full rounded-none' asChild>
-              <Link href='/'>Back to Homepage</Link>
-            </Button>
+            <div className='flex items-center gap-x-2'>
+              <Button variant='homeOutline' className='mt-5 sm:mt-6 flex-1  rounded-none' asChild>
+                <Link href='/'>Back to Home page</Link>
+              </Button>
+              <Button variant='homeDefault' className='mt-5 sm:mt-6 flex-1  rounded-none' asChild>
+                <Link href='/orders'>Go to Order</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </Card>

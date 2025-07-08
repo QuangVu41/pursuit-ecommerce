@@ -18,7 +18,7 @@ export default function Error({ reset, error }: { error: Error & { digest?: stri
             <h3 className='text-lg text-destructive leading-6 font-medium'>Something went wrong!</h3>
             <div className='flex items-center gap-x-2'>
               <Button variant='homeOutline' className='mt-5 sm:mt-6 flex-1 rounded-none' asChild>
-                <Link href='/'>Back to Homepage</Link>
+                <Link href='/'>Back to Home page</Link>
               </Button>
               <Button variant='homeDefault' className='mt-5 sm:mt-6 flex-1 rounded-none' onClick={() => reset()}>
                 Try again

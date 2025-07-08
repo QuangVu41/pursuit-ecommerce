@@ -3,15 +3,24 @@
 import { getUserSession } from '@/auth';
 import { catchAsync } from '@/lib/catchAsync';
 import { APP_FEE_AMOUNT } from '@/lib/constants';
-import { db } from '@/lib/db';
 import { ExpectedError } from '@/lib/errors';
+import { convertVndToUsd } from '@/lib/helpers';
 import { stripe } from '@/lib/stripe';
 import { AddToCartSchema, AddToCartSchemaType } from '@/schemas/products';
+import { getProdVariantByAttrIds } from '@/services/products';
 import { getUserById } from '@/services/users';
-import { Prisma } from '@prisma/client';
 import { redirect } from 'next/navigation';
 
+export type prodDataItem = {
+  prodName: string;
+  productVariantId: string;
+  accountId: string;
+  quantity: number;
+  accountFund: number;
+};
+
 export const purchaseProduct = catchAsync(async (data: AddToCartSchemaType) => {
+  const user = await getUserSession();
   const validatedFields = AddToCartSchema.safeParse(data);
 
   if (!validatedFields.success) {
@@ -19,76 +28,9 @@ export const purchaseProduct = catchAsync(async (data: AddToCartSchemaType) => {
   }
 
   const { productId, firstAttrId, secondAttrId, quantity } = validatedFields.data;
-  let prodVariant: Prisma.ProductVariantGetPayload<{
-    include: {
-      product: {
-        include: {
-          productImages: {
-            where: {
-              isPrimary: true;
-            };
-          };
-          user: {
-            select: {
-              connectedAccountId: true;
-            };
-          };
-        };
-      };
-    };
-  }> | null = null;
-
-  if (secondAttrId) {
-    prodVariant = await db.productVariant.findUnique({
-      where: {
-        productId_firstAttrId_secondAttrId: {
-          productId,
-          firstAttrId,
-          secondAttrId,
-        },
-      },
-      include: {
-        product: {
-          include: {
-            productImages: {
-              where: {
-                isPrimary: true,
-              },
-            },
-            user: {
-              select: {
-                connectedAccountId: true,
-              },
-            },
-          },
-        },
-      },
-    });
-  } else {
-    prodVariant = await db.productVariant.findFirst({
-      where: {
-        productId,
-        firstAttrId,
-        secondAttrId: null,
-      },
-      include: {
-        product: {
-          include: {
-            productImages: {
-              where: {
-                isPrimary: true,
-              },
-            },
-            user: {
-              select: {
-                connectedAccountId: true,
-              },
-            },
-          },
-        },
-      },
-    });
-  }
+  let prodVariant = await getProdVariantByAttrIds(productId, firstAttrId, secondAttrId);
+  const applicationFeeAmount = prodVariant!.price * quantity * APP_FEE_AMOUNT;
+  const accountFund = Math.round(await convertVndToUsd(prodVariant!.price * quantity - applicationFeeAmount)) * 100;
 
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
@@ -109,15 +51,17 @@ export const purchaseProduct = catchAsync(async (data: AddToCartSchemaType) => {
       },
     ],
     metadata: {
-      prodImage: prodVariant?.imageUrl
-        ? prodVariant?.imageUrl
-        : (prodVariant?.product.productImages[0].imageUrl as string),
-    },
-    payment_intent_data: {
-      application_fee_amount: prodVariant!.price * quantity * APP_FEE_AMOUNT,
-      transfer_data: {
-        destination: prodVariant?.product.user.connectedAccountId as string,
-      },
+      prodData: JSON.stringify([
+        {
+          prodName: prodVariant?.product.name,
+          productVariantId: prodVariant?.id,
+          accountId: prodVariant?.product.user.connectedAccountId as string,
+          quantity,
+          accountFund,
+        },
+      ]),
+      applicationFeeAmount,
+      userId: user?.id as string,
     },
     success_url: `${process.env.APP_URL}/payment/success`,
     cancel_url: `${process.env.APP_URL}/payment/cancel`,

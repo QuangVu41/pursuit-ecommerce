@@ -21,14 +21,13 @@ import { Email } from '@/lib/email';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { catchAsync } from '../lib/catchAsync';
 import { SignInOptions } from 'next-auth/react';
-import { stripe } from '@/lib/stripe';
 
 export const sendEmailVerification = catchAsync(async (email: string) => {
   const verificationToken = await generateEmailVerificationToken(email);
   await new Email(verificationToken.email, verificationToken.token).sendEmailVerification();
 
   return { success: 'Confirmation email sent!' };
-});
+}, true);
 
 export const signup = catchAsync(async (data: SignupSchemaType) => {
   const validatedFields = SignupSchema.safeParse(data);
@@ -51,7 +50,7 @@ export const signup = catchAsync(async (data: SignupSchemaType) => {
   });
 
   return await sendEmailVerification(email);
-});
+}, true);
 
 export const signin = catchAsync(async (data: SigninSchemaType, callbackUrl?: string) => {
   const validatedFields = SigninSchema.safeParse(data);
@@ -69,7 +68,7 @@ export const signin = catchAsync(async (data: SigninSchemaType, callbackUrl?: st
   }
 
   return (await signInCredentials({ email, password }, callbackUrl))!;
-});
+}, true);
 
 export const logout = catchAsync(async () => {
   await signOut({ redirectTo: '/' });
@@ -115,7 +114,8 @@ export const verifyEmailVerificationToken = catchAsync(
     else {
       return await signInCredentials(data as z.infer<typeof SigninSchema>);
     }
-  }
+  },
+  true
 );
 
 const signInCredentials = async (data: SigninSchemaType, callbackUrl?: string) => {

@@ -3,13 +3,17 @@
 import { Button } from '@/components/ui/button';
 import { signInWithSocial } from '@/actions/auth';
 import { useTransition } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 
 const Social = () => {
   const [isPending, startTransition] = useTransition();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl');
 
   const handleClick = (provider: 'google' | 'github') => {
     startTransition(() => {
-      signInWithSocial(provider, { redirectTo: '/' });
+      signInWithSocial(provider, { redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT });
     });
   };
 

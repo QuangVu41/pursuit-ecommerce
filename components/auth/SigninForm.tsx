@@ -20,6 +20,7 @@ const SigninForm = () => {
   const searchParams = useSearchParams();
   const errorParam =
     searchParams.get('error') === 'OAuthAccountNotLinked' ? 'Email already in use with different provider' : '';
+  const callbackUrl = searchParams.get('callbackUrl');
   const form = useForm<SigninSchemaType>({
     resolver: zodResolver(SigninSchema),
     defaultValues: {
@@ -45,7 +46,7 @@ const SigninForm = () => {
   const handleSubmit = (data: SigninSchemaType) => {
     startTransition(() => {
       if (!data.code) {
-        signin(data).then((res) => {
+        signin(data, callbackUrl).then((res) => {
           if (res?.error) {
             toast.error(res?.error);
           }
@@ -143,7 +144,7 @@ const SigninForm = () => {
           )}
         />
       )}
-      <Button type='submit' className='w-full'>
+      <Button type='submit' className='w-full' disabled={isPending}>
         {showEmailVerification ? 'Confirm' : 'Sign In'}
       </Button>
       <div className='relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border'>

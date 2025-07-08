@@ -7,7 +7,7 @@ import { generateOrQueryForSearch, getDateInPast, nameToSlug } from '@/lib/helpe
 import { deleteFromS3, uploadToS3 } from '@/lib/upload';
 import { AddToCartSchemaType, ProdFormSchemaType, ProdVariantSchemaType } from '@/schemas/products';
 import { ProductWithCateAndImg, ProductWithCateAndPrImg } from '@/types/products';
-import { Prisma, ProductVariant } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { randomUUID } from 'crypto';
 
 export const getAllFilteredProducts = async (searchParams: { [key: string]: string }) => {
@@ -661,7 +661,25 @@ export const getUserCartItems = async () => {
 };
 
 export const getProdVariantByAttrIds = async (productId: string, firstAttrId: string, secondAttrId?: string) => {
-  let variant: ProductVariant | null;
+  let variant: Prisma.ProductVariantGetPayload<{
+    include: {
+      product: {
+        include: {
+          productImages: {
+            where: {
+              isPrimary: true;
+            };
+          };
+          user: {
+            select: {
+              connectedAccountId: true;
+            };
+          };
+        };
+      };
+    };
+  }> | null = null;
+
   if (secondAttrId)
     variant = await db.productVariant.findUnique({
       where: {
@@ -671,6 +689,22 @@ export const getProdVariantByAttrIds = async (productId: string, firstAttrId: st
           secondAttrId,
         },
       },
+      include: {
+        product: {
+          include: {
+            productImages: {
+              where: {
+                isPrimary: true,
+              },
+            },
+            user: {
+              select: {
+                connectedAccountId: true,
+              },
+            },
+          },
+        },
+      },
     });
   else {
     variant = await db.productVariant.findFirst({
@@ -678,6 +712,22 @@ export const getProdVariantByAttrIds = async (productId: string, firstAttrId: st
         firstAttrId,
         secondAttrId: null,
         productId,
+      },
+      include: {
+        product: {
+          include: {
+            productImages: {
+              where: {
+                isPrimary: true,
+              },
+            },
+            user: {
+              select: {
+                connectedAccountId: true,
+              },
+            },
+          },
+        },
       },
     });
   }

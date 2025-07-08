@@ -1,7 +1,7 @@
 import authConfig from '@/auth.config';
 import NextAuth from 'next-auth';
 import { NextResponse } from 'next/server';
-import { authRoutes, DEFAULT_LOGIN_REDIRECT, secretRoutePrefix } from './routes';
+import { authRoutes, DEFAULT_LOGIN_REDIRECT, secretRoutes } from './routes';
 
 const { auth } = NextAuth(authConfig);
 
@@ -10,7 +10,7 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
 
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-  const isSecretRoute = nextUrl.pathname.startsWith(secretRoutePrefix);
+  const isSecretRoute = secretRoutes.some((secret) => nextUrl.pathname.startsWith(secret));
 
   if (isAuthRoute) {
     if (isLoggedIn) return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl.origin));
@@ -18,10 +18,15 @@ export default auth((req) => {
   }
 
   if (isSecretRoute && !isLoggedIn) {
-    return NextResponse.redirect(new URL('/auth/signin', nextUrl.origin));
+    let callBackUrl = nextUrl.pathname;
+    if (nextUrl.search) {
+      callBackUrl += nextUrl.search;
+    }
+    const encodedCallbackUrl = encodeURIComponent(callBackUrl);
+    return NextResponse.redirect(new URL(`/auth/signin?callbackUrl=${encodedCallbackUrl}`, nextUrl.origin));
   }
 
-  NextResponse.next();
+  return NextResponse.next();
 });
 
 export const config = {

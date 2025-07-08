@@ -7,7 +7,7 @@ import DashboardHeader from '@/components/management/sidebar/DashboardHeader';
 import MainContent from '@/components/common/MainContent';
 import ThemeProvider from '@/components/common/ThemeProvider';
 import { Toaster } from '@/components/ui/sonner';
-import { checkStripeAccountLinked } from './mng/dashboard/page';
+import { checkStripeAccountLinked } from '@/lib/auth-helper';
 
 export const metadata: Metadata = {
   title: {

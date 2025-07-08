@@ -9,16 +9,14 @@ const CartPage = async () => {
   const userCart = await getUserCartWithPayloadByUserId();
 
   return (
-    userCart && (
-      <HomeSectionContainer className='mb-10 md:mb-[60px]'>
-        <HomeSectionHeader title='Your Cart' />
-        <CartItemsProvider cartItems={userCart.cartItems}>
-          <SectionContent className='flex flex-col gay-y-4'>
-            <CartTable />
-          </SectionContent>
-        </CartItemsProvider>
-      </HomeSectionContainer>
-    )
+    <HomeSectionContainer className='mb-10 md:mb-[60px]'>
+      <HomeSectionHeader title='Your Cart' />
+      <CartItemsProvider cartItems={userCart?.cartItems || []}>
+        <SectionContent className='flex flex-col gay-y-4'>
+          <CartTable />
+        </SectionContent>
+      </CartItemsProvider>
+    </HomeSectionContainer>
   );
 };
 

@@ -18,6 +18,14 @@ export const getUserById = async (id: string) => {
   return user;
 };
 
+export const getUserByConnectedAccountId = async (connectedAccountId: string) => {
+  const user = await db.user.findUnique({
+    where: { connectedAccountId },
+  });
+
+  return user;
+};
+
 export const createUser = async (data: { name: string; email: string; password: string }) => {
   const account = await stripe.accounts.create({
     email: data.email,

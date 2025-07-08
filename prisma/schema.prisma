@@ -24,6 +24,11 @@ enum BannerType {
   sale
 }
 
+enum OrderStatus {
+  pending
+  completed
+}
+
 enum VerificationTokenType {
   email
   passwordReset
@@ -49,6 +54,7 @@ model User {
   cart                  Cart?
   connectedAccountId    String?            @unique
   stripeConnectedLinked Boolean            @default(false)
+  orders                Order[]
 
   @@map("users")
 }
@@ -119,6 +125,7 @@ model ProductVariant {
   createdAt    DateTime               @default(now())
   updatedAt    DateTime               @updatedAt
   cartItems    CartItem[]
+  orderItems   OrderItem[]
 
   @@unique([productId, firstAttrId, secondAttrId])
   @@map("product_variants")
@@ -160,6 +167,34 @@ model CartItem {
 
   @@unique([cartId, productVariantId])
   @@map("cart_items")
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  total       Int
+  status      OrderStatus @default(pending)
+  platformFee Int
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orderItems  OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id               String         @id @default(cuid())
+  orderId          String
+  order            Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productVariantId String
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  quantity         Int
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@unique([orderId, productVariantId])
+  @@map("order_items")
 }
 
 model Category {

@@ -85,3 +85,16 @@ export const generateOrQueryForSearch = <T>(searchTerms: string, field: keyof T)
     },
   }));
 };
+
+export async function convertVndToUsd(vndAmount: number): Promise<number> {
+  try {
+    const response = await fetch('https://api.exchangerate-api.com/v4/latest/VND');
+    const data = await response.json();
+    const usdRate = data.rates.USD;
+    return vndAmount * usdRate;
+  } catch (error) {
+    console.error('Error fetching exchange rate:', error);
+    // Fallback to approximate rate (1 USD ≈ 24,000 VND as of 2024)
+    return vndAmount / 24000;
+  }
+}

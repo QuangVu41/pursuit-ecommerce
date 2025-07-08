@@ -18,7 +18,7 @@ const CancelPage = () => {
               Something went wrong with your payment. You haven&apos;t get charged. Please try again!
             </p>
             <Button variant='homeDefault' className='mt-5 sm:mt-6 w-full rounded-none' asChild>
-              <Link href='/'>Back to Homepage</Link>
+              <Link href='/'>Back to Home page</Link>
             </Button>
           </div>
         </div>

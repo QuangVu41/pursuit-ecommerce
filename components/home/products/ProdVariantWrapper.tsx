@@ -6,12 +6,16 @@ import { useTransition } from 'react';
 import { addToCartAction } from '@/actions/products';
 import { toast } from 'sonner';
 import { purchaseProduct } from '@/actions/payment';
+import { useUserSession } from '@/hooks/use-user-session';
+import { useUrl } from '@/hooks/use-url';
 
 interface ProdVariantWrapperProps {
   children: React.ReactNode;
 }
 
 const ProdVariantWrapper = ({ children }: ProdVariantWrapperProps) => {
+  const user = useUserSession();
+  const { router, pathname } = useUrl();
   const [isPending, startTransition] = useTransition();
   const productId = useProdAddToCartStore((state) => state.productId);
   const firstAttrId = useProdAddToCartStore((state) => state.firstAttrId);
@@ -22,6 +26,10 @@ const ProdVariantWrapper = ({ children }: ProdVariantWrapperProps) => {
   const setHasError = useProdAddToCartStore((state) => state.setHasError);
 
   const handleAddToCart = () => {
+    if (!user) {
+      router.push(`/auth/signin?callbackUrl=${pathname}`);
+      return;
+    }
     if (hasTwoAttrs && (!firstAttrId || !secondAttrId)) return setHasError(true);
     if (!hasTwoAttrs && !firstAttrId) return setHasError(true);
     startTransition(() => {
@@ -38,6 +46,10 @@ const ProdVariantWrapper = ({ children }: ProdVariantWrapperProps) => {
   };
 
   const handlePurchaseNow = () => {
+    if (!user) {
+      router.push(`/auth/signin?callbackUrl=${pathname}`);
+      return;
+    }
     if (hasTwoAttrs && (!firstAttrId || !secondAttrId)) return setHasError(true);
     if (!hasTwoAttrs && !firstAttrId) return setHasError(true);
     startTransition(() => {
@@ -46,6 +58,8 @@ const ProdVariantWrapper = ({ children }: ProdVariantWrapperProps) => {
         firstAttrId,
         secondAttrId,
         quantity,
+      }).then((res) => {
+        if (res?.error) return toast.error(res.error);
       });
     });
   };
