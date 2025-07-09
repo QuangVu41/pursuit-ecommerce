@@ -49,7 +49,7 @@ const ProdInputQty = ({ prod }: ProdInputQtyProps) => {
           value={+quantity > totalQty ? totalQty : quantity}
           disabled={isDisabled}
           onChange={(e) => {
-            setQty(e.target.value);
+            setQty(+e.target.value > totalQty ? `${totalQty}` : e.target.value);
           }}
         />
         <Button

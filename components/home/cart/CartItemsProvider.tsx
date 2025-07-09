@@ -21,6 +21,7 @@ interface CartItemsStore {
   increaseQty: (id: string) => void;
   decreaseQty: (id: string) => void;
   deleteCartItem: (id: string) => void;
+  setIsPending: (isPending: boolean) => void;
   deleteManyCartItems: (ids: string[]) => void;
 }
 
@@ -37,6 +38,7 @@ const CartItemsProvider = ({ children, cartItems }: CartItemsProviderProps) => {
       isPending: false,
       cartItems,
       cartTotal: 0,
+      setIsPending: (isPending: boolean) => set({ isPending }),
       setQty: async (id: string, quantity: number) => {
         if (quantity < 1) {
           return get().deleteCartItem(id);

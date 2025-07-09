@@ -1,7 +1,7 @@
-import { prodDataItem } from '@/actions/payment';
-import { db } from '@/lib/db';
+import { ProdDataItemWithCart } from '@/actions/payment';
 import { Email } from '@/lib/email';
 import { stripe } from '@/lib/stripe';
+import { createOrder, createOrderFromCart } from '@/services/orders';
 import { OrderStatus } from '@prisma/client';
 import { headers } from 'next/headers';
 
@@ -23,7 +23,7 @@ export const POST = async (req: Request) => {
       case 'checkout.session.completed': {
         const session = event.data.object;
         const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent as string);
-        const prodData: prodDataItem[] = JSON.parse(session.metadata?.prodData as string);
+        const prodData: ProdDataItemWithCart[] = JSON.parse(session.metadata?.prodData as string);
 
         if (prodData && prodData.length > 0 && session.customer_details?.email) {
           await new Email(session.customer_details?.email).sendEmailProductPurchase(`
@@ -44,20 +44,40 @@ export const POST = async (req: Request) => {
           );
 
           if (session?.metadata?.userId) {
-            await db.order.create({
-              data: {
-                userId: session?.metadata?.userId as string,
-                platformFee: Number(session.metadata?.applicationFeeAmount),
-                total: paymentIntent.amount,
-                status: OrderStatus.completed,
-                orderItems: {
-                  create: prodData.map((data) => ({
-                    productVariantId: data.productVariantId,
-                    quantity: data.quantity,
-                  })),
+            if (!session.metadata.isOrderFromCart)
+              await createOrder({
+                data: {
+                  userId: session?.metadata?.userId as string,
+                  platformFee: Number(session.metadata?.applicationFeeAmount),
+                  total: +session.metadata.total,
+                  status: OrderStatus.completed,
+                  orderItems: {
+                    create: prodData.map((data) => ({
+                      productVariantId: data.productVariantId,
+                      quantity: data.quantity,
+                    })),
+                  },
                 },
-              },
-            });
+              });
+            else {
+              await createOrderFromCart(
+                prodData.map((data) => data.cartItemId),
+                {
+                  data: {
+                    userId: session?.metadata?.userId as string,
+                    platformFee: +session.metadata?.applicationFeeAmount,
+                    total: +session.metadata.total,
+                    status: OrderStatus.completed,
+                    orderItems: {
+                      create: prodData.map((data) => ({
+                        productVariantId: data.productVariantId,
+                        quantity: data.quantity,
+                      })),
+                    },
+                  },
+                }
+              );
+            }
           }
         }
         break;
@@ -66,7 +86,8 @@ export const POST = async (req: Request) => {
         console.log('Unhandled event type:', event.type);
       }
     }
-  } catch {
+  } catch (error) {
+    console.log(error);
     return new Response('Internal Server Error', { status: 500 });
   }
 

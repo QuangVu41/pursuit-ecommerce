@@ -12,6 +12,7 @@ import { UserCartItemsWithPayload } from '@/types/products';
 import CartTotal from '@/components/home/cart/CartTotal';
 import { useCartItemsStore } from '@/components/home/cart/CartItemsProvider';
 import { Checkbox } from '@/components/ui/checkbox';
+import { purchaseProductsInCart } from '@/actions/payment';
 
 interface CartDataTableProps {
   columns: ColumnDef<UserCartItemsWithPayload>[];
@@ -21,7 +22,9 @@ interface CartDataTableProps {
 const CartDataTable = ({ columns, data }: CartDataTableProps) => {
   const [rowSelection, setRowSelection] = useState({});
   const setCartTotal = useCartItemsStore((state) => state.setCartTotal);
+  const cartTotal = useCartItemsStore((state) => state.cartTotal);
   const isPending = useCartItemsStore((state) => state.isPending);
+  const setIsPending = useCartItemsStore((state) => state.setIsPending);
   const deleteManyCartItems = useCartItemsStore((state) => state.deleteManyCartItems);
 
   const table = useReactTable({
@@ -43,6 +46,23 @@ const CartDataTable = ({ columns, data }: CartDataTableProps) => {
       setCartTotal([]);
     }
   }, [rowSelection, setCartTotal, table, data]);
+
+  const handlePurchaseNow = () => {
+    setIsPending(true);
+    const cartItemPayload = table.getSelectedRowModel().rows.map((row) => ({
+      productVariantId: row.original.productVariantId,
+      cartItemId: row.original.id,
+      accountFund: row.original.productVariant.price * row.original.quantity,
+      quantity: row.original.quantity,
+      prodName: row.original.productVariant.product.name,
+      unit_amount: row.original.productVariant.price,
+      description: row.original.productVariant.product.summary,
+      images: row.original.productVariant.imageUrl || row.original.productVariant.product.productImages[0].imageUrl,
+    }));
+    purchaseProductsInCart(cartTotal, cartItemPayload).finally(() => {
+      setIsPending(false);
+    });
+  };
 
   return (
     <div className='w-full'>
@@ -118,6 +138,7 @@ const CartDataTable = ({ columns, data }: CartDataTableProps) => {
           <Button
             disabled={!Object.keys(rowSelection).length || isPending}
             className='rounded-none text-base md:text-lg h-auto px-6 py-2 md:px-9 md:py-3'
+            onClick={handlePurchaseNow}
           >
             Purchase Now
           </Button>
