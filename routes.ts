@@ -25,4 +25,4 @@ export const apiAuthPrefix = '/api/auth';
  */
 export const DEFAULT_LOGIN_REDIRECT = '/';
 
-export const secretRoutes = ['/cart', '/billing', '/profile', '/payment', '/return', '/mng', '/orders'];
+export const secretRoutes = ['/cart', '/billing', '/profile', '/payment', '/return', '/mng'];

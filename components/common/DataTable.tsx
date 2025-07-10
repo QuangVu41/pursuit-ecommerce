@@ -31,6 +31,7 @@ interface DataTableProps<TData extends { id: string }, TValue> {
     originalSelectedRows: string[]
   ) => Promise<{ success?: string; error?: string } | void>;
   showPagination?: boolean;
+  showDeleteButton?: boolean;
 }
 
 const DataTable = <TData extends { id: string }, TValue>({
@@ -42,6 +43,7 @@ const DataTable = <TData extends { id: string }, TValue>({
   count,
   handleDeleteSelectedRowsServer,
   showPagination = false,
+  showDeleteButton = true,
 }: DataTableProps<TData, TValue>) => {
   const [isPending, startTransition] = useTransition();
   const [rowSelection, setRowSelection] = useState({});
@@ -73,38 +75,42 @@ const DataTable = <TData extends { id: string }, TValue>({
             className='max-w-sm bg-background'
           />
         )}
-        <ModalPopup
-          title='Delete Rows'
-          content={
-            <DeleteConfirm
-              clientAction={() => {
-                handleDeleteSelectedRows?.(rowSelection);
-                startTransition(() => {
-                  handleDeleteSelectedRowsServer?.(table.getSelectedRowModel().rows.map((row) => row.original.id)).then(
-                    (res) => {
-                      if (res?.error) toast.error(res.error);
-                      if (res?.success) toast.success(res.success);
-                    }
-                  );
-                });
-                setRowSelection({});
-              }}
-              confirmText='Are you sure you want to delete these rows?'
-            />
-          }
-        >
-          <Button
-            type='button'
-            variant='destructive'
-            size='icon'
-            disabled={!Object.keys(rowSelection).length || isPending}
-          >
-            <Trash2 />
-          </Button>
-        </ModalPopup>
-        <div className='text-sm text-muted-foreground font-manrope ml-auto shrink-0 h-9 flex items-end'>
-          {table.getFilteredSelectedRowModel().rows.length} of {count} row(s) selected.
-        </div>
+        {showDeleteButton && (
+          <>
+            <ModalPopup
+              title='Delete Rows'
+              content={
+                <DeleteConfirm
+                  clientAction={() => {
+                    handleDeleteSelectedRows?.(rowSelection);
+                    startTransition(() => {
+                      handleDeleteSelectedRowsServer?.(
+                        table.getSelectedRowModel().rows.map((row) => row.original.id)
+                      ).then((res) => {
+                        if (res?.error) toast.error(res.error);
+                        if (res?.success) toast.success(res.success);
+                      });
+                    });
+                    setRowSelection({});
+                  }}
+                  confirmText='Are you sure you want to delete these rows?'
+                />
+              }
+            >
+              <Button
+                type='button'
+                variant='destructive'
+                size='icon'
+                disabled={!Object.keys(rowSelection).length || isPending}
+              >
+                <Trash2 />
+              </Button>
+            </ModalPopup>
+            <div className='text-sm text-muted-foreground font-manrope ml-auto shrink-0 h-9 flex items-end'>
+              {table.getFilteredSelectedRowModel().rows.length} of {count} row(s) selected.
+            </div>
+          </>
+        )}
       </div>
       <div className='rounded-md border bg-background/70'>
         <Table>

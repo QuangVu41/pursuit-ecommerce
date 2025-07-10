@@ -25,7 +25,7 @@ const ProdSaleSection = async ({ products }: ProdSaleSectionProps) => {
           />
           <SectionContent className='flex flex-col gap-6 lg:gap-[30px]'>
             {saleBanner && <ProdSaleBanner bannerImages={saleBanner.bannerImages} />}
-            <ProdCarouselPreview products={products} buttonLink='/products' />
+            <ProdCarouselPreview products={products} buttonLink='/products' showNavBtn={false} />
           </SectionContent>
         </HomeSectionContainer>
       </>

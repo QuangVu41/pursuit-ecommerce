@@ -21,7 +21,7 @@ const AvatarDropdown = async () => {
       <DropdownMenuTrigger>
         {user ? (
           <Avatar>
-            <AvatarImage src={user.image || '/no-avatar-user.svg'} alt={user.name || 'User name'} />
+            <AvatarImage src={user.image || '/default-avatar.png'} alt={user.name || 'User name'} />
             <AvatarFallback className='text-home-primary'>
               {getUsernameFallback(user.name || 'User Name')}
             </AvatarFallback>

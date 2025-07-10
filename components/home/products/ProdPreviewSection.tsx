@@ -17,7 +17,7 @@ const ProdPreviewSection = ({ title, description, buttonLink, products }: ProdPr
       <HomeSectionContainer>
         <HomeSectionHeader title={title} description={description} buttonLink={buttonLink} />
         <SectionContent>
-          <ProdCarouselPreview products={products} buttonLink={buttonLink} />
+          <ProdCarouselPreview products={products} buttonLink={buttonLink} showNavBtn={false} />
         </SectionContent>
       </HomeSectionContainer>
     )

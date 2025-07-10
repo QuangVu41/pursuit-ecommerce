@@ -1,8 +1,9 @@
-import { ProdDataItemWithCart } from '@/actions/payment';
+import { ProdDataItem, ProdDataItemWithCart } from '@/actions/payment';
 import { Email } from '@/lib/email';
 import { stripe } from '@/lib/stripe';
 import { createOrder, createOrderFromCart } from '@/services/orders';
 import { OrderStatus } from '@prisma/client';
+import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
 export const POST = async (req: Request) => {
@@ -23,61 +24,79 @@ export const POST = async (req: Request) => {
       case 'checkout.session.completed': {
         const session = event.data.object;
         const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent as string);
-        const prodData: ProdDataItemWithCart[] = JSON.parse(session.metadata?.prodData as string);
 
-        if (prodData && prodData.length > 0 && session.customer_details?.email) {
-          await new Email(session.customer_details?.email).sendEmailProductPurchase(`
-          <p>Thank you for your purchase!</p>
-          <h1>Product Name: ${prodData[0].prodName}</h1>
-          <h2>Total Price: ${paymentIntent.amount}</h2>
-          `);
+        if (session.metadata && session.metadata.userId) {
+          if (!session.metadata.isOrderFromCart) {
+            const prodData: ProdDataItem = JSON.parse(session.metadata?.prodData as string);
+            if (session.customer_details?.email)
+              await new Email(session.customer_details?.email).sendEmailProductPurchase(`
+              <p>Thank you for your purchase!</p>
+              <h1>Product Name: ${prodData.prodName}</h1>
+              <h2>Total Price: ${paymentIntent.amount}</h2>
+              `);
 
-          await Promise.all(
-            prodData.map(async (data) => {
-              await stripe.transfers.create({
-                amount: data.accountFund,
-                currency: 'usd',
-                destination: data.accountId,
-                source_transaction: paymentIntent.latest_charge as string,
-              });
-            })
-          );
+            await stripe.transfers.create({
+              amount: prodData.accountFund,
+              currency: 'usd',
+              destination: prodData.accountId,
+              source_transaction: paymentIntent.latest_charge as string,
+            });
 
-          if (session?.metadata?.userId) {
-            if (!session.metadata.isOrderFromCart)
-              await createOrder({
+            await createOrder({
+              data: {
+                userId: session?.metadata?.userId as string,
+                total: +session.metadata.totalOrder,
+                status: OrderStatus.completed,
+                orderItems: {
+                  create: {
+                    productVariantId: prodData.productVariantId,
+                    quantity: prodData.quantity,
+                    platformFee: prodData.platformFee,
+                    total: prodData.totalOrderItem,
+                  },
+                },
+              },
+            });
+          } else {
+            const prodDataWithCart: ProdDataItemWithCart[] = Object.keys(session.metadata).reduce<
+              ProdDataItemWithCart[]
+            >((acc, key) => {
+              if (key.startsWith('prodData')) {
+                const item = JSON.parse(session.metadata![key]);
+                return [...acc, item];
+              }
+              return acc;
+            }, []);
+
+            await Promise.all(
+              prodDataWithCart.map(async (data) => {
+                await stripe.transfers.create({
+                  amount: data.accountFund,
+                  currency: 'usd',
+                  destination: data.accountId,
+                  source_transaction: paymentIntent.latest_charge as string,
+                });
+              })
+            );
+
+            await createOrderFromCart(
+              prodDataWithCart.map((data) => data.cartItemId),
+              {
                 data: {
                   userId: session?.metadata?.userId as string,
-                  platformFee: Number(session.metadata?.applicationFeeAmount),
-                  total: +session.metadata.total,
+                  total: +session.metadata.totalOrder,
                   status: OrderStatus.completed,
                   orderItems: {
-                    create: prodData.map((data) => ({
+                    create: prodDataWithCart.map((data) => ({
                       productVariantId: data.productVariantId,
                       quantity: data.quantity,
+                      platformFee: data.platformFee,
+                      total: data.totalOrderItem,
                     })),
                   },
                 },
-              });
-            else {
-              await createOrderFromCart(
-                prodData.map((data) => data.cartItemId),
-                {
-                  data: {
-                    userId: session?.metadata?.userId as string,
-                    platformFee: +session.metadata?.applicationFeeAmount,
-                    total: +session.metadata.total,
-                    status: OrderStatus.completed,
-                    orderItems: {
-                      create: prodData.map((data) => ({
-                        productVariantId: data.productVariantId,
-                        quantity: data.quantity,
-                      })),
-                    },
-                  },
-                }
-              );
-            }
+              }
+            );
           }
         }
         break;
@@ -91,5 +110,6 @@ export const POST = async (req: Request) => {
     return new Response('Internal Server Error', { status: 500 });
   }
 
+  revalidatePath('/');
   return new Response(null, { status: 200 });
 };

@@ -1,11 +1,14 @@
 import SearchNav from '@/components/home/header/SearchNav';
 import MainNav from '@/components/home/header/MainNav';
+import Container from '@/components/common/Container';
 
 const Header = () => {
   return (
-    <header className='flex flex-col bg-home-primary py-5 px-2 sm:px-6 md:py-7 lg:px-24 xl:px-32 lg:gap-y-7 md:gap-y-6'>
-      <SearchNav />
-      <MainNav />
+    <header className='bg-home-primary py-5 px-2'>
+      <Container className='flex flex-col lg:gap-y-7 md:gap-y-6'>
+        <SearchNav />
+        <MainNav />
+      </Container>
     </header>
   );
 };

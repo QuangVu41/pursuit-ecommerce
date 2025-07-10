@@ -18,6 +18,8 @@ export type ProdDataItem = {
   accountId: string;
   quantity: number;
   accountFund: number;
+  platformFee: number;
+  totalOrderItem: number;
 };
 
 export type ProdDataItemWithCart = ProdDataItem & {
@@ -35,9 +37,9 @@ export const purchaseProduct = catchAsync(async (data: AddToCartSchemaType) => {
   const { productId, firstAttrId, secondAttrId, quantity } = validatedFields.data;
   let prodVariant = await getProdVariantByAttrIds(productId, firstAttrId, secondAttrId);
   const applicationFeeAmount = prodVariant!.price * quantity * APP_FEE_AMOUNT;
-  const total = prodVariant!.price * quantity;
-  const accountFund = Math.round(await convertVndToUsd(prodVariant!.price * quantity - applicationFeeAmount)) * 100;
-  const prodPriceVnd = Math.round(await convertVndToUsd(prodVariant!.price)) * 100;
+  const totalOrder = prodVariant!.price * quantity;
+  const accountFund = Math.round(await convertVndToUsd(totalOrder - applicationFeeAmount)) * 100;
+  const prodPriceUsd = Math.round(await convertVndToUsd(prodVariant!.price)) * 100;
 
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
@@ -45,7 +47,7 @@ export const purchaseProduct = catchAsync(async (data: AddToCartSchemaType) => {
       {
         price_data: {
           currency: 'usd',
-          unit_amount: prodPriceVnd,
+          unit_amount: prodPriceUsd,
           product_data: {
             name: prodVariant?.product.name as string,
             description: prodVariant?.product.summary,
@@ -59,18 +61,18 @@ export const purchaseProduct = catchAsync(async (data: AddToCartSchemaType) => {
     ],
     payment_method_types: ['card'],
     metadata: {
-      prodData: JSON.stringify([
-        {
-          prodName: prodVariant?.product.name,
-          productVariantId: prodVariant?.id,
-          accountId: prodVariant?.product.user.connectedAccountId as string,
-          quantity,
-          accountFund,
-        },
-      ]),
+      prodData: JSON.stringify({
+        prodName: prodVariant?.product.name,
+        productVariantId: prodVariant?.id,
+        accountId: prodVariant?.product.user.connectedAccountId as string,
+        quantity,
+        accountFund,
+        platformFee: applicationFeeAmount,
+        totalOrderItem: totalOrder,
+      }),
       applicationFeeAmount,
       userId: user?.id as string,
-      total,
+      totalOrder,
     },
     success_url: `${process.env.APP_URL}/payment/success`,
     cancel_url: `${process.env.APP_URL}/payment/cancel`,
@@ -104,8 +106,9 @@ export const purchaseProductsInCart = catchAsync(
             connectedAccountId: true,
           },
         });
-        const accountFund =
-          Math.round(await convertVndToUsd(item.accountFund - item.accountFund * APP_FEE_AMOUNT)) * 100;
+        const totalOrderItem = item.accountFund;
+        const platformFee = item.accountFund * APP_FEE_AMOUNT;
+        const accountFund = Math.round(await convertVndToUsd(totalOrderItem - platformFee)) * 100;
 
         return {
           prodName: item.prodName,
@@ -114,10 +117,17 @@ export const purchaseProductsInCart = catchAsync(
           cartItemId: item.cartItemId,
           accountId: user?.connectedAccountId as string,
           accountFund,
+          totalOrderItem,
+          platformFee,
         };
       })
     );
-    const applicationFeeAmount = cartTotal * APP_FEE_AMOUNT;
+
+    const splittedProdDataWithCart = prodDataWithCart.reduce<{ [key: string]: string }>((acc, item, idx) => {
+      const key = `prodData${idx === 0 ? '' : idx}`;
+      if (!acc[key]) acc[key] = JSON.stringify(item);
+      return acc;
+    }, {});
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -137,10 +147,9 @@ export const purchaseProductsInCart = catchAsync(
       ),
       payment_method_types: ['card'],
       metadata: {
-        prodData: JSON.stringify(prodDataWithCart),
-        applicationFeeAmount,
+        ...splittedProdDataWithCart,
         userId: user?.id as string,
-        total: cartTotal,
+        totalOrder: cartTotal,
         isOrderFromCart: 1,
       },
       success_url: `${process.env.APP_URL}/payment/success`,

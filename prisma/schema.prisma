@@ -170,15 +170,14 @@ model CartItem {
 }
 
 model Order {
-  id          String      @id @default(cuid())
-  userId      String
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  total       Int
-  status      OrderStatus @default(pending)
-  platformFee Int
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  orderItems  OrderItem[]
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  total      Int
+  status     OrderStatus @default(pending)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  orderItems OrderItem[]
 
   @@map("orders")
 }
@@ -190,6 +189,8 @@ model OrderItem {
   productVariantId String
   productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
   quantity         Int
+  total            Int
+  platformFee      Int
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
 

@@ -1,4 +1,13 @@
-import { BadgeCheck, LayoutDashboard, Megaphone, Settings, ShoppingBag, Truck } from 'lucide-react';
+import {
+  BadgeCheck,
+  BadgeDollarSign,
+  CircleUserRound,
+  LayoutDashboard,
+  Megaphone,
+  Settings,
+  ShoppingBag,
+  Truck,
+} from 'lucide-react';
 
 export const sidebarMenu = [
   {
@@ -31,9 +40,9 @@ export const sidebarMenu = [
     icon: Megaphone,
   },
   {
-    label: 'Orders',
-    href: '/mng/orders',
-    icon: Truck,
+    label: 'Sales',
+    href: '/mng/sales',
+    icon: BadgeDollarSign,
   },
   {
     label: 'Settings',
@@ -45,8 +54,31 @@ export const sidebarMenu = [
 export const userMenu = [
   {
     label: 'Profile',
-    href: '/mng/profile',
+    href: '/profile',
     icon: BadgeCheck,
+  },
+];
+
+export const profileMenu = [
+  {
+    label: 'Manage Account',
+    links: [
+      {
+        label: 'Personal information',
+        href: '/profile',
+        icon: CircleUserRound,
+      },
+    ],
+  },
+  {
+    label: 'My Items',
+    links: [
+      {
+        label: 'My orders',
+        href: '/profile/orders',
+        icon: Truck,
+      },
+    ],
   },
 ];
 

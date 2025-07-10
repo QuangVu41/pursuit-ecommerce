@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 const CancelPage = () => {
   return (
-    <HomeSectionContainer className='flex items-center justify-center mb-10 md:mb-[60px]'>
+    <HomeSectionContainer ctnClassName='flex items-center justify-center mb-10 md:mb-[60px]'>
       <Card className='w-[350px] rounded-none'>
         <div className='p-6'>
           <div className='w-full flex justify-center'>

@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 const SuccessPage = () => {
   return (
-    <HomeSectionContainer className='flex items-center justify-center mb-10 md:mb-[60px]'>
+    <HomeSectionContainer ctnClassName='flex items-center justify-center mb-10 md:mb-[60px]'>
       <Card className='w-[350px] rounded-none'>
         <div className='p-6'>
           <div className='w-full flex justify-center'>
@@ -22,7 +22,7 @@ const SuccessPage = () => {
                 <Link href='/'>Back to Home page</Link>
               </Button>
               <Button variant='homeDefault' className='mt-5 sm:mt-6 flex-1  rounded-none' asChild>
-                <Link href='/orders'>Go to Order</Link>
+                <Link href='/profile/orders'>Go to Order</Link>
               </Button>
             </div>
           </div>
