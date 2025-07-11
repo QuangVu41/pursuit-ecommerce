@@ -26,7 +26,7 @@ const ProdReviewForm = ({ hasPurchased, hasReviewed, productId }: ProdReviewForm
   const form = useForm<ReviewSchemaType>({
     resolver: zodResolver(ReviewSchema),
     defaultValues: {
-      rating: 1,
+      rating: 5,
       title: '',
       content: '',
       productId,
@@ -94,7 +94,7 @@ const ProdReviewForm = ({ hasPurchased, hasReviewed, productId }: ProdReviewForm
         control={form.control}
         name='productId'
         render={({ field }) => (
-          <FormItem>
+          <FormItem className='hidden'>
             <FormControl>
               <InputHome {...field} type='text' hidden />
             </FormControl>

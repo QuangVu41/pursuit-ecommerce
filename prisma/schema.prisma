@@ -55,7 +55,7 @@ model User {
   connectedAccountId    String?            @unique
   stripeConnectedLinked Boolean            @default(false)
   orders                Order[]
-  review                Review?
+  reviews               Review[]
 
   @@map("users")
 }
@@ -269,7 +269,7 @@ model BannerImage {
 
 model Review {
   id        String   @id @default(cuid())
-  userId    String   @unique
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -279,5 +279,6 @@ model Review {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([userId, productId])
   @@map("reviews")
 }

@@ -7,10 +7,12 @@ export const hasReviewedProduct = async (productId: string) => {
 
   if (!user) return false;
 
-  const review = await db.review.findFirst({
+  const review = await db.review.findUnique({
     where: {
-      userId: user.id,
-      productId,
+      userId_productId: {
+        userId: user.id as string,
+        productId,
+      },
     },
   });
 
