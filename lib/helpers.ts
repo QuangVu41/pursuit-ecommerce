@@ -1,4 +1,4 @@
-import { formatDistanceToNow } from 'date-fns';
+import { differenceInHours, format, formatDistanceToNow } from 'date-fns';
 
 export const flattenNestedArray = <T>(items: T[], nestedKey: keyof T): T[] => {
   const result: T[] = [];
@@ -30,6 +30,23 @@ export const getUniqueBy = <T, K extends keyof T>(array: T[], key: K): T[] => {
 export const capitalizeFirstLetter = (str: string): string => {
   if (!str) return '';
   return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+export const formatDateSmart = (date: Date | string): string => {
+  const parsedDate = typeof date === 'string' ? new Date(date) : date;
+  const now = new Date();
+
+  // Check if the date is within the last 24 hours
+  const hoursAgo = differenceInHours(now, parsedDate);
+
+  if (hoursAgo < 24) {
+    // Use relative time format for dates within 24 hours
+    const distance = formatDistanceToNow(parsedDate, { addSuffix: false });
+    return capitalizeFirstLetter(distance); // "About 20 hours ago"
+  } else {
+    // Use absolute date format for dates older than 24 hours
+    return format(parsedDate, 'MMM d, yyyy'); // "Feb 5, 2020"
+  }
 };
 
 export const formatDistanceFromNow = (date: Date | string): string => {

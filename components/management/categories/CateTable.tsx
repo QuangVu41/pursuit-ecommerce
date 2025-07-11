@@ -1,6 +1,6 @@
 'use client';
 
-import { formatDistanceFromNow } from '@/lib/helpers';
+import { formatDateSmart } from '@/lib/helpers';
 import ActionBtns from '@/components/common/ActionBtns';
 import { deleteCate, deleteManyCates } from '@/actions/categories';
 import CateForm from './CateForm';
@@ -64,7 +64,7 @@ const CateTable = ({ categories, count }: CateTableProps) => {
     }),
     columnHelper.accessor('createdAt', {
       header: () => <BtnSort header='Date' sortBy='createdAt' />,
-      cell: (info) => formatDistanceFromNow(info.getValue()),
+      cell: (info) => <span className='lowercase'>{formatDateSmart(info.getValue())}</span>,
     }),
     columnHelper.display({
       id: 'actions',

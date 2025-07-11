@@ -879,3 +879,37 @@ export const setCartItemQty = async (id: string, quantity: number) => {
     },
   });
 };
+
+export const getNumProductsSold = async (productId: string) => {
+  const numSold = await db.orderItem.aggregate({
+    where: {
+      productVariant: {
+        productId,
+      },
+    },
+    _sum: {
+      quantity: true,
+    },
+  });
+
+  return numSold._sum.quantity || 0;
+};
+
+export const checkIfUserHasPurchasedProduct = async (productId: string) => {
+  const user = await getUserSession();
+  const userId = user?.id;
+  if (!userId) return false;
+
+  const orderItems = await db.orderItem.findMany({
+    where: {
+      productVariant: {
+        productId,
+      },
+      order: {
+        userId,
+      },
+    },
+  });
+
+  return orderItems.length > 0;
+};

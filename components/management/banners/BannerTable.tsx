@@ -3,7 +3,7 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import { createColumnHelper } from '@tanstack/react-table';
 import BtnSort from '@/components/management/filter/BtnSort';
-import { formatDistanceFromNow } from '@/lib/helpers';
+import { formatDateSmart } from '@/lib/helpers';
 import ActionBtns from '@/components/common/ActionBtns';
 import BannerForm from '@/components/management/banners/BannerForm';
 import DataTable from '@/components/common/DataTable';
@@ -51,7 +51,7 @@ const BannerTable = ({ banners, count }: BannerTableProps) => {
     }),
     columnHelper.accessor('createdAt', {
       header: () => <BtnSort header='Date' sortBy='createdAt' />,
-      cell: (info) => formatDistanceFromNow(info.getValue()),
+      cell: (info) => <span className='lowercase'>{formatDateSmart(info.getValue())}</span>,
     }),
     columnHelper.display({
       id: 'actions',

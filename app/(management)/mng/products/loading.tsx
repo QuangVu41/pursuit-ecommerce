@@ -1,7 +1,7 @@
 import TableSkeleton from '@/components/common/TableSkeleton';
 
-const ProdLoadingPage = () => {
+const LoadingPage = () => {
   return <TableSkeleton />;
 };
 
-export default ProdLoadingPage;
+export default LoadingPage;

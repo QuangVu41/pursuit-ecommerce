@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getUsernameFallback } from '@/lib/helpers';
-import { CircleUserRound, HandCoins, LayoutDashboard, LogIn, Receipt, User } from 'lucide-react';
+import { CircleUserRound, HandCoins, LayoutDashboard, LogIn, Receipt, Truck, User } from 'lucide-react';
 import Link from 'next/link';
 import DropdownItemLogoutBtn from '../../common/DropdownItemLogoutBtn';
 
@@ -21,7 +21,11 @@ const AvatarDropdown = async () => {
       <DropdownMenuTrigger>
         {user ? (
           <Avatar>
-            <AvatarImage src={user.image || '/default-avatar.png'} alt={user.name || 'User name'} />
+            <AvatarImage
+              src={user.image || '/default-avatar.png'}
+              alt={user.name || 'User name'}
+              className='object-cover'
+            />
             <AvatarFallback className='text-home-primary'>
               {getUsernameFallback(user.name || 'User Name')}
             </AvatarFallback>
@@ -67,6 +71,15 @@ const AvatarDropdown = async () => {
               <Link href='/profile'>
                 <User className='text-inherit' />
                 Profile
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              asChild
+              className='text-muted focus:text-muted focus:bg-home-primary-foreground rounded-none'
+            >
+              <Link href='/profile/orders'>
+                <Truck className='text-inherit' />
+                My Orders
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator className='bg-home-primary-foreground m-0' />

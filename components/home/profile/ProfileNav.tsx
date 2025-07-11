@@ -3,7 +3,7 @@ import ProfileNavList from '@/components/home/profile/ProfileNavList';
 
 const ProfileNav = () => {
   return (
-    <div className='rounded-lg overflow-hidden bg-muted'>
+    <div className='rounded-lg overflow-hidden bg-muted hidden 2md:block'>
       <ProfileAvatar />
       <ProfileNavList />
     </div>

@@ -64,7 +64,7 @@ export const profileMenu = [
     label: 'Manage Account',
     links: [
       {
-        label: 'Personal information',
+        label: 'Personal info',
         href: '/profile',
         icon: CircleUserRound,
       },

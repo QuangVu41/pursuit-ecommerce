@@ -9,10 +9,10 @@ const ProfileLayout = ({ children }: ProfileLayoutProps) => {
   return (
     <HomeSectionContainer className='mb-10 md:mt-[60px]'>
       <div className='grid grid-cols-12 gap-x-4'>
-        <div className='col-span-3'>
+        <div className='2md:col-span-3'>
           <ProfileNav />
         </div>
-        <div className='col-span-9'>{children}</div>
+        <div className='col-span-12 2md:col-span-9'>{children}</div>
       </div>
     </HomeSectionContainer>
   );

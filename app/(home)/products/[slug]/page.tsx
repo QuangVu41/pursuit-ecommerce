@@ -5,6 +5,7 @@ import ProdBreadcrumbNav from '@/components/home/products/ProdBreadcrumbNav';
 import ProdDescription from '@/components/home/products/ProdDescription';
 import ProdImgPreviewProvider from '@/components/home/products/ProdImagePreviewProvider';
 import ProdImgPreview from '@/components/home/products/ProdImgPreview';
+import ProdReviews from '@/components/home/products/ProdReviews';
 import ProdReviewSection from '@/components/home/products/ProdReviewSection';
 import ProdSimilarProducts from '@/components/home/products/ProdSimilarProducts';
 import ProdSummary from '@/components/home/products/ProdSummary';
@@ -23,10 +24,11 @@ const ProductPage = async ({ params }: ProductPageProps) => {
   let { slug } = await params;
   slug = decodeURIComponent(slug);
   const product = await getProductBySlug(slug);
-  const mainImg = product?.productImages.find((img) => img.isPrimary);
-  const similarProducts = await getSimilarProducts(product?.categoryId, product?.id);
 
   if (!product) return notFound();
+
+  const mainImg = product.productImages.find((img) => img.isPrimary);
+  const similarProducts = await getSimilarProducts(product.categoryId, product.id);
 
   return (
     <HomeSectionContainer>
@@ -42,9 +44,12 @@ const ProductPage = async ({ params }: ProductPageProps) => {
               <ProdImgPreview prodImgs={product!.productImages} />
               <ProdSummary prod={product as ProductWithPayLoad} />
             </div>
-            <ProdDescription desc={product.description} />
-            <ProdReviewSection />
-            <ProdSimilarProducts prods={similarProducts} />
+            <div className='flex flex-col mt-8 gap-y-8'>
+              <ProdDescription desc={product.description} />
+              <ProdReviewSection productId={product.id} />
+              <ProdReviews productId={product.id} />
+              <ProdSimilarProducts prods={similarProducts} />
+            </div>
           </SectionContent>
         </ProdImgPreviewProvider>
       </ProdAddToCartProvider>

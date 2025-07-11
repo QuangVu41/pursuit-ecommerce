@@ -3,7 +3,7 @@ import Empty from '@/components/common/Empty';
 import Heading from '@/components/common/Heading';
 import PaginationBtns from '@/components/common/PaginationBtns';
 import FilterHeader from '@/components/management/filter/FilterHeader';
-import OrderTable from '@/components/management/sales/SaleTable';
+import SaleTable from '@/components/management/sales/SaleTable';
 import { formatCurrency } from '@/lib/helpers';
 import { getSellerFilteredSales, getTotalSellerSales } from '@/services/orders';
 
@@ -30,7 +30,7 @@ const OrdersPage = async ({ searchParams }: OrdersPageProps) => {
       </FilterHeader>
       {sales.length ? (
         <>
-          <OrderTable sales={sales} count={count} />
+          <SaleTable sales={sales} count={count} />
           <PaginationBtns searchParams={queryParams} count={count!} segment='/mng/orders' />
         </>
       ) : (

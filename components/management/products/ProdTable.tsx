@@ -3,7 +3,7 @@
 import ActionBtns from '@/components/common/ActionBtns';
 import DataTable from '@/components/common/DataTable';
 import { Checkbox } from '@/components/ui/checkbox';
-import { formatCurrency, formatDistanceFromNow } from '@/lib/helpers';
+import { formatCurrency, formatDateSmart } from '@/lib/helpers';
 import { ProductWithCateAndPrImg } from '@/types/products';
 import { createColumnHelper } from '@tanstack/react-table';
 import BtnSort from '@/components/management/filter/BtnSort';
@@ -70,7 +70,7 @@ const ProdTable = ({ products, count }: ProdTableProps) => {
     }),
     columnHelper.accessor('createdAt', {
       header: () => <BtnSort header='Date' sortBy='createdAt' />,
-      cell: (info) => formatDistanceFromNow(info.getValue()),
+      cell: (info) => <span className='lowercase'>{formatDateSmart(info.getValue())}</span>,
     }),
     columnHelper.display({
       id: 'actions',

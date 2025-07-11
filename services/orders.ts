@@ -1,7 +1,7 @@
 import { getUserSession } from '@/auth';
 import { db } from '@/lib/db';
 import FilterApi from '@/lib/filter';
-import { OrderItemWithPayload } from '@/types/orders';
+import { OrderItemWithPayload, OrderWithPayload } from '@/types/orders';
 import { Prisma } from '@prisma/client';
 
 export const createOrder = async (orderData: Prisma.OrderCreateArgs) => {
@@ -77,6 +77,25 @@ export const getSellerFilteredSales = async (searchParams: { [key: string]: stri
           select: {
             name: true,
             slug: true,
+            productImages: {
+              where: {
+                isPrimary: true,
+              },
+              select: {
+                imageUrl: true,
+                altText: true,
+              },
+            },
+          },
+        },
+        firstAttr: {
+          select: {
+            name: true,
+          },
+        },
+        secondAttr: {
+          select: {
+            name: true,
           },
         },
       },
@@ -124,4 +143,50 @@ export const getTotalSellerSales = async (searchParams: { [key: string]: string 
   return (
     (totalSales._sum.total && totalSales._sum.platformFee && totalSales._sum.total - totalSales._sum.platformFee) || 0
   );
+};
+
+export const getAllUserFilteredOrders = async (searchParams: { [key: string]: string }) => {
+  const user = await getUserSession();
+  if (!user) throw new Error('Unauthenticated!');
+
+  const { from, to } = searchParams;
+  const where: Prisma.OrderWhereInput = {
+    createdAt: {
+      gte: from ? new Date(from) : undefined,
+      lte: to ? new Date(to) : undefined,
+    },
+  };
+  const include: Prisma.OrderInclude = {
+    orderItems: {
+      select: {
+        productVariant: {
+          select: {
+            imageUrl: true,
+            altText: true,
+            product: {
+              select: {
+                name: true,
+                productImages: {
+                  where: {
+                    isPrimary: true,
+                  },
+                },
+                slug: true,
+              },
+            },
+          },
+        },
+        quantity: true,
+      },
+    },
+  };
+
+  const { data, count } = await new FilterApi<OrderWithPayload, Prisma.OrderFindManyArgs>('order', searchParams)
+    .where(where)
+    .sort()
+    .paginate()
+    .include(include)
+    .execute();
+
+  return { orders: data, count };
 };

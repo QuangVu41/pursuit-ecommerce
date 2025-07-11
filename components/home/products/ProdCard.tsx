@@ -6,13 +6,18 @@ import { ProductWithCateAndPrimaryImg } from '@/types/products';
 import { formatCurrency, getDateInPast } from '@/lib/helpers';
 import { NUM_DAYS_PRODUCT_NEW } from '@/lib/constants';
 import { cn } from '@/lib/utils';
+import { getNumProductsSold } from '@/services/products';
+import { getAverageRating } from '@/services/reviews';
 
 interface ProdCardProps {
   prod: ProductWithCateAndPrimaryImg;
   className?: string;
 }
 
-const ProdCard = ({ prod, className }: ProdCardProps) => {
+const ProdCard = async ({ prod, className }: ProdCardProps) => {
+  const numSold = await getNumProductsSold(prod.id);
+  const avgRating = await getAverageRating(prod.id);
+
   return (
     <Link href={`/products/${prod.slug}`}>
       <Card className={cn('border-0 rounded-none p-2 gap-y-2 shadow-md hover:shadow-lg transition-shadow', className)}>
@@ -43,9 +48,10 @@ const ProdCard = ({ prod, className }: ProdCardProps) => {
             </span>
             <div className='flex items-center font-medium gap-x-1'>
               <span className='flex items-center gap-x-0.5'>
-                <Image src={starSvg} alt='star' className='size-4' />0
+                <Image src={starSvg} alt='star' className='size-4' />
+                {avgRating.toFixed(1)}
               </span>
-              |<span>Sold 0</span>
+              |<span>Sold {numSold}</span>
             </div>
           </div>
         </CardContent>

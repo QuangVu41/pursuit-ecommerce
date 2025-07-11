@@ -8,7 +8,7 @@ import AttrForm from './AttrForm';
 import AttrFormProvider from './AttrFormProvider';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTable from '@/components/common/DataTable';
-import { formatDistanceFromNow } from '@/lib/helpers';
+import { formatDateSmart } from '@/lib/helpers';
 import { Checkbox } from '@/components/ui/checkbox';
 import BtnSort from '../filter/BtnSort';
 
@@ -51,7 +51,7 @@ const AttrTable = ({ attributes, count }: AttrTableProps) => {
     }),
     columnHelper.accessor('createdAt', {
       header: () => <BtnSort header='Date' sortBy='createdAt' />,
-      cell: (info) => formatDistanceFromNow(info.getValue()),
+      cell: (info) => <span className='lowercase'>{formatDateSmart(info.getValue())}</span>,
     }),
     columnHelper.display({
       id: 'actions',
