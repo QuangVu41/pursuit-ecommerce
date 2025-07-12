@@ -6,53 +6,9 @@ import FilterApi from '@/lib/filter';
 import { generateOrQueryForSearch, getDateInPast, nameToSlug } from '@/lib/helpers';
 import { deleteFromS3, uploadToS3 } from '@/lib/upload';
 import { AddToCartSchemaType, ProdFormSchemaType, ProdVariantSchemaType } from '@/schemas/products';
-import { ProductWithCateAndImg, ProductWithCateAndPrImg } from '@/types/products';
+import { ProductWithCateAndImg, ProductWithCateAndPrimaryImg, ProductWithCateAndPrImg } from '@/types/products';
 import { Prisma } from '@prisma/client';
 import { randomUUID } from 'crypto';
-
-export const getAllFilteredProducts = async (searchParams: { [key: string]: string }) => {
-  let { minPrice, maxPrice, category, query } = searchParams;
-
-  const where: Prisma.ProductWhereInput = {
-    OR: generateOrQueryForSearch(query, 'name'),
-    category: category
-      ? {
-          OR: [
-            {
-              id: category ? category : undefined,
-            },
-            {
-              parentId: category ? category : undefined,
-            },
-          ],
-        }
-      : undefined,
-    regularPrice: {
-      gte: minPrice ? parseInt(minPrice) : undefined,
-      lte: maxPrice ? parseInt(maxPrice) : undefined,
-    },
-  };
-  const include: Prisma.ProductInclude = {
-    category: true,
-    productImages: {
-      where: {
-        isPrimary: true,
-      },
-    },
-  };
-
-  const { data, count } = await new FilterApi<ProductWithCateAndImg, Prisma.ProductFindManyArgs>(
-    'product',
-    searchParams
-  )
-    .where(where)
-    .sort()
-    .paginate()
-    .include(include)
-    .execute();
-
-  return { products: data, count };
-};
 
 export const getProductBySlug = async (slug: string) => {
   const product = await db.product.findUnique({
@@ -113,18 +69,79 @@ export const getBestSellingProductImages = async () => {
 };
 
 export const getRatedProducts = async () => {
-  const products = await db.product.findMany({
+  const reviews = await db.review.findMany({
     include: {
+      product: {
+        include: {
+          productImages: {
+            where: {
+              isPrimary: true,
+            },
+          },
+          category: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      rating: 'desc',
+    },
+  });
+
+  return reviews
+    .map((review) => review.product)
+    .reduce<ProductWithCateAndPrimaryImg[]>((acc, prod) => {
+      if (!acc.some((p) => p.id === prod.id)) {
+        acc.push(prod);
+        return acc;
+      }
+      return acc;
+    }, []);
+};
+
+export const getBestSellingProducts = async () => {
+  const bestSellingProducts = await db.product.findMany({
+    include: {
+      productVariants: {
+        include: {
+          orderItems: true,
+        },
+      },
       productImages: {
         where: {
           isPrimary: true,
         },
       },
-      category: true,
+      category: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
 
-  return products;
+  // Calculate total sales for each product
+  const productsWithSales = bestSellingProducts.map((product) => {
+    const totalQuantitySold = product.productVariants.reduce((total, variant) => {
+      return (
+        total +
+        variant.orderItems.reduce((variantTotal, orderItem) => {
+          return variantTotal + orderItem.quantity;
+        }, 0)
+      );
+    }, 0);
+
+    return {
+      ...product,
+      totalQuantitySold,
+    };
+  });
+
+  // Sort by quantity sold and return top products
+  return productsWithSales.sort((a, b) => b.totalQuantitySold - a.totalQuantitySold).map((prod) => prod);
 };
 
 export const getNewProducts = async () => {
@@ -147,6 +164,94 @@ export const getNewProducts = async () => {
   });
 
   return products;
+};
+
+export const getAllFilteredProducts = async (searchParams: { [key: string]: string }) => {
+  let { minPrice, maxPrice, category, query, sortBy } = searchParams;
+
+  const where: Prisma.ProductWhereInput = {
+    OR: generateOrQueryForSearch(query, 'name'),
+    category: category
+      ? {
+          OR: [
+            {
+              id: category ? category : undefined,
+            },
+            {
+              parentId: category ? category : undefined,
+            },
+          ],
+        }
+      : undefined,
+    regularPrice: {
+      gte: minPrice ? parseInt(minPrice) : undefined,
+      lte: maxPrice ? parseInt(maxPrice) : undefined,
+    },
+  };
+  const include: Prisma.ProductInclude = {
+    category: true,
+    productImages: {
+      where: {
+        isPrimary: true,
+      },
+    },
+    productVariants: {
+      include: {
+        orderItems: {
+          select: {
+            quantity: true,
+          },
+        },
+      },
+    },
+    reviews: {
+      select: {
+        rating: true,
+      },
+    },
+  };
+
+  let { data, count } = await new FilterApi<ProductWithCateAndImg, Prisma.ProductFindManyArgs>('product', searchParams)
+    .where(where)
+    .sort()
+    .paginate()
+    .include(include)
+    .execute();
+
+  if (sortBy === 'best-selling') {
+    data = data
+      .map((product) => {
+        const totalQuantitySold = product.productVariants.reduce((total, variant) => {
+          return (
+            total +
+            variant.orderItems.reduce((variantTotal, orderItem) => {
+              return variantTotal + orderItem.quantity;
+            }, 0)
+          );
+        }, 0);
+
+        return {
+          ...product,
+          totalQuantitySold,
+        };
+      })
+      .sort((a, b) => b.totalQuantitySold - a.totalQuantitySold)
+      .map((prod) => prod);
+  } else if (sortBy === 'rated') {
+    data = data
+      .map((product) => {
+        const totalRating = product.reviews.reduce((total, review) => total + review.rating, 0);
+        const averageRating = totalRating / (product.reviews.length || 1);
+        return {
+          ...product,
+          averageRating,
+        };
+      })
+      .sort((a, b) => b.averageRating - a.averageRating)
+      .map((prod) => prod);
+  }
+
+  return { products: data, count };
 };
 
 export const getProductByName = async (name: string) => {

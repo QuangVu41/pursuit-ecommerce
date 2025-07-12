@@ -158,7 +158,7 @@ const BannerForm = ({ mode, banner }: BannerFormProps) => {
         handleRemoveImage={handleRemoveImage}
         isPending={isPending}
       />
-      <Button className='w-full lg:h-[52px] h-12 text-lg bg-primary' disabled={isPending}>
+      <Button className='w-full text-base bg-primary' disabled={isPending}>
         {mode === 'create' ? 'Create' : 'Save Changes'}
       </Button>
     </FormWrapper>

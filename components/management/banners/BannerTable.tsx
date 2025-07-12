@@ -44,7 +44,10 @@ const BannerTable = ({ banners, count }: BannerTableProps) => {
     columnHelper.accessor('type', {
       header: () => <BtnSort header='Type' sortBy='type' />,
       cell: (info) => (
-        <Badge className={`text-base ${info.getValue() === BannerType.hero ? 'bg-green-600' : 'bg-yellow-500'}`}>
+        <Badge
+          variant='outline'
+          className={`text-sm ${info.getValue() === BannerType.hero ? 'text-green-600' : 'text-yellow-500'}`}
+        >
           {info.getValue()}
         </Badge>
       ),

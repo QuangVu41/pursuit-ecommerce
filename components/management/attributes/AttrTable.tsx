@@ -11,6 +11,7 @@ import DataTable from '@/components/common/DataTable';
 import { formatDateSmart } from '@/lib/helpers';
 import { Checkbox } from '@/components/ui/checkbox';
 import BtnSort from '../filter/BtnSort';
+import { Badge } from '@/components/ui/badge';
 
 interface AttrTableProps {
   attributes: ProductAttributeWithValues[];
@@ -44,8 +45,12 @@ const AttrTable = ({ attributes, count }: AttrTableProps) => {
     columnHelper.accessor('productAttributeValues', {
       header: () => 'Values',
       cell: ({ row }) => (
-        <span className='truncate'>
-          {(row.original.productAttributeValues as ProductAttributeValue[]).map((val) => val.name).join(', ')}
+        <span className='truncate flex items-center gap-x-0.5'>
+          {(row.original.productAttributeValues as ProductAttributeValue[]).map((val) => (
+            <Badge className='text-sm' key={val.id} variant='outline'>
+              {val.name}
+            </Badge>
+          ))}
         </span>
       ),
     }),

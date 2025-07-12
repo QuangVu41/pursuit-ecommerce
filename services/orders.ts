@@ -2,7 +2,8 @@ import { getUserSession } from '@/auth';
 import { db } from '@/lib/db';
 import FilterApi from '@/lib/filter';
 import { OrderItemWithPayload, OrderWithPayload } from '@/types/orders';
-import { Prisma } from '@prisma/client';
+import { OrderStatus, Prisma } from '@prisma/client';
+import { subDays } from 'date-fns';
 
 export const createOrder = async (orderData: Prisma.OrderCreateArgs) => {
   const order = await db.order.create({
@@ -57,12 +58,12 @@ export const createOrderFromCart = async (cartItemIds: string[], orderData: Pris
 export const getSellerFilteredSales = async (searchParams: { [key: string]: string }) => {
   const user = await getUserSession();
   if (!user) throw new Error('Unauthenticated!');
+  const { sortBy = '7' } = searchParams;
 
-  const { from, to } = searchParams;
   const where: Prisma.OrderItemWhereInput = {
     createdAt: {
-      gte: from ? new Date(from) : undefined,
-      lte: to ? new Date(to) : undefined,
+      gte: subDays(new Date(), parseInt(sortBy)),
+      lte: new Date(),
     },
     productVariant: {
       product: {
@@ -189,4 +190,94 @@ export const getAllUserFilteredOrders = async (searchParams: { [key: string]: st
     .execute();
 
   return { orders: data, count };
+};
+
+export const getAllUserSales = async (searchParams: { [key: string]: string }) => {
+  const user = await getUserSession();
+  if (!user) throw new Error('Unauthenticated!');
+
+  const { sortBy = '7' } = searchParams;
+
+  const orderItems = await db.orderItem.findMany({
+    where: {
+      order: {
+        status: OrderStatus.completed,
+      },
+      productVariant: {
+        product: {
+          userId: user?.id,
+        },
+      },
+      createdAt: {
+        gte: subDays(new Date(), parseInt(sortBy)),
+        lte: new Date(),
+      },
+    },
+  });
+
+  return orderItems;
+};
+
+export const getTotalRevenue = async (searchParams: { [key: string]: string } = {}) => {
+  const user = await getUserSession();
+  let { sortBy = '7' } = searchParams;
+
+  const where: Prisma.OrderItemWhereInput = {
+    order: {
+      status: OrderStatus.completed,
+    },
+    productVariant: {
+      product: {
+        userId: user?.id,
+      },
+    },
+    createdAt: {
+      gte: subDays(new Date(), parseInt(sortBy)),
+      lte: new Date(),
+    },
+  };
+
+  const totalRevenue = await db.orderItem.aggregate({
+    _sum: {
+      total: true,
+      platformFee: true,
+    },
+    where,
+  });
+
+  return (
+    (totalRevenue._sum.total &&
+      totalRevenue._sum.platformFee &&
+      totalRevenue._sum.total - totalRevenue._sum.platformFee) ||
+    0
+  );
+};
+
+export const getTotalOrders = async (searchParams: { [key: string]: string }) => {
+  const user = await getUserSession();
+  let { sortBy = '7' } = searchParams;
+
+  const where: Prisma.OrderItemWhereInput = {
+    order: {
+      status: OrderStatus.completed,
+    },
+    productVariant: {
+      product: {
+        userId: user?.id,
+      },
+    },
+    createdAt: {
+      gte: subDays(new Date(), parseInt(sortBy)),
+      lte: new Date(),
+    },
+  };
+
+  const totalRevenue = await db.orderItem.aggregate({
+    _sum: {
+      quantity: true,
+    },
+    where,
+  });
+
+  return totalRevenue._sum.quantity || 0;
 };

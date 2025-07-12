@@ -8,7 +8,6 @@ import { ProductWithCateAndPrImg } from '@/types/products';
 import { createColumnHelper } from '@tanstack/react-table';
 import BtnSort from '@/components/management/filter/BtnSort';
 import { deleteManyProds, deleteProd } from '@/actions/products';
-import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 
 interface ProdTableProps {
@@ -38,7 +37,7 @@ const ProdTable = ({ products, count }: ProdTableProps) => {
     }),
     columnHelper.accessor('name', {
       header: () => <BtnSort header='Name' sortBy='name' />,
-      cell: (info) => <span className='w-72 truncate block'>{info.getValue()}</span>,
+      cell: (info) => <span className='w-44 truncate block'>{info.getValue()}</span>,
     }),
     columnHelper.accessor('productImages', {
       header: () => 'Image',
@@ -57,15 +56,15 @@ const ProdTable = ({ products, count }: ProdTableProps) => {
     columnHelper.accessor('regularPrice', {
       header: () => <BtnSort header='Price' sortBy='regularPrice' />,
       cell: (info) => (
-        <Badge className='text-base flex items-center bg-green-400 dark:bg-green-500'>
+        <span className='text-base font-semibold flex items-center text-green-400 dark:text-green-500'>
           {formatCurrency('VND', info.getValue())}
-        </Badge>
+        </span>
       ),
     }),
     columnHelper.accessor('category', {
       header: () => 'Category',
       cell: ({ row }) => (
-        <Badge className='text-base bg-amber-500 dark:bg-amber-700'>{row.original.category.name}</Badge>
+        <span className='text-base font-semibold text-amber-500 dark:text-amber-700'>{row.original.category.name}</span>
       ),
     }),
     columnHelper.accessor('createdAt', {

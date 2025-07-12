@@ -5,9 +5,7 @@ import DataTable from '@/components/common/DataTable';
 import { formatCurrency, formatDateSmart } from '@/lib/helpers';
 import BtnSort from '@/components/management/filter/BtnSort';
 import { OrderItemWithPayload } from '@/types/orders';
-import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
 interface SaleTableProps {
@@ -21,9 +19,9 @@ const SaleTable = ({ sales, count }: SaleTableProps) => {
     columnHelper.accessor('productVariant.product.name', {
       header: () => 'Product Name',
       cell: (info) => (
-        <Button variant='link' className='text-base' asChild>
-          <Link href={`/products/${info.row.original.productVariant.product.slug}`}>{info.getValue()}</Link>
-        </Button>
+        <Link href={`/products/${info.row.original.productVariant.product.slug}`} className='w-44 truncate block'>
+          {info.getValue()}
+        </Link>
       ),
     }),
     columnHelper.accessor('productVariant.imageUrl', {
@@ -45,39 +43,41 @@ const SaleTable = ({ sales, count }: SaleTableProps) => {
     }),
     columnHelper.accessor('quantity', {
       header: () => 'Quantity',
-      cell: (info) => <Badge className='bg-amber-500 text-base lowercase'>x{info.getValue()}</Badge>,
+      cell: (info) => <span className='text-amber-500 font-semibold text-base lowercase'>x{info.getValue()}</span>,
     }),
     columnHelper.accessor('orderId', {
       header: () => 'Variant',
       cell: (info) => (
-        <Badge className='text-base'>
+        <span className='text-base text-primary font-semibold'>
           {info.row.original.productVariant.firstAttr.name}
           {info.row.original.productVariant.secondAttr ? ` - ${info.row.original.productVariant.secondAttr.name}` : ''}
-        </Badge>
+        </span>
       ),
     }),
     columnHelper.accessor('productVariant.price', {
       header: () => 'Unit Price',
-      cell: (info) => <Badge className='bg-gray-500 text-base'>{formatCurrency('VND', info.getValue())}</Badge>,
+      cell: (info) => (
+        <span className='text-gray-500 font-semibold text-base'>{formatCurrency('VND', info.getValue())}</span>
+      ),
     }),
     columnHelper.accessor('total', {
       header: () => 'Total Price',
-      cell: (info) => <Badge className='bg-blue-500 text-base'>{formatCurrency('VND', info.getValue())}</Badge>,
+      cell: (info) => (
+        <span className='text-blue-500 font-semibold text-base'>{formatCurrency('VND', info.getValue())}</span>
+      ),
     }),
     columnHelper.accessor('platformFee', {
       header: () => 'Platform Fee',
       cell: (info) => (
-        <Badge variant='destructive' className='text-base'>
-          {formatCurrency('VND', info.getValue())}
-        </Badge>
+        <span className='text-base text-destructive font-semibold'>{formatCurrency('VND', info.getValue())}</span>
       ),
     }),
     columnHelper.accessor('id', {
       header: () => 'Receipt',
       cell: (info) => (
-        <Badge className='bg-green-500 text-base'>
+        <span className='text-green-500 font-semibold text-base'>
           {formatCurrency('VND', info.row.original.total - info.row.original.platformFee)}
-        </Badge>
+        </span>
       ),
     }),
     columnHelper.accessor('createdAt', {

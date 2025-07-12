@@ -29,3 +29,21 @@ export const sortCriteria: {
     order: 'desc',
   },
 ];
+
+export const dashboardSortBy = [
+  {
+    label: 'Last 7 days',
+    query: '7',
+    isDefault: true,
+  },
+  {
+    label: 'Last 30 days',
+    query: '30',
+    isDefault: false,
+  },
+  {
+    label: 'Last 90 days',
+    query: '90',
+    isDefault: false,
+  },
+];

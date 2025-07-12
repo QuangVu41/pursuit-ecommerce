@@ -170,12 +170,7 @@ const ProdVariantEditForm = ({ variant }: ProdVariantEditFormProps) => {
           <input ref={inputFileRef} type='file' id='image' hidden onChange={handleFieldChange} name='imageFile' />
         </figure>
       </FieldWithLabel>
-      <Button
-        className='w-full lg:h-[52px] h-12 text-lg'
-        type='button'
-        onClick={handleSaveChanges}
-        disabled={isPending}
-      >
+      <Button className='w-full text-base' type='button' onClick={handleSaveChanges} disabled={isPending}>
         Save Changes
       </Button>
     </div>

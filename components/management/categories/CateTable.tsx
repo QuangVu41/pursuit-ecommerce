@@ -10,7 +10,6 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
 import DataTable from '@/components/common/DataTable';
 import BtnSort from '../filter/BtnSort';
-import { Badge } from '@/components/ui/badge';
 import { CateWithParentCate } from '@/types/categories';
 import { Minus } from 'lucide-react';
 import Image from 'next/image';
@@ -42,7 +41,9 @@ const CateTable = ({ categories, count }: CateTableProps) => {
     }),
     columnHelper.accessor('name', {
       header: () => <BtnSort header='Name' sortBy='name' />,
-      cell: (info) => <Badge className='text-base bg-amber-500 dark:bg-amber-700'>{info.getValue()}</Badge>,
+      cell: (info) => (
+        <span className='text-base font-semibold text-amber-500 dark:text-amber-700'>{info.getValue()}</span>
+      ),
     }),
     columnHelper.accessor('imageUrl', {
       header: () => 'Image',
@@ -60,7 +61,9 @@ const CateTable = ({ categories, count }: CateTableProps) => {
     }),
     columnHelper.accessor('parent', {
       header: () => 'Parent Category',
-      cell: (info) => <Badge className='text-base bg-home-primary'>{info.getValue()?.name || <Minus />}</Badge>,
+      cell: (info) => (
+        <span className='text-base font-semibold text-home-primary'>{info.getValue()?.name || <Minus />}</span>
+      ),
     }),
     columnHelper.accessor('createdAt', {
       header: () => <BtnSort header='Date' sortBy='createdAt' />,

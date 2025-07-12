@@ -1,15 +1,27 @@
 'use client';
 
 import { useUrl } from '@/hooks/use-url';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 
 interface BtnFilterProps {
   label: string;
   query: string;
   isDefault: boolean;
+  className?: string;
+  variant?: VariantProps<typeof buttonVariants>['variant'];
+  activeClass?: string;
 }
 
-const BtnFilter = ({ label, query, isDefault }: BtnFilterProps) => {
+const BtnFilter = ({
+  label,
+  query,
+  isDefault,
+  variant = 'homeSecondary',
+  className,
+  activeClass = 'bg-home-primary',
+}: BtnFilterProps) => {
   const { router, pathname, searchParams } = useUrl();
   const isActive = searchParams.has('sortBy') ? searchParams.get('sortBy') === query : isDefault;
 
@@ -23,8 +35,8 @@ const BtnFilter = ({ label, query, isDefault }: BtnFilterProps) => {
 
   return (
     <Button
-      className={`rounded-none cursor-pointer ${isActive ? 'bg-home-primary text-muted' : ''}`}
-      variant='homeSecondary'
+      className={cn(`rounded-none cursor-pointer ${isActive ? `${activeClass} text-muted` : ''}`, className)}
+      variant={variant}
       onClick={handleClick}
     >
       {label}

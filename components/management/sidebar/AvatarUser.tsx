@@ -8,7 +8,7 @@ const AvatarUser = () => {
   return (
     <>
       <Avatar className='h-8 w-8 rounded-lg'>
-        <AvatarImage src={`${user?.image}`} alt={user?.name || 'User name'} />
+        <AvatarImage src={`${user?.image}`} alt={user?.name || 'User name'} className='object-cover' />
         <AvatarFallback>{getUsernameFallback(user?.name || 'User name')}</AvatarFallback>
       </Avatar>
       <div className='grid flex-1 text-left text-sm leading-tight'>

@@ -1,6 +1,8 @@
 import { getUserSession } from '@/auth';
 import { db } from '@/lib/db';
 import { ReviewSchemaType } from '@/schemas/review';
+import { Prisma } from '@prisma/client';
+import { subDays } from 'date-fns';
 
 export const hasReviewedProduct = async (productId: string) => {
   const user = await getUserSession();
@@ -76,4 +78,54 @@ export const getAverageRating = async (productId: string) => {
   });
 
   return reviews._avg.rating || 0;
+};
+
+export const getUserTotalReview = async (searchParams: { [key: string]: string }) => {
+  const user = await getUserSession();
+  let { sortBy } = searchParams;
+
+  if (!sortBy) sortBy = '7';
+
+  const where: Prisma.ReviewWhereInput = {
+    product: {
+      userId: user?.id,
+    },
+    createdAt: {
+      gte: subDays(new Date(), parseInt(sortBy)),
+      lte: new Date(),
+    },
+  };
+
+  const totalRevenue = await db.review.aggregate({
+    _count: true,
+    where,
+  });
+
+  return totalRevenue._count || 0;
+};
+
+export const getUserAverageRating = async (searchParams: { [key: string]: string }) => {
+  const user = await getUserSession();
+  let { sortBy } = searchParams;
+
+  if (!sortBy) sortBy = '7';
+
+  const where: Prisma.ReviewWhereInput = {
+    product: {
+      userId: user?.id,
+    },
+    createdAt: {
+      gte: subDays(new Date(), parseInt(sortBy)),
+      lte: new Date(),
+    },
+  };
+
+  const totalRevenue = await db.review.aggregate({
+    _avg: {
+      rating: true,
+    },
+    where,
+  });
+
+  return totalRevenue._avg.rating || 0;
 };

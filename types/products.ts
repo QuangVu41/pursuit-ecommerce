@@ -38,14 +38,28 @@ export type ProductWithPayLoad = Prisma.ProductGetPayload<{
             attribute: true;
           };
         };
+        orderItems: {
+          select: {
+            quantity: true;
+          };
+        };
+      };
+    };
+    reviews: {
+      select: {
+        rating: true;
       };
     };
   };
 }>;
-export type ProductWithCateAndImg = Omit<ProductWithPayLoad, 'productVariants'>;
+export type ProductWithCateAndImg = ProductWithPayLoad;
 export type ProductWithCateAndPrimaryImg = Prisma.ProductGetPayload<{
   include: {
-    category: true;
+    category: {
+      select: {
+        name: true;
+      };
+    };
     productImages: {
       where: {
         isPrimary: true;

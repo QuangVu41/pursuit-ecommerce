@@ -45,7 +45,7 @@ const ProdVariantForm = () => {
       <div className='flex items-center gap-x-3'>
         <Button
           variant='outlinePrimary'
-          className='flex-1 lg:h-[52px] h-12 text-base md:text-lg'
+          className='flex-1  text-base md:text-lg'
           disabled={currentVariants.length === 0 || isPending}
           onClick={() => {
             handleAppendVariant();
@@ -56,7 +56,7 @@ const ProdVariantForm = () => {
           Add variant
         </Button>
         <Button
-          className='flex-1 lg:h-[52px] h-12 text-base md:text-lg'
+          className='flex-1  text-base md:text-lg'
           disabled={currentVariants.length === 0 || isPending}
           onClick={() => {
             handleAppendAllVariants();

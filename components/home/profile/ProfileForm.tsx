@@ -219,11 +219,7 @@ const ProfileForm = ({ userData }: ProfileFormProps) => {
         />
       </div>
       <div className='flex'>
-        <Button
-          variant='homeDefault'
-          className='w-full md:w-auto ml-auto rounded-none lg:h-[52px] h-12 text-lg'
-          disabled={isPending}
-        >
+        <Button variant='homeDefault' className='w-full md:w-auto ml-auto rounded-none text-base' disabled={isPending}>
           Save Changes
         </Button>
       </div>

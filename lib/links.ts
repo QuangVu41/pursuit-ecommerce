@@ -39,16 +39,16 @@ export const sidebarMenu = [
     href: '/mng/banners',
     icon: Megaphone,
   },
-  {
-    label: 'Sales',
-    href: '/mng/sales',
-    icon: BadgeDollarSign,
-  },
-  {
-    label: 'Settings',
-    href: '/mng/settings',
-    icon: Settings,
-  },
+  // {
+  //   label: 'Sales',
+  //   href: '/mng/sales',
+  //   icon: BadgeDollarSign,
+  // },
+  // {
+  //   label: 'Settings',
+  //   href: '/mng/settings',
+  //   icon: Settings,
+  // },
 ];
 
 export const userMenu = [

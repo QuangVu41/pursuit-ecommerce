@@ -82,7 +82,7 @@ const AttrForm = () => {
           </Button>
         </div>
       )}
-      <Button className='w-full lg:h-[52px] h-12 text-lg bg-primary' disabled={isPending}>
+      <Button className='w-full text-base bg-primary' disabled={isPending}>
         {mode === 'create' ? 'Create Attribute' : 'Save Changes'}
       </Button>
     </FormWrapper>

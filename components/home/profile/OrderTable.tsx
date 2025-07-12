@@ -8,6 +8,7 @@ import Image from 'next/image';
 import BtnSort from '@/components/management/filter/BtnSort';
 import { OrderWithPayload } from '@/types/orders';
 import { OrderStatus } from '@prisma/client';
+import { CircleCheck, Loader } from 'lucide-react';
 
 interface OrderTableProps {
   orders: OrderWithPayload[];
@@ -42,12 +43,14 @@ const OrderTable = ({ orders, count }: OrderTableProps) => {
     columnHelper.accessor('updatedAt', {
       header: () => 'Quantity',
       cell: (info) => (
-        <Badge className='bg-amber-500 text-base lowercase'>x{info.row.original.orderItems.length}</Badge>
+        <span className='text-amber-500 font-semibold text-base lowercase'>x{info.row.original.orderItems.length}</span>
       ),
     }),
     columnHelper.accessor('total', {
       header: () => 'Total Price',
-      cell: (info) => <Badge className='bg-blue-500 text-base'>{formatCurrency('VND', info.getValue())}</Badge>,
+      cell: (info) => (
+        <span className='text-blue-500 font-semibold text-base'>{formatCurrency('VND', info.getValue())}</span>
+      ),
     }),
     columnHelper.accessor('createdAt', {
       header: () => <BtnSort header='Date' sortBy='createdAt' />,
@@ -56,11 +59,12 @@ const OrderTable = ({ orders, count }: OrderTableProps) => {
     columnHelper.accessor('status', {
       header: () => 'Status',
       cell: (info) => (
-        <Badge
-          className={`text-base text-muted ${
-            info.getValue() === OrderStatus.completed ? 'bg-green-500' : 'bg-amber-500'
-          }`}
-        >
+        <Badge className='text-muted-foreground' variant='outline'>
+          {info.row.original.status === OrderStatus.completed ? (
+            <CircleCheck className='fill-green-500 dark:fill-green-400 stroke-muted' />
+          ) : (
+            <Loader />
+          )}
           {info.getValue()}
         </Badge>
       ),
