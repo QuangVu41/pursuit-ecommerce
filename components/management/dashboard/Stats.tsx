@@ -2,7 +2,7 @@ import Stat from '@/components/management/dashboard/Stat';
 import { formatCurrency } from '@/lib/helpers';
 import { getTotalOrders, getTotalRevenue } from '@/services/orders';
 import { getUserAverageRating, getUserTotalReview } from '@/services/reviews';
-import { SquareChartGantt, Star, Truck } from 'lucide-react';
+import { Banknote, SquareChartGantt, Star, Truck } from 'lucide-react';
 
 interface StatsProps {
   searchParams: { [key: string]: string };
@@ -19,33 +19,22 @@ const Stats = async ({ searchParams }: StatsProps) => {
       <Stat
         title='Total Revenue'
         value={<span className='text-green-500'>{formatCurrency('VND', totalRevenue)}</span>}
+        icon={<Banknote className='stroke-green-500' />}
       />
       <Stat
         title='Total Orders'
-        value={
-          <span className='flex items-end gap-1 leading-none'>
-            {totalOrders.toString()}
-            <Truck />
-          </span>
-        }
+        value={<span className='text-blue-500'>{totalOrders}</span>}
+        icon={<Truck className='stroke-blue-500' />}
       />
       <Stat
         title='Total Reviews'
-        value={
-          <span className='flex items-end gap-1 leading-none'>
-            {totalReviews.toString()}
-            <SquareChartGantt />
-          </span>
-        }
+        value={<span className='text-primary'>{totalReviews}</span>}
+        icon={<SquareChartGantt className='stroke-primary' />}
       />
       <Stat
-        title='Average Rating'
-        value={
-          <span className='flex items-end gap-1 leading-none'>
-            {avgRating.toFixed(1)}
-            <Star className='fill-yellow-500 stroke-yellow-500' />
-          </span>
-        }
+        title='Rating Average'
+        value={<span className='text-yellow-500'>{avgRating.toFixed(1)}</span>}
+        icon={<Star className='fill-yellow-500 stroke-yellow-500' />}
       />
     </div>
   );

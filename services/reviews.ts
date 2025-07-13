@@ -82,16 +82,16 @@ export const getAverageRating = async (productId: string) => {
 
 export const getUserTotalReview = async (searchParams: { [key: string]: string }) => {
   const user = await getUserSession();
-  let { sortBy } = searchParams;
+  let { last } = searchParams;
 
-  if (!sortBy) sortBy = '7';
+  if (!last) last = '7';
 
   const where: Prisma.ReviewWhereInput = {
     product: {
       userId: user?.id,
     },
     createdAt: {
-      gte: subDays(new Date(), parseInt(sortBy)),
+      gte: subDays(new Date(), parseInt(last)),
       lte: new Date(),
     },
   };
@@ -106,16 +106,16 @@ export const getUserTotalReview = async (searchParams: { [key: string]: string }
 
 export const getUserAverageRating = async (searchParams: { [key: string]: string }) => {
   const user = await getUserSession();
-  let { sortBy } = searchParams;
+  let { last } = searchParams;
 
-  if (!sortBy) sortBy = '7';
+  if (!last) last = '7';
 
   const where: Prisma.ReviewWhereInput = {
     product: {
       userId: user?.id,
     },
     createdAt: {
-      gte: subDays(new Date(), parseInt(sortBy)),
+      gte: subDays(new Date(), parseInt(last)),
       lte: new Date(),
     },
   };

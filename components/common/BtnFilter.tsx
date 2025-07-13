@@ -12,6 +12,7 @@ interface BtnFilterProps {
   className?: string;
   variant?: VariantProps<typeof buttonVariants>['variant'];
   activeClass?: string;
+  queryKey?: string;
 }
 
 const BtnFilter = ({
@@ -21,14 +22,15 @@ const BtnFilter = ({
   variant = 'homeSecondary',
   className,
   activeClass = 'bg-home-primary',
+  queryKey = 'sortBy',
 }: BtnFilterProps) => {
   const { router, pathname, searchParams } = useUrl();
-  const isActive = searchParams.has('sortBy') ? searchParams.get('sortBy') === query : isDefault;
+  const isActive = searchParams.has(queryKey) ? searchParams.get(queryKey) === query : isDefault;
 
   const handleClick = () => {
     const newSearchParams = new URLSearchParams(searchParams.toString());
     if (newSearchParams.has('order')) newSearchParams.delete('order');
-    newSearchParams.set('sortBy', query);
+    newSearchParams.set(queryKey, query);
     newSearchParams.set('page', '1');
     router.replace(`${pathname}?${newSearchParams.toString()}`);
   };

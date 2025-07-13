@@ -10,6 +10,7 @@ import { flattenNestedArray } from '@/lib/helpers';
 import { getAllCatesWithNoParentCates } from '@/services/categories';
 import { getAllUserFilteredProducts } from '@/services/products';
 import { Plus } from 'lucide-react';
+import { Metadata } from 'next';
 import Link from 'next/link';
 
 interface ProductsPageProps {
@@ -17,6 +18,10 @@ interface ProductsPageProps {
     [key: string]: string;
   }>;
 }
+
+export const metadata: Metadata = {
+  title: 'Product Management',
+};
 
 const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
   const queryParams = await searchParams;

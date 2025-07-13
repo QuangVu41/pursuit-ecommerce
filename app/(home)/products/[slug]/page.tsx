@@ -20,6 +20,15 @@ interface ProductPageProps {
   }>;
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = await getProductBySlug(decodeURIComponent(slug));
+
+  return {
+    title: `Product ${product?.name}`,
+  };
+}
+
 const ProductPage = async ({ params }: ProductPageProps) => {
   let { slug } = await params;
   slug = decodeURIComponent(slug);

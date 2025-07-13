@@ -7,12 +7,17 @@ import FilterBtnGroup from '@/components/home/filter/FilterBtnGroup';
 import ProdFilter from '@/components/home/products/ProdFilter';
 import ProdList from '@/components/home/products/ProdList';
 import { getAllFilteredProducts } from '@/services/products';
+import { Metadata } from 'next';
 
 interface ProductsPageProps {
   searchParams: Promise<{
     [key: string]: string;
   }>;
 }
+
+export const metadata: Metadata = {
+  title: 'Products',
+};
 
 const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
   const queryParams = await searchParams;

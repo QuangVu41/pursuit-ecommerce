@@ -10,12 +10,17 @@ import FilterHeader from '@/components/management/filter/FilterHeader';
 import { Button } from '@/components/ui/button';
 import { getAllUserFilteredAttributes } from '@/services/attributes';
 import { Plus } from 'lucide-react';
+import { Metadata } from 'next';
 
 interface AttributesPageProps {
   searchParams: Promise<{
     [key: string]: string;
   }>;
 }
+
+export const metadata: Metadata = {
+  title: 'Attribute Management',
+};
 
 const AttributesPage = async ({ searchParams }: AttributesPageProps) => {
   const queryParams = await searchParams;

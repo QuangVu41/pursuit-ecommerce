@@ -1,11 +1,10 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 const BtnLogo = () => {
   return (
     <Link href='/'>
-      <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
-        P
-      </div>
+      <Image src={'/logo.png'} alt='Logo' width={32} height={32} className='size-8 object-cover bg-primary rounded-md' />
       <div className='flex flex-col gap-0.5 leading-none'>
         <span className='font-semibold'>Pursuit</span>
       </div>

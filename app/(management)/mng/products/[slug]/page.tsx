@@ -6,6 +6,15 @@ import { getProductBySlug } from '@/services/products';
 import { ProductWithPayLoad } from '@/types/products';
 import { notFound } from 'next/navigation';
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = await getProductBySlug(decodeURIComponent(slug));
+
+  return {
+    title: `Edit Product ${product?.name}`,
+  };
+}
+
 const EditProductPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   let { slug } = await params;
   slug = decodeURIComponent(slug);

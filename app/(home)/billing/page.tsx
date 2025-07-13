@@ -5,7 +5,12 @@ import SectionContent from '@/components/common/SectionContent';
 import BtnCreateAccountLink from '@/components/home/payment/BtnCreateAccountLink';
 import BtnViewDashboard from '@/components/home/payment/BtnViewDashboard';
 import { getUserById } from '@/services/users';
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+
+export const metadata: Metadata = {
+  title: 'Billing',
+};
 
 const BillingPage = async () => {
   const user = await getUserSession();

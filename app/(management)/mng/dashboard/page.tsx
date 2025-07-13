@@ -7,14 +7,19 @@ import FilterHeader from '@/components/management/filter/FilterHeader';
 import SaleTable from '@/components/management/sales/SaleTable';
 import { dashboardSortBy } from '@/lib/searchParams';
 import { getAllUserSales, getSellerFilteredSales } from '@/services/orders';
+import { Metadata } from 'next';
 
 interface DashboardPageProps {
   searchParams: Promise<{ [key: string]: string }>;
 }
 
+export const metadata: Metadata = {
+  title: 'Dashboard',
+};
+
 const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
   const queryParams = await searchParams;
-  const { sortBy = '7' } = queryParams;
+  const { last = '7' } = queryParams;
   const orderItems = await getAllUserSales(queryParams);
   const { sales, count } = await getSellerFilteredSales(queryParams);
 
@@ -24,9 +29,10 @@ const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
       <FilterHeader showSearch={false}>
         {dashboardSortBy.map((item) => (
           <BtnFilter
+            queryKey='last'
             variant='outline'
             activeClass='bg-primary dark:bg-primary'
-            className='rounded-md font-manrope hover:bg-primary hover:text-muted dark:hover:bg-primary text-xs md:text-sm py-1 px-3 md:py-2 md:px-4'
+            className='rounded-md font-manrope hover:bg-primary hover:text-muted dark:hover:bg-primary active:bg-primary active:text-muted dark:active:bg-primary text-xs md:text-sm py-1 px-3 md:py-2 md:px-4'
             key={item.query}
             label={item.label}
             query={item.query}
@@ -35,7 +41,7 @@ const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
         ))}
       </FilterHeader>
       <Stats searchParams={queryParams} />
-      <SaleChart orderItems={orderItems} sortBy={sortBy} />
+      <SaleChart orderItems={orderItems} last={last} />
       <SaleTable sales={sales} count={count} />
       <PaginationBtns searchParams={queryParams} count={count!} segment='/mng/orders' />
     </>

@@ -3,11 +3,16 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { getUserByConnectedAccountId } from '@/services/users';
 import { Check, XCircle } from 'lucide-react';
+import { Metadata } from 'next';
 import Link from 'next/link';
 
 interface ReturnPageProps {
   params: Promise<{ id: string }>;
 }
+
+export const metadata: Metadata = {
+  title: 'Return',
+};
 
 const ReturnPage = async ({ params }: ReturnPageProps) => {
   const { id } = await params;

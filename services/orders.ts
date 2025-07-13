@@ -58,11 +58,11 @@ export const createOrderFromCart = async (cartItemIds: string[], orderData: Pris
 export const getSellerFilteredSales = async (searchParams: { [key: string]: string }) => {
   const user = await getUserSession();
   if (!user) throw new Error('Unauthenticated!');
-  const { sortBy = '7' } = searchParams;
+  const { last = '7' } = searchParams;
 
   const where: Prisma.OrderItemWhereInput = {
     createdAt: {
-      gte: subDays(new Date(), parseInt(sortBy)),
+      gte: subDays(new Date(), parseInt(last)),
       lte: new Date(),
     },
     productVariant: {
@@ -156,6 +156,7 @@ export const getAllUserFilteredOrders = async (searchParams: { [key: string]: st
       gte: from ? new Date(from) : undefined,
       lte: to ? new Date(to) : undefined,
     },
+    userId: user.id,
   };
   const include: Prisma.OrderInclude = {
     orderItems: {
@@ -196,7 +197,7 @@ export const getAllUserSales = async (searchParams: { [key: string]: string }) =
   const user = await getUserSession();
   if (!user) throw new Error('Unauthenticated!');
 
-  const { sortBy = '7' } = searchParams;
+  const { last = '7' } = searchParams;
 
   const orderItems = await db.orderItem.findMany({
     where: {
@@ -209,7 +210,7 @@ export const getAllUserSales = async (searchParams: { [key: string]: string }) =
         },
       },
       createdAt: {
-        gte: subDays(new Date(), parseInt(sortBy)),
+        gte: subDays(new Date(), parseInt(last)),
         lte: new Date(),
       },
     },
@@ -220,7 +221,7 @@ export const getAllUserSales = async (searchParams: { [key: string]: string }) =
 
 export const getTotalRevenue = async (searchParams: { [key: string]: string } = {}) => {
   const user = await getUserSession();
-  let { sortBy = '7' } = searchParams;
+  let { last = '7' } = searchParams;
 
   const where: Prisma.OrderItemWhereInput = {
     order: {
@@ -232,7 +233,7 @@ export const getTotalRevenue = async (searchParams: { [key: string]: string } = 
       },
     },
     createdAt: {
-      gte: subDays(new Date(), parseInt(sortBy)),
+      gte: subDays(new Date(), parseInt(last)),
       lte: new Date(),
     },
   };
@@ -255,7 +256,7 @@ export const getTotalRevenue = async (searchParams: { [key: string]: string } = 
 
 export const getTotalOrders = async (searchParams: { [key: string]: string }) => {
   const user = await getUserSession();
-  let { sortBy = '7' } = searchParams;
+  let { last = '7' } = searchParams;
 
   const where: Prisma.OrderItemWhereInput = {
     order: {
@@ -267,7 +268,7 @@ export const getTotalOrders = async (searchParams: { [key: string]: string }) =>
       },
     },
     createdAt: {
-      gte: subDays(new Date(), parseInt(sortBy)),
+      gte: subDays(new Date(), parseInt(last)),
       lte: new Date(),
     },
   };

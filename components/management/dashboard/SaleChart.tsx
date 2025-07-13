@@ -16,12 +16,12 @@ const chartConfig = {
 
 interface SaleChartProps {
   orderItems: OrderItem[];
-  sortBy: string;
+  last: string;
 }
 
-const SaleChart = ({ orderItems, sortBy }: SaleChartProps) => {
+const SaleChart = ({ orderItems, last }: SaleChartProps) => {
   const allDates = eachDayOfInterval({
-    start: subDays(new Date(), +sortBy),
+    start: subDays(new Date(), +last),
     end: new Date(),
   });
 
@@ -37,8 +37,8 @@ const SaleChart = ({ orderItems, sortBy }: SaleChartProps) => {
       <CardHeader>
         <CardTitle>Sales Chart</CardTitle>
         <CardDescription>
-          <span className='hidden @[540px]/card:block'>Total for the last {sortBy} days</span>
-          <span className='@[540px]/card:hidden'>Last 3 months</span>
+          <span className='hidden @[540px]/card:block'>Total for the last {last} days</span>
+          <span className='@[540px]/card:hidden'>Last {last} days</span>
         </CardDescription>
       </CardHeader>
       <CardContent className='px-2 pt-4 sm:px-6 sm:pt-6'>

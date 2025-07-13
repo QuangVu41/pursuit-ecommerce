@@ -9,12 +9,17 @@ import FilterHeader from '@/components/management/filter/FilterHeader';
 import { Button } from '@/components/ui/button';
 import { getFilteredBanners } from '@/services/banners';
 import { Plus } from 'lucide-react';
+import { Metadata } from 'next';
 
 interface BannersPageProps {
   searchParams: Promise<{
     [key: string]: string;
   }>;
 }
+
+export const metadata: Metadata = {
+  title: 'Banner Management',
+};
 
 const BannersPage = async ({ searchParams }: BannersPageProps) => {
   const queryParams = await searchParams;

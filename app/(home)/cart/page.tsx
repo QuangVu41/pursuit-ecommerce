@@ -4,6 +4,11 @@ import SectionContent from '@/components/common/SectionContent';
 import CartItemsProvider from '@/components/home/cart/CartItemsProvider';
 import CartTable from '@/components/home/cart/CartTable';
 import { getUserCartWithPayloadByUserId } from '@/services/products';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Cart',
+};
 
 const CartPage = async () => {
   const userCart = await getUserCartWithPayloadByUserId();

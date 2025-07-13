@@ -2,7 +2,12 @@ import HomeSectionContainer from '@/components/common/HomeSectionContainer';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { XCircle } from 'lucide-react';
+import { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Payment Cancelled',
+};
 
 const CancelPage = () => {
   return (

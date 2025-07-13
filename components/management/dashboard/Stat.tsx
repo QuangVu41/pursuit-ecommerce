@@ -1,11 +1,12 @@
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardAction, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface StatProps {
   title: string;
   value: React.ReactNode;
+  icon: React.ReactNode;
 }
 
-const Stat = ({ title, value }: StatProps) => {
+const Stat = ({ title, value, icon }: StatProps) => {
   return (
     <Card className='@container/card'>
       <CardHeader>
@@ -13,6 +14,7 @@ const Stat = ({ title, value }: StatProps) => {
         <CardTitle className='text-2xl font-semibold tabular-nums @[250px]/card:text-3xl font-manrope'>
           {value}
         </CardTitle>
+        <CardAction>{icon}</CardAction>
       </CardHeader>
     </Card>
   );

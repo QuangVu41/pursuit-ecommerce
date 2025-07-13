@@ -3,6 +3,11 @@ import Heading from '@/components/common/Heading';
 import NotFound from '@/components/common/NotFound';
 import ProfileForm from '@/components/home/profile/ProfileForm';
 import { getUserById } from '@/services/users';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Profile',
+};
 
 const ProfilePage = async () => {
   const user = await getUserSession();

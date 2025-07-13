@@ -11,12 +11,17 @@ import FilterHeader from '@/components/management/filter/FilterHeader';
 import { Button } from '@/components/ui/button';
 import { getFilteredCategories } from '@/services/categories';
 import { Plus } from 'lucide-react';
+import { Metadata } from 'next';
 
 interface CategoriesPageProps {
   searchParams: Promise<{
     [key: string]: string;
   }>;
 }
+
+export const metadata: Metadata = {
+  title: 'Category Management',
+};
 
 const CategoriesPage = async ({ searchParams }: CategoriesPageProps) => {
   const queryParams = await searchParams;

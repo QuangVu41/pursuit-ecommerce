@@ -9,6 +9,7 @@ import BtnSort from '@/components/management/filter/BtnSort';
 import { OrderWithPayload } from '@/types/orders';
 import { OrderStatus } from '@prisma/client';
 import { CircleCheck, Loader } from 'lucide-react';
+import Link from 'next/link';
 
 interface OrderTableProps {
   orders: OrderWithPayload[];
@@ -27,23 +28,27 @@ const OrderTable = ({ orders, count }: OrderTableProps) => {
       cell: (info) => (
         <div className='flex *:not-first:-ml-4'>
           {info.getValue().map((item, idx) => (
-            <figure className='relative size-14 shadow-md' key={idx}>
-              <Image
-                src={item.productVariant.imageUrl || item.productVariant.product.productImages[0].imageUrl}
-                alt={item.productVariant.altText || item.productVariant.product.productImages[0].altText}
-                width={56}
-                height={56}
-                className='object-cover absolute inset-0 w-full h-full rounded-md'
-              />
-            </figure>
+            <Link href={`/products/${item.productVariant.product.slug}`} key={idx}>
+              <figure className='relative size-14 shadow-md'>
+                <Image
+                  src={item.productVariant.imageUrl || item.productVariant.product.productImages[0].imageUrl}
+                  alt={item.productVariant.altText || item.productVariant.product.productImages[0].altText}
+                  width={56}
+                  height={56}
+                  className='object-cover absolute inset-0 w-full h-full rounded-md'
+                />
+              </figure>
+            </Link>
           ))}
         </div>
       ),
     }),
     columnHelper.accessor('updatedAt', {
-      header: () => 'Quantity',
+      header: () => 'Total Quantity',
       cell: (info) => (
-        <span className='text-amber-500 font-semibold text-base lowercase'>x{info.row.original.orderItems.length}</span>
+        <span className='text-amber-500 font-semibold text-base lowercase'>
+          x{info.row.original.orderItems.reduce((acc, item) => acc + item.quantity, 0)}
+        </span>
       ),
     }),
     columnHelper.accessor('total', {

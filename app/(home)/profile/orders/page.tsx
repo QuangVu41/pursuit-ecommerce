@@ -3,10 +3,15 @@ import Heading from '@/components/common/Heading';
 import PaginationBtns from '@/components/common/PaginationBtns';
 import OrderTable from '@/components/home/profile/OrderTable';
 import { getAllUserFilteredOrders } from '@/services/orders';
+import { Metadata } from 'next';
 
 interface OrdersPageProps {
   searchParams: Promise<{ [key: string]: string }>;
 }
+
+export const metadata: Metadata = {
+  title: 'My Orders',
+};
 
 const OrdersPage = async ({ searchParams }: OrdersPageProps) => {
   const queryParams = await searchParams;
