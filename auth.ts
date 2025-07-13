@@ -1,9 +1,9 @@
 import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import { db } from './lib/db';
+import { db } from '@/lib/db';
+import { getUserById, updateUserById } from './lib/user-queries';
+import { stripe } from '@/lib/stripe';
 import authConfig from '@/auth.config';
-import { getUserById, updateUserById } from './services/users';
-import { stripe } from './lib/stripe';
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   pages: {
@@ -68,6 +68,5 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
 export const getUserSession = async () => {
   const session = await auth();
-
   return session?.user;
 };

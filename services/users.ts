@@ -1,6 +1,9 @@
+import { getUserSession } from '@/auth';
 import { db } from '@/lib/db';
 import { stripe } from '@/lib/stripe';
+import { UserPasswordChangeSchemaType } from '@/schemas/user';
 import { User } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 export const getUserByEmail = async (email: string) => {
   const user = await db.user.findUnique({
@@ -59,4 +62,27 @@ export const updateUserById = async (id: string, data: Partial<User>) => {
   });
 
   return user;
+};
+
+export const checkIfUserUsedOauthProvider = async () => {
+  const user = await getUserSession();
+  if (!user) throw new Error('Unauthenticated');
+  const account = await db.account.findFirst({
+    where: {
+      userId: user.id,
+    },
+  });
+
+  return !!account;
+};
+
+export const changeUserPassword = async (data: UserPasswordChangeSchemaType) => {
+  const user = await getUserSession();
+  if (!user) throw new Error('Unauthenticated');
+
+  const existingUser = await getUserById(user.id as string);
+
+  if (!existingUser) throw new Error('User not found');
+
+  const isCurrentPasswordMatched = await bcrypt.compare(data.currentPassword, existingUser.password as string);
 };

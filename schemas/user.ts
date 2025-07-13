@@ -21,4 +21,22 @@ export const UserEditSchema = z.object({
     .optional(),
 });
 
+export const UserPasswordChangeSchema = z
+  .object({
+    currentPassword: z.string().nonempty('Current password is required'),
+    newPassword: z
+      .string()
+      .min(8, { message: 'Password must be at least 8 characters!' })
+      .trim()
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]+$/, {
+        message: 'Password must include 1 uppercase, 1 lowercase, 1 number, and 1 special character!',
+      }),
+    confirmPassword: z.string().nonempty('Confirm password is not matched'),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'Confirm password is not matched',
+    path: ['confirmPassword'],
+  });
+
 export type UserEditSchemaType = z.infer<typeof UserEditSchema>;
+export type UserPasswordChangeSchemaType = z.infer<typeof UserPasswordChangeSchema>;

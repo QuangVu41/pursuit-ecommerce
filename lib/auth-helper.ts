@@ -1,5 +1,5 @@
 import { getUserSession } from '@/auth';
-import { getUserById } from '@/services/users';
+import { getUserById } from '@/lib/user-queries';
 import { redirect } from 'next/navigation';
 
 export const checkStripeAccountLinked = async () => {

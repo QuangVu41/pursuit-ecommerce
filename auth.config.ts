@@ -4,8 +4,7 @@ import Google from 'next-auth/providers/google';
 import Github from 'next-auth/providers/github';
 import { NextAuthConfig } from 'next-auth';
 import { SigninSchema } from './schemas/auth';
-import { getUserByEmail } from './services/users';
-import { stripe } from './lib/stripe';
+import { getUserByEmail } from './lib/user-queries';
 
 export default {
   providers: [

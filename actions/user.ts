@@ -2,7 +2,7 @@
 
 import { uploadToS3 } from '@/lib/upload';
 import { UserEditSchema, UserEditSchemaType } from '@/schemas/user';
-import { updateUserById } from '@/services/users';
+import { updateUserById } from '@/lib/user-queries';
 import { revalidatePath } from 'next/cache';
 
 export const updateUserInfoAct = async (data: UserEditSchemaType) => {

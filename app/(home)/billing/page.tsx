@@ -4,7 +4,7 @@ import HomeSectionHeader from '@/components/common/HomeSectionHeader';
 import SectionContent from '@/components/common/SectionContent';
 import BtnCreateAccountLink from '@/components/home/payment/BtnCreateAccountLink';
 import BtnViewDashboard from '@/components/home/payment/BtnViewDashboard';
-import { getUserById } from '@/services/users';
+import { getUserById } from '@/lib/user-queries';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 

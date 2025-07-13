@@ -64,159 +64,163 @@ const ProfileForm = ({ userData }: ProfileFormProps) => {
 
   return (
     <FormWrapper form={form} handleSubmit={handleSubmit} isModal={false} className='!px-0'>
-      <FormField
-        control={form.control}
-        name='imageUrl'
-        render={() => (
-          <FormItem>
-            <FormLabel htmlFor='cate-file'>Your avatar*</FormLabel>
-            <FormControl>
-              <div className='flex aria-invalid:*:border-destructive aria-invalid:*:border'>
-                <figure
-                  className='group size-40 relative flex flex-col items-center justify-center bg-background shadow-md cursor-pointer p-2 overflow-hidden'
-                  onClick={() => !isPending && inputFileRef.current?.click()}
-                >
-                  {imageUrl && (
-                    <>
-                      <Image
-                        src={imageUrl}
-                        alt={`${form.getValues('name')}`}
-                        height={160}
-                        width={160}
-                        className='object-cover absolute inset-0 w-full h-full'
-                      />
-                      <FilePenLine className='w-5 h-5 text-foreground/70 group-hover:text-foreground top-2 right-2 absolute' />
-                    </>
-                  )}
-                  {!imageUrl && (
-                    <>
-                      <FilePlus2 className='w-5 h-5 text-home-primary/70 group-hover:text-home-primary top-2 right-2 absolute' />
-                      <p className='font-manrope text-xl font-bold text-foreground/70 group-hover:text-foreground'>
-                        160 X 160
-                      </p>
-                    </>
-                  )}
-                  <input
-                    ref={inputFileRef}
-                    id='cate-file'
-                    type='file'
-                    onChange={handleInputChange}
-                    hidden
-                    name='imageFile'
+      <div className='grid items-start sm:grid-cols-2 gap-4'>
+        <FormField
+          control={form.control}
+          name='imageUrl'
+          render={() => (
+            <FormItem className='justify-items-center'>
+              <FormLabel htmlFor='cate-file'>Avatar</FormLabel>
+              <FormControl>
+                <div className='flex aria-invalid:*:border-destructive aria-invalid:*:border'>
+                  <figure
+                    className='group size-48 relative flex flex-col items-center justify-center bg-background shadow-md cursor-pointer p-2 rounded-full'
+                    onClick={() => !isPending && inputFileRef.current?.click()}
+                  >
+                    {imageUrl && (
+                      <>
+                        <Image
+                          src={imageUrl}
+                          alt={`${form.getValues('name')}`}
+                          height={160}
+                          width={160}
+                          className='object-cover absolute inset-0 w-full h-full rounded-full'
+                        />
+                        <span className='group-hover:text-foreground top-2 right-2 absolute rounded-lg p-1 bg-background border'>
+                          <FilePenLine className='size-5 text-foreground/70' />
+                        </span>
+                      </>
+                    )}
+                    {!imageUrl && (
+                      <>
+                        <FilePlus2 className='w-5 h-5 text-home-primary/70 group-hover:text-home-primary top-2 right-2 absolute' />
+                        <p className='font-manrope text-xl font-bold text-foreground/70 group-hover:text-foreground'>
+                          160 X 160
+                        </p>
+                      </>
+                    )}
+                    <input
+                      ref={inputFileRef}
+                      id='cate-file'
+                      type='file'
+                      onChange={handleInputChange}
+                      hidden
+                      name='imageFile'
+                    />
+                  </figure>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className='flex flex-col gap-3'>
+          <FormField
+            control={form.control}
+            name='id'
+            render={({ field }) => (
+              <FormItem className='hidden'>
+                <FormControl>
+                  <Input {...field} type='text' hidden />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='name'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Full name*</FormLabel>
+                <FormControl>
+                  <InputHome
+                    {...field}
+                    placeholder='John Doe'
+                    type='text'
+                    disabled={isPending}
+                    className='text-foreground bg-background placeholder:text-muted-foreground'
                   />
-                </figure>
-              </div>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name='id'
-        render={({ field }) => (
-          <FormItem className='hidden'>
-            <FormControl>
-              <Input {...field} type='text' hidden />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <div className='grid sm:grid-cols-2 gap-4'>
-        <FormField
-          control={form.control}
-          name='name'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Full name*</FormLabel>
-              <FormControl>
-                <InputHome
-                  {...field}
-                  placeholder='John Doe'
-                  type='text'
-                  disabled={isPending}
-                  className='text-foreground bg-background placeholder:text-foreground/70'
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='email'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email*</FormLabel>
-              <FormControl>
-                <InputHome
-                  {...field}
-                  placeholder='examle@gmail.com'
-                  type='text'
-                  disabled
-                  className='text-foreground bg-background placeholder:text-muted-foreground/70'
-                  maxLength={10}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='phoneNumber'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone number</FormLabel>
-              <FormControl>
-                <InputHome
-                  {...field}
-                  placeholder='0123456789'
-                  type='number'
-                  disabled={isPending}
-                  className='text-foreground bg-background placeholder:text-foreground/70'
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='birthOfDate'
-          render={({ field }) => (
-            <FormItem className='flex flex-col'>
-              <FormLabel>Date of birth</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={'outline'}
-                      className={cn(
-                        'w-full rounded-none pl-3 text-left font-normal',
-                        !field.value && 'text-muted-foreground'
-                      )}
-                    >
-                      {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
-                      <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className='w-auto p-0' align='start'>
-                  <Calendar
-                    mode='single'
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                    captionLayout='dropdown'
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='email'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email*</FormLabel>
+                <FormControl>
+                  <InputHome
+                    {...field}
+                    placeholder='examle@gmail.com'
+                    type='text'
+                    disabled
+                    className='text-foreground bg-background placeholder:text-muted-foreground'
+                    maxLength={10}
                   />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='phoneNumber'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone number</FormLabel>
+                <FormControl>
+                  <InputHome
+                    {...field}
+                    placeholder='0123456789'
+                    type='number'
+                    disabled={isPending}
+                    className='text-foreground bg-background placeholder:text-muted-foreground'
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='birthOfDate'
+            render={({ field }) => (
+              <FormItem className='flex flex-col'>
+                <FormLabel>Date of birth</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={'outline'}
+                        className={cn(
+                          'w-full rounded-none pl-3 text-left font-normal',
+                          !field.value && 'text-muted-foreground'
+                        )}
+                      >
+                        {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
+                        <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className='w-auto p-0' align='start'>
+                    <Calendar
+                      mode='single'
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                      captionLayout='dropdown'
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
       </div>
       <div className='flex'>
         <Button variant='homeDefault' className='w-full md:w-auto ml-auto rounded-none text-base' disabled={isPending}>

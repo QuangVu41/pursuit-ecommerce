@@ -11,7 +11,8 @@ import {
   VerificationCodeWithEmailSchema,
   VerificationCodeWithEmailSchemaType,
 } from '@/schemas/auth';
-import { createUser, getUserByEmail, updateUserById } from '@/services/users';
+import { createUser } from '@/services/users';
+import { getUserByEmail, updateUserById } from '@/lib/user-queries';
 import {
   deleteVerificationTokenById,
   generateEmailVerificationToken,
