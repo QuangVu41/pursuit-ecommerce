@@ -10,7 +10,7 @@
  * These routes will redirect login user to /settings
  * @type {string[]}
  */
-export const authRoutes = ['/auth/signin', '/auth/signup'];
+export const authRoutes = ['/auth/signin', '/auth/signup', '/auth/forgot-password'];
 
 /**
  * The prefix for API authentication routes

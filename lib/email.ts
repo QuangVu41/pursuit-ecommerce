@@ -35,6 +35,13 @@ export class Email {
     await this.send(`<p>Your email verification code: ${this.token}</p>`, 'Email Verification');
   }
 
+  async sendPasswordReset() {
+    await this.send(
+      `<p>Your password reset link: <a href='${process.env.APP_URL}/auth/reset-password?token=${this.token}'>Click here</a></p>`,
+      'Password Reset'
+    );
+  }
+
   async sendEmailProductPurchase(html: string) {
     await this.send(html, 'Product Purchase Successful');
   }

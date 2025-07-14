@@ -4,6 +4,8 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { signIn, signOut } from '@/auth';
 import {
+  ResetPasswordSchema,
+  ResetPasswordSchemaType,
   SigninSchema,
   SigninSchemaType,
   SignupSchema,
@@ -12,11 +14,13 @@ import {
   VerificationCodeWithEmailSchemaType,
 } from '@/schemas/auth';
 import { createUser } from '@/services/users';
-import { getUserByEmail, updateUserById } from '@/lib/user-queries';
+import { getUserByEmail, updateUserById } from '@/services/user-queries';
 import {
   deleteVerificationTokenById,
   generateEmailVerificationToken,
+  generatePasswordResetToken,
   getEmailVerificationTokenByEmail,
+  getPasswordResetTokenByToken,
 } from '@/services/verifications';
 import { Email } from '@/lib/email';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
@@ -29,6 +33,44 @@ export const sendEmailVerification = catchAsync(async (email: string) => {
 
   return { success: 'Confirmation email sent!' };
 }, true);
+
+export const sendPasswordResetVerification = catchAsync(async (email: string) => {
+  const verificationToken = await generatePasswordResetToken(email);
+  await new Email(verificationToken.email, verificationToken.token).sendPasswordReset();
+
+  return { success: 'Reset password link sent!' };
+}, true);
+
+export const resetPassword = async (data: ResetPasswordSchemaType, token?: string | null) => {
+  if (!token) return { error: 'Missing token!' };
+
+  const validatedFields = ResetPasswordSchema.safeParse(data);
+
+  if (!validatedFields.success)
+    return { error: `Invalid Fields! ${validatedFields.error.errors.map((err) => err.message).join(', ')}` };
+
+  const { password } = validatedFields.data;
+
+  const existingToken = await getPasswordResetTokenByToken(token);
+
+  if (!existingToken) return { error: 'Invalid token!' };
+
+  const hasExpires = new Date(existingToken.expires) < new Date();
+
+  if (hasExpires) return { error: 'Token has expires!' };
+
+  const existingUser = await getUserByEmail(existingToken.email);
+
+  if (!existingUser) return { error: 'Email does not exist!' };
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await updateUserById(existingUser.id, { password: hashedPassword });
+
+  await deleteVerificationTokenById(existingToken.id);
+
+  return { success: 'Password updated' };
+};
 
 export const signup = catchAsync(async (data: SignupSchemaType) => {
   const validatedFields = SignupSchema.safeParse(data);

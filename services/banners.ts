@@ -45,6 +45,10 @@ export const createBanner = async (data: BannerFormSchemaType) => {
 
   if (images.length === 0) return { error: 'Banner has to have at least 1 image!' };
 
+  const existingBanner = await getBannerByType(type);
+
+  if (existingBanner) throw new ExpectedError('Banner of this type already exists!');
+
   const bannerImages = await Promise.all(
     images.map(async (img, idx) => {
       const imageUrl = await uploadToS3(img.imageFile, 'banners');
@@ -77,6 +81,10 @@ export const updateBanner = async (data: BannerFormSchemaType) => {
     if (!id) throw new ExpectedError('Banner ID is required!');
 
     if (images.length === 0) return { error: 'Banner has to have at least 1 image!' };
+
+    const existingBanner = await getBannerByType(type);
+
+    if (existingBanner) throw new ExpectedError('Banner of this type already exists!');
 
     const existingBannerImages = images.filter((img) => img.imgId);
     const deletingBannerImages = await Promise.all(
@@ -124,7 +132,7 @@ export const updateBanner = async (data: BannerFormSchemaType) => {
 };
 
 export const getHeroBanner = async () => {
-  const heroBanner = await db.banner.findFirst({
+  const heroBanner = await db.banner.findUnique({
     where: {
       type: BannerType.hero,
     },
@@ -137,7 +145,7 @@ export const getHeroBanner = async () => {
 };
 
 export const getSaleBanner = async () => {
-  const saleBanner = await db.banner.findFirst({
+  const saleBanner = await db.banner.findUnique({
     where: {
       type: BannerType.sale,
     },
@@ -147,6 +155,16 @@ export const getSaleBanner = async () => {
   });
 
   return saleBanner;
+};
+
+export const getBannerByType = async (type: BannerType) => {
+  const banner = await db.banner.findUnique({
+    where: {
+      type,
+    },
+  });
+
+  return banner;
 };
 
 export const getManyBannerImages = async (bannerId: string, ids?: string[]) => {

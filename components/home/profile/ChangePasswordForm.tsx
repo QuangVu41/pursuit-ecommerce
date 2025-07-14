@@ -8,6 +8,8 @@ import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import InputHome from '@/components/common/InputHome';
 import { Button } from '@/components/ui/button';
+import { changeUserPasswordAct } from '@/actions/user';
+import { toast } from 'sonner';
 
 const ChangePasswordForm = () => {
   const [isPending, startTransition] = useTransition();
@@ -20,7 +22,19 @@ const ChangePasswordForm = () => {
     },
   });
 
-  const handleSubmit = (data: UserPasswordChangeSchemaType) => {};
+  const handleSubmit = (data: UserPasswordChangeSchemaType) => {
+    startTransition(() => {
+      changeUserPasswordAct(data).then((res) => {
+        if (res?.error) {
+          toast.error(res.error);
+        }
+        if (res?.success) {
+          toast.success(res.success);
+          form.reset();
+        }
+      });
+    });
+  };
 
   return (
     <FormWrapper form={form} handleSubmit={handleSubmit} isModal={false} className='!px-0'>
@@ -34,7 +48,7 @@ const ChangePasswordForm = () => {
               <InputHome
                 {...field}
                 placeholder='********'
-                type='text'
+                type='password'
                 disabled={isPending}
                 className='text-foreground bg-background placeholder:text-muted-foreground'
               />
@@ -53,9 +67,9 @@ const ChangePasswordForm = () => {
               <InputHome
                 {...field}
                 placeholder='********'
-                type='text'
+                type='password'
                 className='text-foreground bg-background placeholder:text-muted-foreground'
-                maxLength={10}
+                disabled={isPending}
               />
             </FormControl>
             <FormMessage />
@@ -72,7 +86,7 @@ const ChangePasswordForm = () => {
               <InputHome
                 {...field}
                 placeholder='********'
-                type='text'
+                type='password'
                 disabled={isPending}
                 className='text-foreground bg-background placeholder:text-muted-foreground'
               />

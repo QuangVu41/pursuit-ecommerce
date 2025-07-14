@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { db } from '@/lib/db';
-import { getUserById, updateUserById } from './lib/user-queries';
+import { getUserById, updateUserById } from './services/user-queries';
 import { stripe } from '@/lib/stripe';
 import authConfig from '@/auth.config';
 

@@ -1,8 +1,15 @@
 'use server';
 
+import { catchAsync } from '@/lib/catchAsync';
 import { uploadToS3 } from '@/lib/upload';
-import { UserEditSchema, UserEditSchemaType } from '@/schemas/user';
-import { updateUserById } from '@/lib/user-queries';
+import {
+  UserEditSchema,
+  UserEditSchemaType,
+  UserPasswordChangeSchema,
+  UserPasswordChangeSchemaType,
+} from '@/schemas/user';
+import { updateUserById } from '@/services/user-queries';
+import { changeUserPassword } from '@/services/users';
 import { revalidatePath } from 'next/cache';
 
 export const updateUserInfoAct = async (data: UserEditSchemaType) => {
@@ -26,3 +33,16 @@ export const updateUserInfoAct = async (data: UserEditSchemaType) => {
   revalidatePath('/profile');
   return { success: 'Information updated successfully!' };
 };
+
+export const changeUserPasswordAct = catchAsync(async (data: UserPasswordChangeSchemaType) => {
+  const validatedFields = UserPasswordChangeSchema.safeParse(data);
+
+  if (!validatedFields.success)
+    return { error: `Invalid Fields! ${validatedFields.error.errors.map((err) => err.message).join(', ')}` };
+
+  await changeUserPassword(validatedFields.data);
+
+  revalidatePath('/profile');
+
+  return { success: 'Password changed successfully!' };
+});

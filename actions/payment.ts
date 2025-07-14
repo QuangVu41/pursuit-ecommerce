@@ -9,7 +9,7 @@ import { convertVndToUsd } from '@/lib/helpers';
 import { stripe } from '@/lib/stripe';
 import { AddToCartSchema, AddToCartSchemaType } from '@/schemas/products';
 import { getProdVariantByAttrIds } from '@/services/products';
-import { getUserById } from '@/lib/user-queries';
+import { getUserById } from '@/services/user-queries';
 import { redirect } from 'next/navigation';
 
 export type ProdDataItem = {

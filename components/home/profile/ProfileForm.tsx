@@ -93,7 +93,9 @@ const ProfileForm = ({ userData }: ProfileFormProps) => {
                     )}
                     {!imageUrl && (
                       <>
-                        <FilePlus2 className='w-5 h-5 text-home-primary/70 group-hover:text-home-primary top-2 right-2 absolute' />
+                        <span className='group-hover:text-foreground top-2 right-2 absolute rounded-lg p-1 bg-background border'>
+                          <FilePlus2 className='w-5 h-5 text-home-primary/70 group-hover:text-home-primary' />
+                        </span>
                         <p className='font-manrope text-xl font-bold text-foreground/70 group-hover:text-foreground'>
                           160 X 160
                         </p>
@@ -106,6 +108,7 @@ const ProfileForm = ({ userData }: ProfileFormProps) => {
                       onChange={handleInputChange}
                       hidden
                       name='imageFile'
+                      disabled={isPending}
                     />
                   </figure>
                 </div>
@@ -197,7 +200,7 @@ const ProfileForm = ({ userData }: ProfileFormProps) => {
                       <Button
                         variant={'outline'}
                         className={cn(
-                          'w-full rounded-none pl-3 text-left font-normal',
+                          'w-full rounded-none pl-3 text-left font-normal text-base',
                           !field.value && 'text-muted-foreground'
                         )}
                       >

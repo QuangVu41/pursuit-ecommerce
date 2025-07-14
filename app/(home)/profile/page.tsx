@@ -5,7 +5,7 @@ import ChangePasswordForm from '@/components/home/profile/ChangePasswordForm';
 import ProfileForm from '@/components/home/profile/ProfileForm';
 import { Separator } from '@/components/ui/separator';
 import { checkIfUserUsedOauthProvider } from '@/services/users';
-import { getUserById } from '@/lib/user-queries';
+import { getUserById } from '@/services/user-queries';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
