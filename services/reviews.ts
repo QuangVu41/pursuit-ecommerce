@@ -129,3 +129,13 @@ export const getUserAverageRating = async (searchParams: { [key: string]: string
 
   return totalRevenue._avg.rating || 0;
 };
+
+export const getAll5StarReviews = async () => {
+  const reviews = await db.review.count({
+    where: {
+      rating: 5,
+    },
+  });
+
+  return reviews;
+};

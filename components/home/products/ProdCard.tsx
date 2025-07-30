@@ -51,7 +51,7 @@ const ProdCard = async ({ prod, className }: ProdCardProps) => {
                 <Image src={starSvg} alt='star' className='size-4' />
                 {avgRating.toFixed(1)}
               </span>
-              |<span>Sold {numSold}</span>
+              |<span>{numSold} Sold</span>
             </div>
           </div>
         </CardContent>

@@ -1,4 +1,8 @@
-const FooterRating = () => {
+import { getAll5StarReviews } from '@/services/reviews';
+
+const FooterRating = async () => {
+  const total5StarReviews = await getAll5StarReviews();
+
   return (
     <div className='text-muted flex flex-col gap-y-3 items-center'>
       <h4 className='font-bold text-[20px]'>Excellent</h4>
@@ -15,7 +19,7 @@ const FooterRating = () => {
         ))}
       </div>
       <p className='text-lg'>
-        Based on <span className='underline decoration-background underline-offset-2'>13,586 reviews</span>
+        Based on <span className='underline decoration-background underline-offset-2'>{total5StarReviews} reviews</span>
       </p>
       <span className='text-lg font-bold flex items-center gap-1'>
         <svg width='31' height='29' viewBox='0 0 31 29' fill='none' xmlns='http://www.w3.org/2000/svg'>

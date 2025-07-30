@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { getAllCatesWithNoParentCates } from '@/services/categories';
 import { CateWithSubCates } from '@/types/categories';
-import { Minus, OctagonAlert, ScrollText } from 'lucide-react';
+import { Minus, OctagonAlert, ScrollText, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
 import { Fragment } from 'react';
 
@@ -46,6 +46,12 @@ export const getMainNavItems = async (): Promise<MainNavItems<CateWithSubCates>>
       icon: OctagonAlert,
       href: '/about',
       type: 'link',
+    },
+    {
+      title: 'Products',
+      type: 'link',
+      href: '/products',
+      icon: ShoppingBag,
     },
   ];
 };
