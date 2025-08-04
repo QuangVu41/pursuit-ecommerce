@@ -25,6 +25,7 @@ const DropdownItemLogoutBtn = ({ className }: DropdownItemLogoutBtnProps) => {
       logout().then((res) => {
         if (res?.error) toast.error(res.error);
         toast.dismiss(toastId);
+        toast.success('Logged out successfully');
       })
     );
   };
