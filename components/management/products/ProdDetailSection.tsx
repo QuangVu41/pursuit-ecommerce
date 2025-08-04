@@ -41,12 +41,12 @@ const ProdDetailSection = ({ form, cateSelectItems, isPending }: ProdDetailSecti
       <SectionHeader>
         <SectionTitle title='Product Detail' />
       </SectionHeader>
-      <div className='grid sm:grid-cols-2 xl:grid-cols-3 gap-3 items-start'>
+      <div className='grid sm:grid-cols-2 gap-3 items-start'>
         <FormField
           control={form.control}
           name='name'
           render={({ field }) => (
-            <FormItem className='sm:col-span-2 xl:col-span-1'>
+            <FormItem>
               <FormLabel>Name*</FormLabel>
               <FormControl>
                 <Input
@@ -92,6 +92,27 @@ const ProdDetailSection = ({ form, cateSelectItems, isPending }: ProdDetailSecti
                   placeholder='₫ 70000'
                   type='number'
                   maxLength={10}
+                  disabled={isPending}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name='discountPercentage'
+          render={({ field }) => (
+            <FormItem className='flex-2'>
+              <FormLabel>Discount percentage</FormLabel>
+              <FormControl>
+                <Input
+                  className='bg-background resize-none'
+                  {...field}
+                  placeholder='10%'
+                  type='number'
+                  min={0}
+                  max={100}
                   disabled={isPending}
                 />
               </FormControl>

@@ -44,6 +44,7 @@ const ProdForm = ({ cateSelectItems, attributes, mode, product }: ProdFormProps)
           regularPrice: 0,
           variants: [],
           images: [],
+          discountPercentage: 0,
           mode,
         }
       : {
@@ -53,6 +54,7 @@ const ProdForm = ({ cateSelectItems, attributes, mode, product }: ProdFormProps)
           summary: product.summary,
           categoryId: product.categoryId,
           regularPrice: product.regularPrice,
+          discountPercentage: product.discountPercentage,
           variants: product.productVariants.map((variant) => ({
             variantId: variant.id,
             firstAttrId: variant.firstAttrId,

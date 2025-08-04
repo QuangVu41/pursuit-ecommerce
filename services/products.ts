@@ -338,7 +338,10 @@ export const createProduct = async (data: ProdFormSchemaType) => {
   const userId = user?.id;
   if (!userId) throw new ExpectedError('Unauthenticated!');
 
-  const { name, categoryId, regularPrice, description, summary, images, variants } = data;
+  const { name, categoryId, regularPrice, description, summary, images, variants, discountPercentage } = data;
+
+  if (discountPercentage < 0 || discountPercentage > 100)
+    throw new ExpectedError('Discount percentage must be between 0 and 100!');
 
   if (variants.length === 0) throw new ExpectedError('Your product has to have at least one variant!');
 
@@ -390,6 +393,7 @@ export const createProduct = async (data: ProdFormSchemaType) => {
       regularPrice,
       summary,
       slug,
+      discountPercentage,
       productImages: {
         createMany: {
           data: prodImages,
@@ -410,7 +414,10 @@ export const updateProduct = async (data: ProdFormSchemaType) => {
     const userId = user?.id;
     if (!userId) throw new ExpectedError('Unauthenticated!');
 
-    const { id, name, categoryId, regularPrice, description, summary, images, variants } = data;
+    const { id, name, categoryId, regularPrice, description, summary, images, variants, discountPercentage } = data;
+
+    if (discountPercentage < 0 || discountPercentage > 100)
+      throw new ExpectedError('Discount percentage must be between 0 and 100!');
 
     if (!id) throw new ExpectedError('Product ID is required!');
 
@@ -526,6 +533,7 @@ export const updateProduct = async (data: ProdFormSchemaType) => {
         regularPrice,
         summary,
         slug,
+        discountPercentage,
         productImages: {
           deleteMany: {
             id: {

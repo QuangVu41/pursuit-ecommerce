@@ -93,21 +93,22 @@ model VerificationToken {
 }
 
 model Product {
-  id              String           @id @default(cuid())
-  name            String           @unique
-  slug            String           @unique
-  description     String
-  summary         String
-  regularPrice    Float
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  categoryId      String
-  category        Category         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  userId          String
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  productVariants ProductVariant[]
-  productImages   ProductImage[]
-  reviews         Review[]
+  id                 String           @id @default(cuid())
+  name               String           @unique
+  slug               String           @unique
+  description        String
+  summary            String
+  regularPrice       Float
+  discountPercentage Int              @default(0)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  categoryId         String
+  category           Category         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  userId             String
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productVariants    ProductVariant[]
+  productImages      ProductImage[]
+  reviews            Review[]
 
   @@map("products")
 }

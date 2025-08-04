@@ -69,6 +69,11 @@ export const ProdSchema = z.object({
     .number({ message: 'Price must be a number!' })
     .max(MAX_PRODUCT_PRICE, { message: `Price cannot exceed ${MAX_PRODUCT_PRICE}!` })
     .int(),
+  discountPercentage: z.coerce
+    .number({ message: 'Discount must be a number!' })
+    .min(0, { message: 'Discount cannot be less than 0%' })
+    .max(100, { message: 'Discount cannot exceed 100%' })
+    .int(),
   variants: ProdVariantSchema.array()
     .refine((vals) => vals.length > 0, {
       message: 'Please add at least one product variant!',

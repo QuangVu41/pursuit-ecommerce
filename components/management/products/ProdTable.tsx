@@ -9,6 +9,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import BtnSort from '@/components/management/filter/BtnSort';
 import { deleteManyProds, deleteProd } from '@/actions/products';
 import Image from 'next/image';
+import { Badge } from '@/components/ui/badge';
 
 interface ProdTableProps {
   products: ProductWithCateAndPrImg[];
@@ -59,6 +60,14 @@ const ProdTable = ({ products, count }: ProdTableProps) => {
         <span className='text-base font-semibold flex items-center text-green-400 dark:text-green-500'>
           {formatCurrency('VND', info.getValue())}
         </span>
+      ),
+    }),
+    columnHelper.accessor('discountPercentage', {
+      header: () => <BtnSort header='Discount' sortBy='discountPercentage' />,
+      cell: (info) => (
+        <Badge className='text-sm border-green-500 bg-green-500/10 text-green-500 rounded-full' variant='outline'>
+          {info.getValue()}%
+        </Badge>
       ),
     }),
     columnHelper.accessor('category', {
