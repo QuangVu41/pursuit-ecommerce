@@ -16,15 +16,15 @@ const DropdownItemLogoutBtn = ({ className }: DropdownItemLogoutBtnProps) => {
 
   const handleLogout = () => {
     startTransition(() => {
-      const toastId = toast(
-        <div className='items-center gap-1 flex'>
-          <Loader2 className='animate-spin' />
-          Logging out...
-        </div>
-      );
+      // const toastId = toast(
+      //   <div className='items-center gap-1 flex'>
+      //     <Loader2 className='animate-spin' />
+      //     Logging out...
+      //   </div>
+      // );
       logout().then((res) => {
         if (res?.error) toast.error(res.error);
-        toast.dismiss(toastId);
+        // toast.dismiss(toastId);
         toast.success('Logged out successfully');
       });
     });
