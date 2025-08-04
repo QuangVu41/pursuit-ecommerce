@@ -15,19 +15,19 @@ const DropdownItemLogoutBtn = ({ className }: DropdownItemLogoutBtnProps) => {
   const [isPending, startTransition] = useTransition();
 
   const handleLogout = () => {
-    const toastId = toast(
-      <div className='items-center gap-1 flex'>
-        <Loader2 className='animate-spin' />
-        Logging out...
-      </div>
-    );
-    startTransition(() =>
+    startTransition(() => {
+      const toastId = toast(
+        <div className='items-center gap-1 flex'>
+          <Loader2 className='animate-spin' />
+          Logging out...
+        </div>
+      );
       logout().then((res) => {
         if (res?.error) toast.error(res.error);
         toast.dismiss(toastId);
         toast.success('Logged out successfully');
-      })
-    );
+      });
+    });
   };
 
   return (
