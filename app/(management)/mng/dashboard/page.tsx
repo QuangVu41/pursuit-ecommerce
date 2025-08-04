@@ -1,13 +1,11 @@
 import BtnFilter from '@/components/common/BtnFilter';
 import Heading from '@/components/common/Heading';
-import PaginationBtns from '@/components/common/PaginationBtns';
-import SaleChart from '@/components/management/dashboard/SaleChart';
-import Stats from '@/components/management/dashboard/Stats';
+import DashboardWrapper from '@/components/management/dashboard/DashboardWrapper';
 import FilterHeader from '@/components/management/filter/FilterHeader';
-import SaleTable from '@/components/management/sales/SaleTable';
 import { dashboardSortBy } from '@/lib/searchParams';
-import { getAllUserSales, getSellerFilteredSales } from '@/services/orders';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
+import LoadingPage from './loading';
 
 interface DashboardPageProps {
   searchParams: Promise<{ [key: string]: string }>;
@@ -19,9 +17,6 @@ export const metadata: Metadata = {
 
 const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
   const queryParams = await searchParams;
-  const { last = '7' } = queryParams;
-  const orderItems = await getAllUserSales(queryParams);
-  const { sales, count } = await getSellerFilteredSales(queryParams);
 
   return (
     <>
@@ -40,10 +35,9 @@ const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
           />
         ))}
       </FilterHeader>
-      <Stats searchParams={queryParams} />
-      <SaleChart orderItems={orderItems} last={last} />
-      <SaleTable sales={sales} count={count} />
-      <PaginationBtns searchParams={queryParams} count={count!} segment='/mng/orders' />
+      <Suspense key={JSON.stringify(queryParams)} fallback={<LoadingPage />}>
+        <DashboardWrapper searchParams={queryParams} />
+      </Suspense>
     </>
   );
 };
