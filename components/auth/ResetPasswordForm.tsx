@@ -28,7 +28,7 @@ const ResetPasswordForm = () => {
   const handleSubmit = (data: ResetPasswordSchemaType) => {
     startTransition(() => {
       resetPassword(data, token).then((res) => {
-        if (res.error) {
+        if (res?.error) {
           toast.error(res.error);
         } else {
           toast.success('Password reset successfully!');

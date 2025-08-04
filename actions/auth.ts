@@ -41,7 +41,7 @@ export const sendPasswordResetVerification = catchAsync(async (email: string) =>
   return { success: 'Reset password link sent!' };
 }, true);
 
-export const resetPassword = async (data: ResetPasswordSchemaType, token?: string | null) => {
+export const resetPassword = catchAsync(async (data: ResetPasswordSchemaType, token?: string | null) => {
   if (!token) return { error: 'Missing token!' };
 
   const validatedFields = ResetPasswordSchema.safeParse(data);
@@ -70,7 +70,7 @@ export const resetPassword = async (data: ResetPasswordSchemaType, token?: strin
   await deleteVerificationTokenById(existingToken.id);
 
   return { success: 'Password updated' };
-};
+}, true);
 
 export const signup = catchAsync(async (data: SignupSchemaType) => {
   const validatedFields = SignupSchema.safeParse(data);
