@@ -144,6 +144,26 @@ export const getBestSellingProducts = async () => {
   return productsWithSales.sort((a, b) => b.totalQuantitySold - a.totalQuantitySold).map((prod) => prod);
 };
 
+export const getSaleProducts = async () => {
+  const products = await db.product.findMany({
+    where: {
+      discountPercentage: {
+        gt: 0,
+      },
+    },
+    include: {
+      productImages: {
+        where: {
+          isPrimary: true,
+        },
+      },
+      category: true,
+    },
+  });
+
+  return products;
+};
+
 export const getNewProducts = async () => {
   const thirtyDaysAgo = getDateInPast(NUM_DAYS_PRODUCT_NEW);
 

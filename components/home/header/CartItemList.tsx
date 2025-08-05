@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { formatCurrency } from '@/lib/helpers';
+import { calDiscountPrice, formatCurrency } from '@/lib/helpers';
 import { CartItemWithPayload } from '@/types/products';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -40,7 +40,12 @@ const CartItemList = ({ items }: CartItemListProps) => {
                   </div>
                 </div>
               </div>
-              <h2 className='text-primary font-semibold'>{formatCurrency('VND', item.productVariant.price)}</h2>
+              <h2 className='text-primary font-semibold'>
+                {formatCurrency(
+                  'VND',
+                  calDiscountPrice(item.productVariant.price, item.productVariant.product.discountPercentage)
+                )}
+              </h2>
             </Link>
           </li>
         ))}

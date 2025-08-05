@@ -7,6 +7,7 @@ import {
   increaseCartItemQty,
   setCartItemQtyAct,
 } from '@/actions/products';
+import { calDiscountPrice } from '@/lib/helpers';
 import { UserCartWithPayload } from '@/types/products';
 import { createContext, useContext, useState } from 'react';
 import { toast } from 'sonner';
@@ -140,7 +141,13 @@ const CartItemsProvider = ({ children, cartItems }: CartItemsProviderProps) => {
         set((state) => ({
           cartTotal: state.cartItems
             .filter((item) => ids.includes(item.id))
-            .reduce((total, item) => total + item.productVariant.price * item.quantity, 0),
+            .reduce(
+              (total, item) =>
+                total +
+                calDiscountPrice(item.productVariant.price, item.productVariant.product.discountPercentage) *
+                  item.quantity,
+              0
+            ),
         })),
     }))
   );

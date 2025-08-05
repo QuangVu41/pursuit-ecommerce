@@ -30,7 +30,7 @@ const ProdSummary = async ({ prod }: ProdSummaryProps) => {
           {numReviews} Review{numReviews > 1 ? 's' : ''}
         </span>
       </div>
-      <ProdPrice />
+      <ProdPrice discountPercentage={prod.discountPercentage} />
       <p className='text-base mt-2'>{prod.summary}</p>
       <ProdVariantWrapper>
         {prod.productVariants.length > 0 && <ProdSummaryVariant productVariants={prod.productVariants} />}

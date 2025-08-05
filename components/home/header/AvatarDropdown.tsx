@@ -61,7 +61,7 @@ const AvatarDropdown = async () => {
             >
               <Link href='/profile/orders'>
                 <Truck className='text-inherit' />
-                My Orders
+                My orders
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -70,7 +70,7 @@ const AvatarDropdown = async () => {
             >
               <Link href='/mng/dashboard'>
                 <LayoutDashboard className='text-inherit' />
-                Sell your Products
+                Sell your products
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem

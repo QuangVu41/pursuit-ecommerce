@@ -3,7 +3,7 @@
 import InputHome from '@/components/common/InputHome';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { formatCurrency } from '@/lib/helpers';
+import { calDiscountPrice, formatCurrency } from '@/lib/helpers';
 import { UserCartItemsWithPayload } from '@/types/products';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { Minus, Plus, Trash2 } from 'lucide-react';
@@ -91,9 +91,26 @@ const CartTable = () => {
       id: 'unit-price',
       header: () => 'Unit Price',
       cell: ({ row }) => (
-        <span className='text-home-primary font-medium'>
-          {formatCurrency('VND', row.original.productVariant.price)}
-        </span>
+        <div className='text-home-primary font-medium flex items-center gap-1'>
+          {row.original.productVariant.product.discountPercentage > 0 && (
+            <span>
+              {formatCurrency(
+                'VND',
+                calDiscountPrice(
+                  row.original.productVariant.price,
+                  row.original.productVariant.product.discountPercentage
+                )
+              )}
+            </span>
+          )}
+          <span
+            className={`${
+              row.original.productVariant.product.discountPercentage > 0 && 'line-through text-muted-foreground text-sm'
+            }`}
+          >
+            {formatCurrency('VND', row.original.productVariant.price)}
+          </span>
+        </div>
       ),
     }),
     columnHelper.display({
@@ -157,7 +174,13 @@ const CartTable = () => {
       header: () => 'Price',
       cell: ({ row }) => (
         <span className='text-primary font-medium'>
-          {formatCurrency('VND', row.original.productVariant.price * row.original.quantity)}
+          {formatCurrency(
+            'VND',
+            calDiscountPrice(
+              row.original.productVariant.price,
+              row.original.productVariant.product.discountPercentage
+            ) * row.original.quantity
+          )}
         </span>
       ),
     }),

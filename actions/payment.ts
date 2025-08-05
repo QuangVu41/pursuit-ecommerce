@@ -5,7 +5,7 @@ import { catchAsync } from '@/lib/catchAsync';
 import { APP_FEE_AMOUNT } from '@/lib/constants';
 import { db } from '@/lib/db';
 import { ExpectedError } from '@/lib/errors';
-import { convertVndToUsd } from '@/lib/helpers';
+import { calDiscountPrice, convertVndToUsd } from '@/lib/helpers';
 import { stripe } from '@/lib/stripe';
 import { AddToCartSchema, AddToCartSchemaType } from '@/schemas/products';
 import { getProdVariantByAttrIds } from '@/services/products';
@@ -36,10 +36,11 @@ export const purchaseProduct = catchAsync(async (data: AddToCartSchemaType) => {
 
   const { productId, firstAttrId, secondAttrId, quantity } = validatedFields.data;
   let prodVariant = await getProdVariantByAttrIds(productId, firstAttrId, secondAttrId);
-  const applicationFeeAmount = prodVariant!.price * quantity * APP_FEE_AMOUNT;
-  const totalOrder = prodVariant!.price * quantity;
+  const prodVariantDiscountPrice = calDiscountPrice(prodVariant.price, prodVariant.product.discountPercentage);
+  const applicationFeeAmount = prodVariantDiscountPrice * quantity * APP_FEE_AMOUNT;
+  const totalOrder = prodVariantDiscountPrice * quantity;
   const accountFund = Math.round(await convertVndToUsd(totalOrder - applicationFeeAmount)) * 100;
-  const prodPriceUsd = Math.round(await convertVndToUsd(prodVariant!.price)) * 100;
+  const prodPriceUsd = Math.round(await convertVndToUsd(prodVariantDiscountPrice)) * 100;
 
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',

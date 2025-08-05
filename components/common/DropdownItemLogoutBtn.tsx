@@ -18,7 +18,7 @@ const DropdownItemLogoutBtn = ({ className }: DropdownItemLogoutBtnProps) => {
     startTransition(() => {
       const toastId = toast(
         <div className='items-center gap-1 flex'>
-          <Loader2 className='animate-spin' />
+          <Loader2 className='size-5 animate-spin' />
           Logging out...
         </div>
       );

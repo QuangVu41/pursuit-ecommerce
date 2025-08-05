@@ -3,11 +3,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import starSvg from '@/public/star.svg';
 import { ProductWithCateAndPrimaryImg } from '@/types/products';
-import { formatCurrency, getDateInPast } from '@/lib/helpers';
+import { calDiscountPrice, formatCurrency, getDateInPast } from '@/lib/helpers';
 import { NUM_DAYS_PRODUCT_NEW } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import { getNumProductsSold } from '@/services/products';
 import { getAverageRating } from '@/services/reviews';
+import { Badge } from '@/components/ui/badge';
 
 interface ProdCardProps {
   prod: ProductWithCateAndPrimaryImg;
@@ -43,8 +44,15 @@ const ProdCard = async ({ prod, className }: ProdCardProps) => {
           </span>
           <h2 className='text-base font-medium truncate leading-none'>{prod.name}</h2>
           <div className='flex flex-col gap-y-2 items-start text-xs leading-none'>
-            <span className='font-bold text-primary text-base leading-none'>
-              {formatCurrency('VND', prod.regularPrice)}
+            <span className='font-bold text-primary text-base leading-none flex items-center gap-1'>
+              {prod.discountPercentage > 0
+                ? formatCurrency('VND', calDiscountPrice(prod.regularPrice, prod.discountPercentage))
+                : formatCurrency('VND', prod.regularPrice)}
+              {prod.discountPercentage > 0 && (
+                <Badge variant='outline' className='border-primary text-xs text-primary bg-primary/10'>
+                  -{prod.discountPercentage}%
+                </Badge>
+              )}
             </span>
             <div className='flex items-center font-medium gap-x-1'>
               <span className='flex items-center gap-x-0.5'>

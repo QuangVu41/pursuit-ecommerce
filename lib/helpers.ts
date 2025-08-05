@@ -27,6 +27,11 @@ export const getUniqueBy = <T, K extends keyof T>(array: T[], key: K): T[] => {
   });
 };
 
+export const calDiscountPrice = (price: number, discount: number) => {
+  if (discount === 0) return price;
+  return price - (price * discount) / 100;
+};
+
 export const capitalizeFirstLetter = (str: string): string => {
   if (!str) return '';
   return str.charAt(0).toUpperCase() + str.slice(1);

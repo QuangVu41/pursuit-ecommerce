@@ -35,6 +35,7 @@ const ProdAddToCartProvider = ({ children, hasTwoAttrs, regularPrice, productId 
     createStore<ProdAddToCartStore>((set) => ({
       productId,
       regularPrice,
+      variantPrice: undefined,
       hasTwoAttrs,
       quantity: 1,
       firstAttrId: '',

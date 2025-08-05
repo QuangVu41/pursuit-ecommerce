@@ -13,6 +13,7 @@ import CartTotal from '@/components/home/cart/CartTotal';
 import { useCartItemsStore } from '@/components/home/cart/CartItemsProvider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { purchaseProductsInCart } from '@/actions/payment';
+import { calDiscountPrice } from '@/lib/helpers';
 
 interface CartDataTableProps {
   columns: ColumnDef<UserCartItemsWithPayload>[];
@@ -52,10 +53,15 @@ const CartDataTable = ({ columns, data }: CartDataTableProps) => {
     const cartItemPayload = table.getSelectedRowModel().rows.map((row) => ({
       productVariantId: row.original.productVariantId,
       cartItemId: row.original.id,
-      accountFund: row.original.productVariant.price * row.original.quantity,
+      accountFund:
+        calDiscountPrice(row.original.productVariant.price, row.original.productVariant.product.discountPercentage) *
+        row.original.quantity,
       quantity: row.original.quantity,
       prodName: row.original.productVariant.product.name,
-      unit_amount: row.original.productVariant.price,
+      unit_amount: calDiscountPrice(
+        row.original.productVariant.price,
+        row.original.productVariant.product.discountPercentage
+      ),
       description: row.original.productVariant.product.summary,
       images: row.original.productVariant.imageUrl || row.original.productVariant.product.productImages[0].imageUrl,
     }));

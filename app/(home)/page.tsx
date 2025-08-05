@@ -3,18 +3,19 @@ import CategorySection from '@/components/home/others/CategorySection';
 import Newsletter from '@/components/home/others/Newsletter';
 import ProdPreviewSection from '@/components/home/products/ProdPreviewSection';
 import ProdSaleSection from '@/components/home/products/ProdSaleSection';
-import { getBestSellingProducts, getNewProducts, getRatedProducts } from '@/services/products';
+import { getBestSellingProducts, getNewProducts, getRatedProducts, getSaleProducts } from '@/services/products';
 
 const Home = async () => {
   const ratedProduct = await getRatedProducts();
   const newProducts = await getNewProducts();
   const bestSellingProducts = await getBestSellingProducts();
+  const saleProducts = await getSaleProducts();
 
   return (
     <>
       <Hero />
       <CategorySection />
-      <ProdSaleSection products={newProducts} />
+      <ProdSaleSection products={saleProducts} />
       <ProdPreviewSection
         title='Our popular products'
         description='Browse our most popular products and make your day more beautiful and glorious.'

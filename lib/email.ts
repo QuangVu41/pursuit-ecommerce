@@ -6,17 +6,20 @@ export class Email {
   token?: string;
 
   constructor(email: string, token?: string) {
-    this.from = `Pursuit Verification <${process.env.SENDGRID_EMAIL_FROM}>`;
+    this.from = `Pursuit Verification <${process.env.GOOGLE_EMAIL_SMTP_USER}>`;
     this.to = email;
     this.token = token;
   }
 
   newTransport() {
     return nodemailer.createTransport({
-      service: 'SendGrid',
+      service: 'gmail',
       auth: {
-        user: process.env.SENDGRID_USER,
-        pass: process.env.SENDGRID_PASS,
+        type: 'OAuth2',
+        user: process.env.GOOGLE_EMAIL_SMTP_USER,
+        clientId: process.env.GOOGLE_EMAIL_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_EMAIL_CLIENT_SECRET,
+        refreshToken: process.env.GOOGLE_EMAIL_REFRESH_TOKEN,
       },
     });
   }
