@@ -89,6 +89,7 @@ export const getRatedProducts = async () => {
     orderBy: {
       rating: 'desc',
     },
+    take: 5,
   });
 
   return reviews
@@ -121,6 +122,7 @@ export const getBestSellingProducts = async () => {
         },
       },
     },
+    take: 5,
   });
 
   // Calculate total sales for each product
@@ -159,6 +161,7 @@ export const getSaleProducts = async () => {
       },
       category: true,
     },
+    take: 5,
   });
 
   return products;
@@ -181,6 +184,7 @@ export const getNewProducts = async () => {
       },
       category: true,
     },
+    take: 5,
   });
 
   return products;
