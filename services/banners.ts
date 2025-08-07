@@ -84,7 +84,7 @@ export const updateBanner = async (data: BannerFormSchemaType) => {
 
     const existingBanner = await getBannerByType(type);
 
-    if (existingBanner) throw new ExpectedError('Banner of this type already exists!');
+    if (existingBanner && existingBanner.id !== id) throw new ExpectedError('Banner of this type already exists!');
 
     const existingBannerImages = images.filter((img) => img.imgId);
     const deletingBannerImages = await Promise.all(
