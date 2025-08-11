@@ -54,3 +54,11 @@ export const deleteUserAct = catchAsync(async (userId: string) => {
 
   return { success: 'User deleted successfully!' };
 });
+
+export const deleteManyUserAct = catchAsync(async (ids: string[]) => {
+  await Promise.all(ids.map((id) => deleteUser(id)));
+
+  revalidatePath('/mng/users');
+
+  return { success: 'Users deleted successfully!' };
+});

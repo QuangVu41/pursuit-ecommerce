@@ -12,7 +12,7 @@ import DataTable from '@/components/common/DataTable';
 import ModalPopup from '@/components/common/ModalPopup';
 import DeleteConfirm from '@/components/common/DeleteConfirm';
 import { Button } from '@/components/ui/button';
-import { deleteUserAct } from '@/actions/user';
+import { deleteManyUserAct, deleteUserAct } from '@/actions/user';
 
 interface UserMngTableProps {
   users: User[];
@@ -130,7 +130,15 @@ const UserMngTable = ({ users, count }: UserMngTableProps) => {
     }),
   ];
 
-  return <DataTable<User, any> count={count} columns={prodColumns} data={users} showFilter={false} />;
+  return (
+    <DataTable<User, any>
+      count={count}
+      columns={prodColumns}
+      data={users}
+      showFilter={false}
+      handleDeleteSelectedRowsServer={deleteManyUserAct}
+    />
+  );
 };
 
 export default UserMngTable;

@@ -33,7 +33,7 @@ const AllProductsPage = async ({ searchParams }: AllProductsPageProps) => {
 
   return (
     <>
-      <Heading title='Product List' />
+      <Heading title='All Products' />
       <FilterHeader>
         <DateRangePicker />
         <BtnCombobox items={categories} inputText='Category' />

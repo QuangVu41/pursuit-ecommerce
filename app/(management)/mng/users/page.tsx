@@ -25,7 +25,7 @@ const UsersPage = async ({ searchParams }: UsersPageProps) => {
 
   return (
     <>
-      <Heading title='Product List' />
+      <Heading title='Users List' />
       <FilterHeader>
         <DateRangePicker />
       </FilterHeader>
