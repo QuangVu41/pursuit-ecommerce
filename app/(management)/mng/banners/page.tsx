@@ -7,6 +7,7 @@ import BannerForm from '@/components/management/banners/BannerForm';
 import BannerTable from '@/components/management/banners/BannerTable';
 import FilterHeader from '@/components/management/filter/FilterHeader';
 import { Button } from '@/components/ui/button';
+import { checkUserHasAdminRole } from '@/lib/auth-helper';
 import { getFilteredBanners } from '@/services/banners';
 import { Plus } from 'lucide-react';
 import { Metadata } from 'next';
@@ -22,6 +23,7 @@ export const metadata: Metadata = {
 };
 
 const BannersPage = async ({ searchParams }: BannersPageProps) => {
+  await checkUserHasAdminRole();
   const queryParams = await searchParams;
   const { banners, count } = await getFilteredBanners(queryParams);
 

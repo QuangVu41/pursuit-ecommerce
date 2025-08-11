@@ -9,6 +9,7 @@ import CateSelectItems from '@/components/management/categories/CateSelectItems'
 import CateTable from '@/components/management/categories/CateTable';
 import FilterHeader from '@/components/management/filter/FilterHeader';
 import { Button } from '@/components/ui/button';
+import { checkUserHasAdminRole } from '@/lib/auth-helper';
 import { getFilteredCategories } from '@/services/categories';
 import { Plus } from 'lucide-react';
 import { Metadata } from 'next';
@@ -24,6 +25,7 @@ export const metadata: Metadata = {
 };
 
 const CategoriesPage = async ({ searchParams }: CategoriesPageProps) => {
+  await checkUserHasAdminRole();
   const queryParams = await searchParams;
   const { categories, count } = await getFilteredCategories(queryParams);
 

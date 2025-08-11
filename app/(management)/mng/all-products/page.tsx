@@ -1,36 +1,34 @@
-import { getUserSession } from '@/auth';
 import BtnCombobox from '@/components/common/BtnCombobox';
 import DateRangePicker from '@/components/common/DateRangePicker';
 import Empty from '@/components/common/Empty';
 import Heading from '@/components/common/Heading';
 import PaginationBtns from '@/components/common/PaginationBtns';
 import FilterHeader from '@/components/management/filter/FilterHeader';
-import ProdTable from '@/components/management/products/ProdTable';
 import { Button } from '@/components/ui/button';
 import { flattenNestedArray } from '@/lib/helpers';
 import { getAllCatesWithNoParentCates } from '@/services/categories';
-import { getAllUserFilteredProducts } from '@/services/products';
+import { getAllFilteredMngProducts } from '@/services/products';
 import { Plus } from 'lucide-react';
-import { Metadata } from 'next';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { Metadata } from 'next';
+import { checkUserHasAdminRole } from '@/lib/auth-helper';
+import ProdMngTable from '@/components/management/products/ProdMngTable';
 
-interface ProductsPageProps {
+export const metadata: Metadata = {
+  title: 'All Products Management',
+};
+
+interface AllProductsPageProps {
   searchParams: Promise<{
     [key: string]: string;
   }>;
 }
 
-export const metadata: Metadata = {
-  title: 'Products Management',
-};
-
-const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
-  const user = await getUserSession();
-  if (user && !user.stripeConnectedLinked) redirect('/billing');
+const AllProductsPage = async ({ searchParams }: AllProductsPageProps) => {
+  await checkUserHasAdminRole();
 
   const queryParams = await searchParams;
-  const { products, count } = await getAllUserFilteredProducts(queryParams);
+  const { products, count } = await getAllFilteredMngProducts(queryParams);
   const categories = flattenNestedArray(await getAllCatesWithNoParentCates(), 'subcategories');
 
   return (
@@ -48,8 +46,8 @@ const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
       </FilterHeader>
       {products.length ? (
         <>
-          <ProdTable products={products} count={count} />
-          <PaginationBtns searchParams={queryParams} count={count!} segment='/mng/products' />
+          <ProdMngTable products={products} count={count} />
+          <PaginationBtns searchParams={queryParams} count={count!} segment='/mng/all-products' />
         </>
       ) : (
         <Empty title='No products found!' />
@@ -58,4 +56,4 @@ const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
   );
 };
 
-export default ProductsPage;
+export default AllProductsPage;

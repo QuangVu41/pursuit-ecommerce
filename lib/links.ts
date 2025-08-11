@@ -1,11 +1,12 @@
+import { UserRole } from '@prisma/client';
 import {
   BadgeCheck,
-  BadgeDollarSign,
+  BriefcaseConveyorBelt,
   CircleUserRound,
   LayoutDashboard,
   Megaphone,
-  Settings,
   ShoppingBag,
+  SquareUserRound,
   Truck,
 } from 'lucide-react';
 
@@ -27,6 +28,7 @@ export const sidebarMenu = [
       {
         label: 'Categories',
         href: '/mng/products/categories',
+        role: UserRole.admin,
       },
       {
         label: 'Attributes',
@@ -35,15 +37,23 @@ export const sidebarMenu = [
     ],
   },
   {
+    label: 'All Products',
+    href: '/mng/all-products',
+    icon: BriefcaseConveyorBelt,
+    role: UserRole.admin,
+  },
+  {
+    label: 'All Users',
+    href: '/mng/users',
+    icon: SquareUserRound,
+    role: UserRole.admin,
+  },
+  {
     label: 'Banners',
     href: '/mng/banners',
     icon: Megaphone,
+    role: UserRole.admin,
   },
-  // {
-  //   label: 'Sales',
-  //   href: '/mng/sales',
-  //   icon: BadgeDollarSign,
-  // },
   // {
   //   label: 'Settings',
   //   href: '/mng/settings',

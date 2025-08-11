@@ -7,7 +7,7 @@ import { generateOrQueryForSearch, getDateInPast, nameToSlug } from '@/lib/helpe
 import { deleteFromS3, uploadToS3 } from '@/lib/upload';
 import { AddToCartSchemaType, ProdFormSchemaType, ProdVariantSchemaType } from '@/schemas/products';
 import { ProductWithCateAndImg, ProductWithCateAndPrimaryImg, ProductWithCateAndPrImg } from '@/types/products';
-import { Prisma } from '@prisma/client';
+import { Prisma, UserRole } from '@prisma/client';
 import { randomUUID } from 'crypto';
 
 export const getProductBySlug = async (slug: string) => {
@@ -340,6 +340,50 @@ export const getAllUserFilteredProducts = async (searchParams: { [key: string]: 
     productImages: {
       where: {
         isPrimary: true,
+      },
+    },
+  };
+
+  const { data, count } = await new FilterApi<ProductWithCateAndPrImg, Prisma.ProductFindManyArgs>(
+    'product',
+    searchParams
+  )
+    .where(where)
+    .sort()
+    .paginate()
+    .include(include)
+    .execute();
+
+  return { products: data, count };
+};
+
+export const getAllFilteredMngProducts = async (searchParams: { [key: string]: string }) => {
+  const user = await getUserSession();
+  if (user && user.role !== UserRole.admin) throw new ExpectedError('Unauthorized!');
+
+  const { search, from, to, item } = searchParams;
+  const where: Prisma.ProductWhereInput = {
+    OR: search ? generateOrQueryForSearch(search, 'name') : undefined,
+    createdAt: {
+      gte: from ? new Date(from) : undefined,
+      lte: to ? new Date(to) : undefined,
+    },
+    category: {
+      OR: item ? [{ name: item }, { parentId: item }] : undefined,
+    },
+  };
+  const include: Prisma.ProductInclude = {
+    category: true,
+    productImages: {
+      where: {
+        isPrimary: true,
+      },
+    },
+    user: {
+      select: {
+        name: true,
+        image: true,
+        role: true,
       },
     },
   };

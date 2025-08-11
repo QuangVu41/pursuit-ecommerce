@@ -9,20 +9,26 @@ import {
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import { ChevronDown } from 'lucide-react';
+import { UserRole } from '@prisma/client';
+import { getUserSession } from '@/auth';
 
 interface CollapsibleMenuItemProps {
   item: {
     label: string;
     href: string;
     icon: React.ComponentType;
+    onlyAdmin?: boolean;
     subMenu: {
       label: string;
       href: string;
+      role?: UserRole;
     }[];
   };
 }
 
-const CollapsibleMenuItem = ({ item }: CollapsibleMenuItemProps) => {
+const CollapsibleMenuItem = async ({ item }: CollapsibleMenuItemProps) => {
+  const user = await getUserSession();
+
   return (
     <Collapsible key={item.href} className='group/collapsible' asChild>
       <SidebarMenuItem>
@@ -42,15 +48,17 @@ const CollapsibleMenuItem = ({ item }: CollapsibleMenuItemProps) => {
             </CollapsibleTrigger>
             <CollapsibleContent>
               <SidebarMenuSub>
-                {item.subMenu?.map((subItem) => (
-                  <SidebarMenuSubItem key={subItem.label}>
-                    <SidebarMenuSubButton asChild href={subItem.href}>
-                      <Link href={subItem.href}>
-                        <span>{subItem.label}</span>
-                      </Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                ))}
+                {item.subMenu?.map((subItem) =>
+                  subItem.role && subItem.role !== user?.role ? null : (
+                    <SidebarMenuSubItem key={subItem.label}>
+                      <SidebarMenuSubButton asChild href={subItem.href}>
+                        <Link href={subItem.href}>
+                          <span>{subItem.label}</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  )
+                )}
               </SidebarMenuSub>
             </CollapsibleContent>
           </>

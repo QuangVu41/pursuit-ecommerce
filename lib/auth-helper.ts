@@ -1,13 +1,23 @@
 import { getUserSession } from '@/auth';
 import { getUserById } from '@/services/user-queries';
-import { redirect } from 'next/navigation';
+import { UserRole } from '@prisma/client';
+import { notFound, redirect } from 'next/navigation';
 
 export const checkStripeAccountLinked = async () => {
   const user = await getUserSession();
 
   if (user && user.id) {
     const userPayload = await getUserById(user.id);
+    if (user.role === 'admin') return;
     if (userPayload && userPayload.stripeConnectedLinked === false) redirect('/billing');
+  }
+};
+
+export const checkUserHasAdminRole = async () => {
+  const user = await getUserSession();
+
+  if (user && user.role !== UserRole.admin) {
+    notFound();
   }
 };
 

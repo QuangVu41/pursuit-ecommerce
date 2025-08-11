@@ -28,6 +28,7 @@ export type ProdDataItemWithCart = ProdDataItem & {
 
 export const purchaseProduct = catchAsync(async (data: AddToCartSchemaType) => {
   const user = await getUserSession();
+
   const validatedFields = AddToCartSchema.safeParse(data);
 
   if (!validatedFields.success) {

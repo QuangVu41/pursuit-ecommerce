@@ -1,9 +1,21 @@
-import NextAuth from 'next-auth';
+import NextAuth, { DefaultSession } from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { db } from '@/lib/db';
 import { getUserById, updateUserById } from './services/user-queries';
 import { stripe } from '@/lib/stripe';
 import authConfig from '@/auth.config';
+import { UserRole } from '@prisma/client';
+
+export type ExtendedUser = {
+  role: UserRole;
+  stripeConnectedLinked: boolean;
+} & DefaultSession['user'];
+
+declare module 'next-auth' {
+  interface Session {
+    user: ExtendedUser;
+  }
+}
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   pages: {
@@ -47,11 +59,18 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
       token.name = existingUser.name;
       token.picture = existingUser.image;
+      token.role = existingUser.role;
+      token.stripeConnectedLinked = existingUser.stripeConnectedLinked;
 
       return token;
     },
     session({ token, session }) {
       if (token.sub && session.user) session.user.id = token.sub;
+
+      if (token.role && session.user) session.user.role = token.role as UserRole;
+
+      if (token.stripeConnectedLinked && session.user)
+        session.user.stripeConnectedLinked = token.stripeConnectedLinked as boolean;
 
       if (session.user) {
         session.user.name = token.name;

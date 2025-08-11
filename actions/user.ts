@@ -9,7 +9,7 @@ import {
   UserPasswordChangeSchemaType,
 } from '@/schemas/user';
 import { updateUserById } from '@/services/user-queries';
-import { changeUserPassword } from '@/services/users';
+import { changeUserPassword, deleteUser } from '@/services/users';
 import { revalidatePath } from 'next/cache';
 
 export const updateUserInfoAct = async (data: UserEditSchemaType) => {
@@ -45,4 +45,12 @@ export const changeUserPasswordAct = catchAsync(async (data: UserPasswordChangeS
   revalidatePath('/profile');
 
   return { success: 'Password changed successfully!' };
+});
+
+export const deleteUserAct = catchAsync(async (userId: string) => {
+  await deleteUser(userId);
+
+  revalidatePath('/mng/users');
+
+  return { success: 'User deleted successfully!' };
 });

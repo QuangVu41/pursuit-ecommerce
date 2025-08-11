@@ -70,7 +70,7 @@ const AvatarDropdown = async () => {
             >
               <Link href='/mng/dashboard'>
                 <LayoutDashboard className='text-inherit' />
-                Sell your products
+                {user.role === 'admin' ? 'Dashboard' : 'Sell your products'}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem

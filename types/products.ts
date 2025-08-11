@@ -16,6 +16,13 @@ export type ProductWithCateAndPrImg = Prisma.ProductGetPayload<{
         isPrimary: true;
       };
     };
+    user: {
+      select: {
+        name: true;
+        image: true;
+        role: true;
+      };
+    };
   };
 }>;
 export type ProductWithPayLoad = Prisma.ProductGetPayload<{
