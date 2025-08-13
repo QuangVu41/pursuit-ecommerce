@@ -22,7 +22,7 @@ import ProdReviewSection from './ProdReviewSection';
 type ProdFormProps = {
   cateSelectItems: React.ReactNode;
   attributes: ProductAttributeWithValues[];
-  prodReviews: ProductReviewWithPayload[];
+  prodReviews?: ProductReviewWithPayload[];
 } & ({ mode: 'create'; product?: never } | { mode: 'edit'; product: ProductWithPayLoad });
 
 interface HasNoVariantsState {
@@ -132,7 +132,7 @@ const ProdForm = ({ cateSelectItems, attributes, mode, product, prodReviews }: P
       <Button className='flex shadow-md ml-auto text-base items-center' type='submit' disabled={isPending}>
         {mode === 'create' ? 'Create Product' : 'Save Changes'}
       </Button>
-      <ProdReviewSection prodReviews={prodReviews} />
+      <ProdReviewSection prodReviews={prodReviews as ProductReviewWithPayload[]} />
     </FormWrapper>
   );
 };
