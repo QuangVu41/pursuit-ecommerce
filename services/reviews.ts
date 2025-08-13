@@ -139,3 +139,11 @@ export const getAll5StarReviews = async () => {
 
   return reviews;
 };
+
+export const deleteReview = async (reviewId: string) => {
+  await db.review.delete({
+    where: {
+      id: reviewId,
+    },
+  });
+};

@@ -159,3 +159,13 @@ export type UserCartWithPayload = Prisma.CartGetPayload<{
 }>;
 
 export type UserCartItemsWithPayload = UserCartWithPayload['cartItems'][0];
+export type ProductReviewWithPayload = Prisma.ReviewGetPayload<{
+  include: {
+    user: {
+      select: {
+        name: true;
+        image: true;
+      };
+    };
+  };
+}>;

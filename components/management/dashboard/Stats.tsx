@@ -1,6 +1,6 @@
 import Stat from '@/components/management/dashboard/Stat';
 import { formatCurrency } from '@/lib/helpers';
-import { getTotalOrders, getTotalRevenue } from '@/services/orders';
+import { getUserTotalOrders, getUserTotalRevenue } from '@/services/orders';
 import { getUserAverageRating, getUserTotalReview } from '@/services/reviews';
 import { Banknote, SquareChartGantt, Star, Truck } from 'lucide-react';
 
@@ -9,8 +9,8 @@ interface StatsProps {
 }
 
 const Stats = async ({ searchParams }: StatsProps) => {
-  const totalRevenue = await getTotalRevenue(searchParams);
-  const totalOrders = await getTotalOrders(searchParams);
+  const totalRevenue = await getUserTotalRevenue(searchParams);
+  const totalOrders = await getUserTotalOrders(searchParams);
   const totalReviews = await getUserTotalReview(searchParams);
   const avgRating = await getUserAverageRating(searchParams);
 

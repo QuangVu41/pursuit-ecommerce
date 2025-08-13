@@ -2,7 +2,7 @@
 
 import { catchAsync } from '@/lib/catchAsync';
 import { ReviewSchema, ReviewSchemaType } from '@/schemas/review';
-import { createReview } from '@/services/reviews';
+import { createReview, deleteReview } from '@/services/reviews';
 import { revalidatePath } from 'next/cache';
 
 export const createReviewAct = catchAsync(async (data: ReviewSchemaType) => {
@@ -15,4 +15,12 @@ export const createReviewAct = catchAsync(async (data: ReviewSchemaType) => {
 
   revalidatePath(`/mng/products/${validatedFields.data.productId}`);
   return { success: 'Review created successfully!' };
+});
+
+export const deleteReviewAct = catchAsync(async (reviewId: string) => {
+  await deleteReview(reviewId);
+
+  revalidatePath(`/mng/products`);
+
+  return { success: 'Review deleted successfully!' };
 });

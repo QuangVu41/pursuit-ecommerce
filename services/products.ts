@@ -9,6 +9,7 @@ import { AddToCartSchemaType, ProdFormSchemaType, ProdVariantSchemaType } from '
 import { ProductWithCateAndImg, ProductWithCateAndPrimaryImg, ProductWithCateAndPrImg } from '@/types/products';
 import { Prisma, UserRole } from '@prisma/client';
 import { randomUUID } from 'crypto';
+import { subMonths } from 'date-fns';
 
 export const getProductBySlug = async (slug: string) => {
   const product = await db.product.findUnique({
@@ -40,32 +41,6 @@ export const getProductBySlug = async (slug: string) => {
   });
 
   return product;
-};
-
-export const getBestSellingProductImages = async () => {
-  const product = await db.product.findUnique({
-    where: {
-      slug: 'Converse-Chuck-70-Low',
-    },
-    include: {
-      productImages: true,
-      productVariants: true,
-    },
-  });
-
-  if (product) {
-    const images = product.productImages.map((img) => ({
-      imageUrl: img.imageUrl,
-      altText: img.altText,
-    }));
-    const variants = product.productVariants.map((variant) => ({
-      imageUrl: variant.imageUrl,
-      altText: variant.altText,
-    }));
-    return [...images, ...variants];
-  }
-
-  return [];
 };
 
 export const getRatedProducts = async () => {
@@ -711,6 +686,57 @@ export const deleteProduct = async (id: string) => {
       userId,
     },
   });
+};
+
+export const getPopularProducts = async (searchParams: { [key: string]: string }) => {
+  const { last = '3' } = searchParams;
+
+  const bestSellingProducts = await db.product.findMany({
+    include: {
+      productVariants: {
+        include: {
+          orderItems: true,
+        },
+      },
+      productImages: {
+        where: {
+          isPrimary: true,
+        },
+      },
+      category: {
+        select: {
+          name: true,
+        },
+      },
+    },
+    where: {
+      createdAt: {
+        gte: subMonths(new Date(), parseInt(last)),
+        lte: new Date(),
+      },
+    },
+    take: 5,
+  });
+
+  // Calculate total sales for each product
+  const productsWithSales = bestSellingProducts.map((product) => {
+    const totalQuantitySold = product.productVariants.reduce((total, variant) => {
+      return (
+        total +
+        variant.orderItems.reduce((variantTotal, orderItem) => {
+          return variantTotal + orderItem.quantity;
+        }, 0)
+      );
+    }, 0);
+
+    return {
+      ...product,
+      totalQuantitySold,
+    };
+  });
+
+  // Sort by quantity sold and return top products
+  return productsWithSales.sort((a, b) => b.totalQuantitySold - a.totalQuantitySold).map((prod) => prod);
 };
 
 export const deleteManyProducts = async (ids: string[]) => {

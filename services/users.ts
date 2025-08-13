@@ -104,3 +104,9 @@ export const deleteUser = async (userId: string) => {
     where: { id: userId },
   });
 };
+
+export const getTotalUsers = async () => {
+  const totalUsers = await db.user.count();
+
+  return totalUsers;
+};

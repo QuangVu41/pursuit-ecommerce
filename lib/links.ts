@@ -5,12 +5,19 @@ import {
   CircleUserRound,
   LayoutDashboard,
   Megaphone,
+  ShieldUser,
   ShoppingBag,
   SquareUserRound,
   Truck,
 } from 'lucide-react';
 
 export const sidebarMenu = [
+  {
+    label: 'Admin Dashboard',
+    href: '/mng/admin-dashboard',
+    icon: ShieldUser,
+    role: UserRole.admin,
+  },
   {
     label: 'Dashboard',
     href: '/mng/dashboard',

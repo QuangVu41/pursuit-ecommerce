@@ -8,8 +8,8 @@ import { eachDayOfInterval, format, isSameDay, subDays } from 'date-fns';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 const chartConfig = {
-  totalSales: {
-    label: 'Sales',
+  totalRevenue: {
+    label: 'Revenue',
     color: 'var(--primary)',
   },
 } satisfies ChartConfig;
@@ -27,7 +27,7 @@ const SaleChart = ({ orderItems, last }: SaleChartProps) => {
 
   const chartData = allDates.map((date) => ({
     date: format(date, 'MMM dd'),
-    totalSales: orderItems
+    totalRevenue: orderItems
       .filter((item) => isSameDay(date, new Date(item.createdAt)))
       .reduce((acc, curr) => acc + curr.total - curr.platformFee, 0),
   }));
@@ -35,7 +35,7 @@ const SaleChart = ({ orderItems, last }: SaleChartProps) => {
   return (
     <Card className='@container/card font-manrope'>
       <CardHeader>
-        <CardTitle>Sales Chart</CardTitle>
+        <CardTitle>Revenue Chart</CardTitle>
         <CardDescription>
           <span className='hidden @[540px]/card:block'>Total for the last {last} days</span>
           <span className='@[540px]/card:hidden'>Last {last} days</span>
@@ -45,20 +45,14 @@ const SaleChart = ({ orderItems, last }: SaleChartProps) => {
         <ChartContainer config={chartConfig} className='aspect-auto h-[250px] w-full'>
           <AreaChart data={chartData}>
             <defs>
-              <linearGradient id='fillTotalSales' x1='0' y1='0' x2='0' y2='1'>
-                <stop offset='5%' stopColor='var(--color-totalSales)' stopOpacity={1.0} />
-                <stop offset='95%' stopColor='var(--color-totalSales)' stopOpacity={0.1} />
+              <linearGradient id='fillTotalRevenue' x1='0' y1='0' x2='0' y2='1'>
+                <stop offset='5%' stopColor='var(--color-totalRevenue)' stopOpacity={1.0} />
+                <stop offset='95%' stopColor='var(--color-totalRevenue)' stopOpacity={0.1} />
               </linearGradient>
             </defs>
             <CartesianGrid vertical={false} />
             <XAxis dataKey='date' tickLine={false} axisLine={false} tickMargin={8} minTickGap={32} />
-            <YAxis
-              tick={{ fill: 'var(--primary)' }}
-              tickLine={{ stroke: 'var(--primary)' }}
-              tickSize={4}
-              width={80}
-              tickFormatter={(value) => formatCurrency('VND', value)}
-            />
+            <YAxis tickSize={0} width={60} tickFormatter={(value) => formatCurrency('VND', value)} />
             <ChartTooltip
               cursor={false}
               defaultIndex={-1}
@@ -75,10 +69,10 @@ const SaleChart = ({ orderItems, last }: SaleChartProps) => {
               }
             />
             <Area
-              dataKey='totalSales'
+              dataKey='totalRevenue'
               type='monotone'
-              fill='url(#fillTotalSales)'
-              stroke='var(--color-totalSales)'
+              fill='url(#fillTotalRevenue)'
+              stroke='var(--color-totalRevenue)'
               stackId='a'
             />
           </AreaChart>

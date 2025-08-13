@@ -47,3 +47,21 @@ export const dashboardSortBy = [
     isDefault: false,
   },
 ];
+
+export const adminDashboardSortBy = [
+  {
+    label: 'Last 3 months',
+    query: '3',
+    isDefault: true,
+  },
+  {
+    label: 'Last 6 months',
+    query: '6',
+    isDefault: false,
+  },
+  {
+    label: 'Last 9 months',
+    query: '9',
+    isDefault: false,
+  },
+];

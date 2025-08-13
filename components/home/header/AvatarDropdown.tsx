@@ -12,6 +12,7 @@ import { getUsernameFallback } from '@/lib/helpers';
 import { CircleUserRound, HandCoins, LayoutDashboard, LogIn, Receipt, Truck, User } from 'lucide-react';
 import Link from 'next/link';
 import DropdownItemLogoutBtn from '../../common/DropdownItemLogoutBtn';
+import { UserRole } from '@prisma/client';
 
 const AvatarDropdown = async () => {
   const user = await getUserSession();
@@ -68,9 +69,9 @@ const AvatarDropdown = async () => {
               asChild
               className='text-muted focus:text-muted focus:bg-home-primary-foreground rounded-none'
             >
-              <Link href='/mng/dashboard'>
+              <Link href={`/mng/${user.role === UserRole.admin ? 'admin-dashboard' : 'dashboard'}`}>
                 <LayoutDashboard className='text-inherit' />
-                {user.role === 'admin' ? 'Dashboard' : 'Sell your products'}
+                {user.role === UserRole.admin ? 'Dashboard' : 'Sell your products'}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem

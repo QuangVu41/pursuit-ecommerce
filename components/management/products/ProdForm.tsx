@@ -15,12 +15,14 @@ import ProdVariantProvider from './ProdVariantProvider';
 import { usePreviewImage } from '@/hooks/use-preview-image';
 import { createProd, updateProd } from '@/actions/products';
 import { useTransition } from 'react';
-import { ProductWithPayLoad } from '@/types/products';
+import { ProductReviewWithPayload, ProductWithPayLoad } from '@/types/products';
 import { create } from 'zustand';
+import ProdReviewSection from './ProdReviewSection';
 
 type ProdFormProps = {
   cateSelectItems: React.ReactNode;
   attributes: ProductAttributeWithValues[];
+  prodReviews: ProductReviewWithPayload[];
 } & ({ mode: 'create'; product?: never } | { mode: 'edit'; product: ProductWithPayLoad });
 
 interface HasNoVariantsState {
@@ -33,7 +35,7 @@ export const useHasNoVariants = create<HasNoVariantsState>((set) => ({
   setHasNoVariants: (value: boolean) => set({ hasNoVariants: value }),
 }));
 
-const ProdForm = ({ cateSelectItems, attributes, mode, product }: ProdFormProps) => {
+const ProdForm = ({ cateSelectItems, attributes, mode, product, prodReviews }: ProdFormProps) => {
   const defaultValues: ProdFormSchemaType =
     mode === 'create'
       ? {
@@ -130,6 +132,7 @@ const ProdForm = ({ cateSelectItems, attributes, mode, product }: ProdFormProps)
       <Button className='flex shadow-md ml-auto text-base items-center' type='submit' disabled={isPending}>
         {mode === 'create' ? 'Create Product' : 'Save Changes'}
       </Button>
+      <ProdReviewSection prodReviews={prodReviews} />
     </FormWrapper>
   );
 };

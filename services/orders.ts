@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import FilterApi from '@/lib/filter';
 import { OrderItemWithPayload, OrderWithPayload } from '@/types/orders';
 import { OrderStatus, Prisma } from '@prisma/client';
-import { subDays } from 'date-fns';
+import { subDays, subMonths } from 'date-fns';
 
 export const createOrder = async (orderData: Prisma.OrderCreateArgs) => {
   const order = await db.order.create({
@@ -197,7 +197,7 @@ export const getAllUserSales = async (searchParams: { [key: string]: string }) =
   const user = await getUserSession();
   if (!user) throw new Error('Unauthenticated!');
 
-  const { last = '7' } = searchParams;
+  const { last = '3' } = searchParams;
 
   const orderItems = await db.orderItem.findMany({
     where: {
@@ -219,7 +219,25 @@ export const getAllUserSales = async (searchParams: { [key: string]: string }) =
   return orderItems;
 };
 
-export const getTotalRevenue = async (searchParams: { [key: string]: string } = {}) => {
+export const getAllSales = async (searchParams: { [key: string]: string }) => {
+  const { last = '3' } = searchParams;
+
+  const orderItems = await db.orderItem.findMany({
+    where: {
+      order: {
+        status: OrderStatus.completed,
+      },
+      createdAt: {
+        gte: subMonths(new Date(), parseInt(last)),
+        lte: new Date(),
+      },
+    },
+  });
+
+  return orderItems;
+};
+
+export const getUserTotalRevenue = async (searchParams: { [key: string]: string } = {}) => {
   const user = await getUserSession();
   let { last = '7' } = searchParams;
 
@@ -254,7 +272,28 @@ export const getTotalRevenue = async (searchParams: { [key: string]: string } = 
   );
 };
 
-export const getTotalOrders = async (searchParams: { [key: string]: string }) => {
+export const getTotalRevenue = async (searchParams: { [key: string]: string } = {}) => {
+  let { last = '3' } = searchParams;
+
+  const totalRevenue = await db.orderItem.aggregate({
+    where: {
+      order: {
+        status: OrderStatus.completed,
+      },
+      createdAt: {
+        gte: subMonths(new Date(), parseInt(last)),
+        lte: new Date(),
+      },
+    },
+    _sum: {
+      platformFee: true,
+    },
+  });
+
+  return totalRevenue._sum.platformFee || 0;
+};
+
+export const getUserTotalOrders = async (searchParams: { [key: string]: string }) => {
   const user = await getUserSession();
   let { last = '7' } = searchParams;
 
@@ -281,4 +320,29 @@ export const getTotalOrders = async (searchParams: { [key: string]: string }) =>
   });
 
   return totalRevenue._sum.quantity || 0;
+};
+
+export const getLatestTransactions = async (searchParams: { [key: string]: string }) => {
+  const { last = '3' } = searchParams;
+
+  const transactions = await db.order.findMany({
+    where: {
+      status: OrderStatus.completed,
+      createdAt: {
+        gte: subMonths(new Date(), parseInt(last)),
+        lte: new Date(),
+      },
+    },
+    include: {
+      user: {
+        select: {
+          name: true,
+          image: true,
+        },
+      },
+    },
+    take: 5,
+  });
+
+  return transactions;
 };
