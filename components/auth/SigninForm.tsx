@@ -43,6 +43,8 @@ const SigninForm = () => {
     });
   };
 
+  console.log(form.formState.errors);
+
   const handleSubmit = (data: SigninSchemaType) => {
     startTransition(() => {
       if (!data.code) {
@@ -53,7 +55,6 @@ const SigninForm = () => {
           if (res?.success) {
             setShowEmailVerification(true);
             toast.success(res.success);
-            form.reset();
           }
         });
       } else {
