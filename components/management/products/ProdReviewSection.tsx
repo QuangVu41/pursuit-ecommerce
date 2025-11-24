@@ -22,7 +22,7 @@ const ProdReviewSection = ({ prodReviews }: ProdReviewSectionProps) => {
         <SectionTitle title='Product reviews' />
       </SectionHeader>
       <SectionContent className='!mt-4 grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
-        {prodReviews.length > 0 ? (
+        {prodReviews?.length > 0 ? (
           prodReviews.map((review) => (
             <Card key={review.id}>
               <CardHeader>
@@ -59,7 +59,7 @@ const ProdReviewSection = ({ prodReviews }: ProdReviewSectionProps) => {
             </Card>
           ))
         ) : (
-          <Empty title='No reviews yet!' />
+          <Empty className='sm:col-span-2 lg:col-span-3 xl:col-span-4' title='No reviews yet!' />
         )}
       </SectionContent>
     </SectionContainer>
